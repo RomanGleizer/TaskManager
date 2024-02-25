@@ -8,27 +8,27 @@ namespace Dal.EF;
 /// Описание:
 /// Представляет контекст базы данных для хранения сущностей.
 /// </summary>
-public class TaskManagerDbContext : IdentityDbContext<User>
+public class TaskManagerDbContext : IdentityDbContext<UserDal>
 {
     /// <summary>
     /// Пользователи в базе данных.
     /// </summary>
-    public override DbSet<User> Users { get; set; }
+    public override DbSet<UserDal> Users { get; set; }
 
     /// <summary>
     /// Задачи в базе данных
     /// </summary>
-    public DbSet<ProjectTask> Tasks { get; set; }
+    public DbSet<TaskDal> Tasks { get; set; }
 
     /// <summary>
     /// Проекты в базе данных.
     /// </summary>
-    public DbSet<Project> Projects { get; set; }
+    public DbSet<ProjectDal> Projects { get; set; }
 
     /// <summary>
     /// Роли для участников проекта.
     /// </summary>
-    public DbSet<Role> ProjectRoles { get; set; }
+    public DbSet<RoleDal> ProjectRoles { get; set; }
 
     /// <summary>
     /// Инициализирует новый экземпляр класса TaskManagerDbContext с указанными параметрами.

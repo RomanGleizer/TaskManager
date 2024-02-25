@@ -10,7 +10,7 @@ namespace Dal.Repositories;
 public class EFUnitOfWork : IUnitOfWork
 {
     private readonly TaskManagerDbContext _dbContext;
-    private IRepository<ProjectTask, int>? _taskRepository;
+    private IRepository<TaskDal, int>? _taskRepository;
 
     /// <summary>
     /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных.
@@ -23,7 +23,7 @@ public class EFUnitOfWork : IUnitOfWork
     /// <summary>
     /// Получает репозиторий для работы с сущностями ProjectTask.
     /// </summary>
-    public IRepository<ProjectTask, int> Tasks
+    public IRepository<TaskDal, int> Tasks
     {
         get
         {
@@ -36,7 +36,7 @@ public class EFUnitOfWork : IUnitOfWork
     /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных.
     /// </summary>
-    public async Task SaveAsync()
+    public async Task SaveChangesAsync()
     {
         await _dbContext.SaveChangesAsync();
     }

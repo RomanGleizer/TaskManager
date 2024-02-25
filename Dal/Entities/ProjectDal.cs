@@ -5,7 +5,7 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность проекта для базы данных
 /// </summary>
-public class Project : IDbEntity<int>
+public class ProjectDal : IDbEntity<int>
 {
     /// <summary>
     /// Идентификатор проекта
@@ -35,10 +35,10 @@ public class Project : IDbEntity<int>
     /// <summary>
     /// Основатель проекта
     /// </summary>
-    public User Creator { get; set; }
+    public UserDal Creator { get; set; }
 
     /// <summary>
     /// Коллекция участников проекта
     /// </summary>
-    public IEnumerable<User> Participants { get; set; }
+    public IEnumerable<UserDal> Participants { get; set; }
 }

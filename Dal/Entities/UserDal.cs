@@ -6,7 +6,7 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность пользователя для бд
 /// </summary>
-public class User : IdentityUser, IDbEntity<string>
+public class UserDal : IdentityUser, IDbEntity<string>
 {
     /// <summary>
     /// Имя пользователя
@@ -36,5 +36,5 @@ public class User : IdentityUser, IDbEntity<string>
     /// <summary>
     /// Роль пользователя в проекте
     /// </summary>
-    public Role? Role { get; set; }
+    public RoleDal? Role { get; set; }
 }

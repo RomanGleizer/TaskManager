@@ -1,11 +1,9 @@
-﻿using Dal.Interfaces;
-
-namespace Dal.Entities;
+﻿namespace Logic.DTO;
 
 /// <summary>
-/// Сущность задачи для базы данных
+/// DTO для ProjectTask
 /// </summary>
-public class ProjectTask : IDbEntity<int>
+public class ProjectTaskDTO
 {
     /// <summary>
     /// Идентификатор задачи
@@ -38,32 +36,17 @@ public class ProjectTask : IDbEntity<int>
     public DateTime LastUpdateDate { get; set; }
 
     /// <summary>
-    /// Идентификаторы исполнителей задачи
-    /// </summary>
-    public IEnumerable<int> PerformerIds { get; set; }
-
-    /// <summary>
-    /// Исполнители задачи
-    /// </summary>
-    public IEnumerable<User> Performers { get; set; }
-
-    /// <summary>
     /// Идентификатор постановщика задачи
     /// </summary>
     public int StageDirectorId { get; set; }
 
     /// <summary>
-    /// Постановщик задачи
+    /// Идентификаторы исполнителей задачи
     /// </summary>
-    public User StageDirector { get; set; }
+    public IEnumerable<int> PerformerIds { get; set; }
 
     /// <summary>
-    /// Идентификатор проекта, к которому относится задача 
+    /// Идентификатор проекта, к которому относится задача
     /// </summary>
     public int ProjectId { get; set; }
-
-    /// <summary>
-    /// Ссылка на проект, к которому относится задача
-    /// </summary>
-    public Project Project { get; set; }
 }

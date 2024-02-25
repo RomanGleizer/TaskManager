@@ -15,5 +15,5 @@ public interface IUnitOfWork
     /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных.
     /// </summary>
-    Task SaveAsync();
+    Task SaveChangesAsync();
 }

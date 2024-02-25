@@ -1,18 +1,22 @@
+using AutoMapper;
 using Dal.EF;
 using Dal.Entities;
 using Dal.Interfaces;
 using Dal.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Logic.MapperLogic;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRepository<ProjectTask, int>, TaskRepository>();
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+builder.Services.AddSingleton(mappingConfig.CreateMapper());
 builder.Services
     .AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection))
     .AddIdentity<User, IdentityRole>(options =>

@@ -4,30 +4,32 @@
 /// Интерфейс репозитория для операций с сущностями
 /// </summary>
 /// <typeparam name="T">Сущность, реализующая интерфейс IDbEntity</typeparam>
-public interface IRepository<T, I> where T : IDbEntity<I>
+/// <typeparam name="I">Тип уникального идентификатора сущности</typeparam>
+public interface IRepository<T, I> 
+    where T : IDbEntity<I>
 {
     /// <summary>
     /// Возвращает все сущности данного типа.
     /// </summary>
-    IEnumerable<T> GetAllTasks();
+    IEnumerable<T> GetAll();
 
     /// <summary>
     /// Возвращает сущность по заданному идентификатору.
     /// </summary>
-    Task<T?> GetTaskById(int id);
+    Task<T?> GetByIdAsync(int id);
 
     /// <summary>
     /// Создает новую сущность в хранилище данных.
     /// </summary>
-    Task CreateTaskAsync(T item);
+    Task CreateAsync(T item);
 
     /// <summary>
     /// Обновляет существующую сущность в хранилище данных.
     /// </summary>
-    void UpdateTaskAsync(T item);
+    void Update(T item);
 
     /// <summary>
     /// Удаляет сущность с заданным идентификатором из хранилища данных.
     /// </summary>
-    Task DeleteTaskAsync(int id);
+    void Delete(T item);
 }

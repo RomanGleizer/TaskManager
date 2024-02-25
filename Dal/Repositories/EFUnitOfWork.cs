@@ -36,7 +36,7 @@ public class EFUnitOfWork : IUnitOfWork
     /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных.
     /// </summary>
-    public async Task SaveAsync()
+    public async Task SaveChangesAsync()
     {
         await _dbContext.SaveChangesAsync();
     }

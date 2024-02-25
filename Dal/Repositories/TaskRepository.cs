@@ -23,7 +23,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Асинхронно создает новую сущность ProjectTask в базе данных.
     /// </summary>
-    public async Task CreateTaskAsync(ProjectTask item)
+    public async Task CreateAsync(ProjectTask item)
     {
         await _dbContext.Tasks.AddAsync(item);
     }
@@ -31,17 +31,15 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных.
     /// </summary>
-    public async Task DeleteTaskAsync(int id)
+    public void Delete(ProjectTask task)
     {
-        var task = await _dbContext.Tasks.FindAsync(id);
-        if (task != null)
-            _dbContext.Tasks.Remove(task);
+        _dbContext.Tasks.Remove(task);
     }
 
     /// <summary>
     /// Возвращает все сущности ProjectTask из базы данных.
     /// </summary>
-    public IEnumerable<ProjectTask> GetAllTasks()
+    public IEnumerable<ProjectTask> GetAll()
     {
         return _dbContext.Tasks;
     }
@@ -49,7 +47,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Асинхронно возвращает сущность ProjectTask с заданным идентификатором из базы данных.
     /// </summary>
-    public async Task<ProjectTask?> GetTaskById(int id)
+    public async Task<ProjectTask?> GetByIdAsync(int id)
     {
         return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
     }
@@ -57,7 +55,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Обновляет существующую сущность ProjectTask в базе данных.
     /// </summary>
-    public void UpdateTaskAsync(ProjectTask item)
+    public void Update(ProjectTask item)
     {
         _dbContext.Entry(item).State = EntityState.Modified;
     }

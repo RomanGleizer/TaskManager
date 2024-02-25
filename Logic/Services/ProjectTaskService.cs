@@ -18,13 +18,13 @@ public class ProjectTaskService : IProjectTaskService
         _mapper = mapper;
     }
 
-    public async Task<ProjectTaskDTO> GetTaskByIdAsync(int id)
+    public async Task<TaskDTO> GetTaskByIdAsync(int id)
     {
         var task = await _unitOfWork.Tasks.GetByIdAsync(id);
         if (task == null)
             throw new ValidationException("Task was not found in database", string.Empty);
 
-        return new ProjectTaskDTO
+        return new TaskDTO
         {
             Id = task.Id,
             Name = task.Name,
@@ -38,15 +38,15 @@ public class ProjectTaskService : IProjectTaskService
         };
     }
 
-    public IEnumerable<ProjectTaskDTO> GetAllTasks()
+    public IEnumerable<TaskDTO> GetAllTasks()
     {
         var allTasks = _unitOfWork.Tasks.GetAll();
-        return _mapper.Map<IEnumerable<ProjectTask>, IEnumerable<ProjectTaskDTO>>(allTasks);
+        return _mapper.Map<IEnumerable<TaskDal>, IEnumerable<TaskDTO>>(allTasks);
     }
 
-    public async Task CreateTaskAsync(ProjectTaskDTO taskDTO)
+    public async Task CreateTaskAsync(TaskDTO taskDTO)
     {
-        var task = new ProjectTask
+        var task = new TaskDal
         {
             Name = taskDTO.Name,
             Description = taskDTO.Description,
@@ -72,7 +72,7 @@ public class ProjectTaskService : IProjectTaskService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task UpdateTaskAsync(ProjectTaskDTO taskDTO, int taskId)
+    public async Task UpdateTaskAsync(TaskDTO taskDTO, int taskId)
     {
         var existingTask = await _unitOfWork.Tasks.GetByIdAsync(taskId);
         if (existingTask == null)

@@ -14,12 +14,12 @@ var mappingConfig = new MapperConfiguration(config => config.AddProfile(new Mapp
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<IRepository<ProjectTask, int>, TaskRepository>();
+builder.Services.AddTransient<IRepository<TaskDal, int>, TaskRepository>();
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 builder.Services
     .AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection))
-    .AddIdentity<User, IdentityRole>(options =>
+    .AddIdentity<UserDal, IdentityRole>(options =>
     {
         options.Password.RequiredLength = 8;
         options.Password.RequireNonAlphanumeric = false;

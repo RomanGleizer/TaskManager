@@ -5,7 +5,7 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность задачи для базы данных
 /// </summary>
-public class ProjectTask : IDbEntity<int>
+public class TaskDal : IDbEntity<int>
 {
     /// <summary>
     /// Идентификатор задачи
@@ -45,7 +45,17 @@ public class ProjectTask : IDbEntity<int>
     /// <summary>
     /// Исполнители задачи
     /// </summary>
-    public IEnumerable<User> Performers { get; set; }
+    public IEnumerable<UserDal> Performers { get; set; }
+
+    /// <summary>
+    /// Идентификатор постановщика задачи
+    /// </summary>
+    public int StageDirectorId { get; set; }
+
+    /// <summary>
+    /// Постановщик задачи
+    /// </summary>
+    public UserDal StageDirector { get; set; }
 
     /// <summary>
     /// Идентификатор постановщика задачи
@@ -65,5 +75,5 @@ public class ProjectTask : IDbEntity<int>
     /// <summary>
     /// Ссылка на проект, к которому относится задача
     /// </summary>
-    public Project Project { get; set; }
+    public ProjectDal Project { get; set; }
 }

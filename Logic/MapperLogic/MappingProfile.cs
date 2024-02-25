@@ -8,6 +8,6 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<ProjectTask, ProjectTaskDTO>();
+        CreateMap<TaskDal, TaskDTO>();
     }
 }

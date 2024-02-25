@@ -10,7 +10,7 @@ public interface IUnitOfWork
     /// <summary>
     /// Получает репозиторий для работы с сущностями ProjectTask.
     /// </summary>
-    IRepository<ProjectTask, int> Tasks { get; }
+    IRepository<TaskDal, int> Tasks { get; }
 
     /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных.

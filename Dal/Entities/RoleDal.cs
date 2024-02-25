@@ -5,7 +5,7 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность роли для базы данных
 /// </summary>
-public class Role : IDbEntity<int>
+public class RoleDal : IDbEntity<int>
 {
     /// <summary>
     /// Идентификатор роли

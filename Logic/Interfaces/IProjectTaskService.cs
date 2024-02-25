@@ -2,11 +2,33 @@
 
 namespace Logic.Interfaces;
 
+/// <summary>
+/// Сервис задач, предназначенный для операций над задачами
+/// </summary>
 public interface IProjectTaskService
 {
-    Task<ProjectTaskDTO> GetTaskByIdAsync(int id);
-    IEnumerable<ProjectTaskDTO> GetAllTasks();
-    Task CreateTaskAsync(ProjectTaskDTO task);
+    /// <summary>
+    /// Получает задачу по идентификатору асинхронно.
+    /// </summary>
+    Task<TaskDTO> GetTaskByIdAsync(int id);
+
+    /// <summary>
+    /// Получает все задачи.
+    /// </summary>
+    IEnumerable<TaskDTO> GetAllTasks();
+
+    /// <summary>
+    /// Создает новую задачу асинхронно.
+    /// </summary>
+    Task CreateTaskAsync(TaskDTO task);
+
+    /// <summary>
+    /// Удаляет задачу по идентификатору асинхронно.
+    /// </summary>
     Task DeleteTaskAsync(int id);
-    Task UpdateTaskAsync(ProjectTaskDTO task, int id);
+
+    /// <summary>
+    /// Обновляет задачу по идентификатору асинхронно.
+    /// </summary>
+    Task UpdateTaskAsync(TaskDTO task, int id);
 }

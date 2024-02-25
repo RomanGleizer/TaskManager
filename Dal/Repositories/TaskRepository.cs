@@ -8,7 +8,7 @@ namespace Dal.Repositories;
 /// <summary>
 /// Репозиторий для работы с сущностями ProjectTask.
 /// </summary>
-public class TaskRepository : IRepository<ProjectTask, int>
+public class TaskRepository : IRepository<TaskDal, int>
 {
     private readonly TaskManagerDbContext _dbContext;
 
@@ -23,7 +23,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Асинхронно создает новую сущность ProjectTask в базе данных.
     /// </summary>
-    public async Task CreateAsync(ProjectTask item)
+    public async Task CreateAsync(TaskDal item)
     {
         await _dbContext.Tasks.AddAsync(item);
     }
@@ -31,7 +31,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных.
     /// </summary>
-    public void Delete(ProjectTask task)
+    public void Delete(TaskDal task)
     {
         _dbContext.Tasks.Remove(task);
     }
@@ -39,7 +39,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Возвращает все сущности ProjectTask из базы данных.
     /// </summary>
-    public IEnumerable<ProjectTask> GetAll()
+    public IEnumerable<TaskDal> GetAll()
     {
         return _dbContext.Tasks;
     }
@@ -47,7 +47,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Асинхронно возвращает сущность ProjectTask с заданным идентификатором из базы данных.
     /// </summary>
-    public async Task<ProjectTask?> GetByIdAsync(int id)
+    public async Task<TaskDal?> GetByIdAsync(int id)
     {
         return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
     }
@@ -55,7 +55,7 @@ public class TaskRepository : IRepository<ProjectTask, int>
     /// <summary>
     /// Обновляет существующую сущность ProjectTask в базе данных.
     /// </summary>
-    public void Update(ProjectTask item)
+    public void Update(TaskDal item)
     {
         _dbContext.Entry(item).State = EntityState.Modified;
     }

@@ -1,8 +1,31 @@
+using Dal.EF;
+using Dal.Entities;
+using Dal.Interfaces;
+using Dal.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IRepository<ProjectTask, int>, TaskRepository>();
+builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+builder.Services
+    .AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection))
+    .AddIdentity<User, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 8;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireDigit = true;
+        options.User.RequireUniqueEmail = false;
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddEntityFrameworkStores<TaskManagerDbContext>();
 
 var app = builder.Build();
 

@@ -1,4 +1,6 @@
-﻿namespace Dal.Interfaces;
+﻿using Core.Dal.Base;
+
+namespace Dal.Interfaces;
 
 /// <summary>
 /// Интерфейс репозитория для операций с сущностями
@@ -6,7 +8,7 @@
 /// <typeparam name="T">Сущность, реализующая интерфейс IDbEntity</typeparam>
 /// <typeparam name="I">Тип уникального идентификатора сущности</typeparam>
 public interface IRepository<T, I> 
-    where T : IDbEntity<I>
+    where T : IBaseEntityDal<I>
 {
     /// <summary>
     /// Возвращает все сущности данного типа.

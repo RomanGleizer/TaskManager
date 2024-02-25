@@ -4,15 +4,16 @@ using Logic.Interfaces;
 using Logic.Infrastructure;
 using AutoMapper;
 using Dal.Entities;
+using Core.Dal.Base;
 
 namespace Logic.Services;
 
-public class ProjectTaskService : IProjectTaskService
+public class TaskService : ITaskService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ProjectTaskService(IUnitOfWork unitOfWork, IMapper mapper)
+    public TaskService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;

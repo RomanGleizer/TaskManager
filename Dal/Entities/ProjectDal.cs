@@ -1,11 +1,11 @@
-﻿using Dal.Interfaces;
+﻿using Core.Dal.Base;
 
 namespace Dal.Entities;
 
 /// <summary>
 /// Сущность проекта для базы данных
 /// </summary>
-public class ProjectDal : IDbEntity<int>
+public class ProjectDal : IBaseEntityDal<int>
 {
     /// <summary>
     /// Идентификатор проекта

@@ -1,11 +1,11 @@
-﻿using Dal.Interfaces;
+﻿using Core.Dal.Base;
 
 namespace Dal.Entities;
 
 /// <summary>
 /// Сущность роли для базы данных
 /// </summary>
-public class RoleDal : IDbEntity<int>
+public class RoleDal : IBaseEntityDal<int>
 {
     /// <summary>
     /// Идентификатор роли

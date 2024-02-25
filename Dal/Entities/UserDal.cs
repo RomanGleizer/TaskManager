@@ -1,12 +1,12 @@
-﻿using Dal.Interfaces;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Core.Dal.Base;
 
 namespace Dal.Entities;
 
 /// <summary>
 /// Сущность пользователя для бд
 /// </summary>
-public class UserDal : IdentityUser, IDbEntity<string>
+public class UserDal : IdentityUser, IBaseEntityDal<string>
 {
     /// <summary>
     /// Имя пользователя

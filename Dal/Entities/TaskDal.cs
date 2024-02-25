@@ -1,11 +1,11 @@
-﻿using Dal.Interfaces;
+﻿using Core.Dal.Base;
 
 namespace Dal.Entities;
 
 /// <summary>
 /// Сущность задачи для базы данных
 /// </summary>
-public class TaskDal : IDbEntity<int>
+public class TaskDal : IBaseEntityDal<int>
 {
     /// <summary>
     /// Идентификатор задачи

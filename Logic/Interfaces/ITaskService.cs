@@ -5,7 +5,7 @@ namespace Logic.Interfaces;
 /// <summary>
 /// Сервис задач, предназначенный для операций над задачами
 /// </summary>
-public interface IProjectTaskService
+public interface ITaskService
 {
     /// <summary>
     /// Получает задачу по идентификатору асинхронно.

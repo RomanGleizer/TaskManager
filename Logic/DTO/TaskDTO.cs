@@ -38,15 +38,15 @@ public class TaskDTO
     /// <summary>
     /// Идентификатор постановщика задачи
     /// </summary>
-    public int StageDirectorId { get; set; }
+    public string StageDirectorId { get; set; }
 
     /// <summary>
     /// Идентификаторы исполнителей задачи
     /// </summary>
-    public IEnumerable<int> PerformerIds { get; set; }
+    public IList<string> PerformerIds { get; set; }
 
     /// <summary>
     /// Идентификатор проекта, к которому относится задача
     /// </summary>
-    public int ProjectId { get; set; }
+    public int? ProjectId { get; set; }
 }

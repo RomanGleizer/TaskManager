@@ -6,6 +6,8 @@ using Dal.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Logic.MapperLogic;
+using Logic.Interfaces;
+using Logic.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -16,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRepository<TaskDal, int>, TaskRepository>();
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+builder.Services.AddTransient<ITaskService, TaskService>();
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 builder.Services
     .AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection))

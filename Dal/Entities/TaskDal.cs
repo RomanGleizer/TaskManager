@@ -40,37 +40,17 @@ public class TaskDal : IBaseEntityDal<int>
     /// <summary>
     /// Идентификаторы исполнителей задачи
     /// </summary>
-    public IEnumerable<int> PerformerIds { get; set; }
+    public IList<string> PerformerIds { get; set; }
 
     /// <summary>
     /// Исполнители задачи
     /// </summary>
-    public IEnumerable<UserDal> Performers { get; set; }
-
-    /// <summary>
-    /// Идентификатор постановщика задачи
-    /// </summary>
-    public int StageDirectorId { get; set; }
-
-    /// <summary>
-    /// Постановщик задачи
-    /// </summary>
-    public UserDal StageDirector { get; set; }
-
-    /// <summary>
-    /// Идентификатор постановщика задачи
-    /// </summary>
-    public int StageDirectorId { get; set; }
-
-    /// <summary>
-    /// Постановщик задачи
-    /// </summary>
-    public User StageDirector { get; set; }
+    public IList<UserDal> Performers { get; set; }
 
     /// <summary>
     /// Идентификатор проекта, к которому относится задача 
     /// </summary>
-    public int ProjectId { get; set; }
+    public int? ProjectId { get; set; }
 
     /// <summary>
     /// Ссылка на проект, к которому относится задача

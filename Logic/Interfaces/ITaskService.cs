@@ -1,4 +1,5 @@
-﻿using Logic.DTO;
+﻿using Dal.Entities;
+using Logic.DTO;
 
 namespace Logic.Interfaces;
 
@@ -20,15 +21,15 @@ public interface ITaskService
     /// <summary>
     /// Создает новую задачу асинхронно.
     /// </summary>
-    Task CreateTaskAsync(TaskDTO task);
+    Task<TaskDal> CreateTaskAsync(TaskDTO task);
 
     /// <summary>
     /// Удаляет задачу по идентификатору асинхронно.
     /// </summary>
-    Task DeleteTaskAsync(int id);
+    Task<TaskDal> DeleteTaskAsync(int id);
 
     /// <summary>
     /// Обновляет задачу по идентификатору асинхронно.
     /// </summary>
-    Task UpdateTaskAsync(TaskDTO task, int id);
+    Task<TaskDal> UpdateTaskAsync(TaskDTO task, int id);
 }

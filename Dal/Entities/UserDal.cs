@@ -36,5 +36,5 @@ public class UserDal : IdentityUser, IBaseEntityDal<string>
     /// <summary>
     /// Роль пользователя в проекте
     /// </summary>
-    public RoleDal? Role { get; set; }
+    public IList<RoleDal> Roles { get; set; }
 }

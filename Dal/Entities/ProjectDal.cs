@@ -40,5 +40,10 @@ public class ProjectDal : IBaseEntityDal<int>
     /// <summary>
     /// Коллекция участников проекта
     /// </summary>
-    public IEnumerable<UserDal> Participants { get; set; }
+    public IList<UserDal> Participants { get; set; }
+
+    /// <summary>
+    /// Список задач в проекте
+    /// </summary>
+    public IList<TaskDal> Tasks { get; set; }
 }

@@ -4,7 +4,6 @@ using Logic.Interfaces;
 using Logic.Infrastructure;
 using AutoMapper;
 using Dal.Entities;
-using Core.Dal.Base;
 
 namespace Logic.Services;
 
@@ -33,7 +32,6 @@ public class TaskService : ITaskService
             ExecutionStatus = task.ExecutionStatus,
             CreatedDate = task.CreatedDate,
             LastUpdateDate = task.LastUpdateDate,
-            StageDirectorId = task.StageDirectorId,
             PerformerIds = task.PerformerIds,
             ProjectId = task.ProjectId
         };
@@ -45,8 +43,10 @@ public class TaskService : ITaskService
         return _mapper.Map<IEnumerable<TaskDal>, IEnumerable<TaskDTO>>(allTasks);
     }
 
-    public async Task CreateTaskAsync(TaskDTO taskDTO)
+    public async Task<TaskDal> CreateTaskAsync(TaskDTO taskDTO)
     {
+        // Логика проверки, зареган ли текущий пользователь.
+
         var task = new TaskDal
         {
             Name = taskDTO.Name,
@@ -54,16 +54,16 @@ public class TaskService : ITaskService
             ExecutionStatus = taskDTO.ExecutionStatus,
             CreatedDate = taskDTO.CreatedDate,
             LastUpdateDate = taskDTO.LastUpdateDate,
-            StageDirectorId = taskDTO.StageDirectorId,
             PerformerIds = taskDTO.PerformerIds,
             ProjectId = taskDTO.ProjectId
         };
 
         await _unitOfWork.Tasks.CreateAsync(task);
         await _unitOfWork.SaveChangesAsync();
+        return task;
     }
 
-    public async Task DeleteTaskAsync(int id)
+    public async Task<TaskDal> DeleteTaskAsync(int id)
     {
         var existingTask = await _unitOfWork.Tasks.GetByIdAsync(id);
         if (existingTask == null)
@@ -71,9 +71,11 @@ public class TaskService : ITaskService
 
         _unitOfWork.Tasks.Delete(existingTask);
         await _unitOfWork.SaveChangesAsync();
+
+        return existingTask;
     }
 
-    public async Task UpdateTaskAsync(TaskDTO taskDTO, int taskId)
+    public async Task<TaskDal> UpdateTaskAsync(TaskDTO taskDTO, int taskId)
     {
         var existingTask = await _unitOfWork.Tasks.GetByIdAsync(taskId);
         if (existingTask == null)
@@ -85,10 +87,11 @@ public class TaskService : ITaskService
         existingTask.CreatedDate = taskDTO.CreatedDate;
         existingTask.LastUpdateDate = taskDTO.LastUpdateDate;
         existingTask.PerformerIds = taskDTO.PerformerIds;
-        existingTask.StageDirectorId = taskDTO.StageDirectorId;
         existingTask.ProjectId = taskDTO.ProjectId;
 
         _unitOfWork.Tasks.Update(existingTask);
         await _unitOfWork.SaveChangesAsync();
+
+        return existingTask;
     }
 }

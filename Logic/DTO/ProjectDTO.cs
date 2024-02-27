@@ -1,11 +1,9 @@
-﻿using Core.Dal.Base;
-
-namespace Dal.Entities;
+﻿namespace Logic.DTO;
 
 /// <summary>
-/// Сущность проекта для базы данных
+/// DTO для ProjectDal
 /// </summary>
-public class ProjectDal : IBaseEntityDal<int>
+public class ProjectDTO
 {
     /// <summary>
     /// Идентификатор проекта
@@ -13,7 +11,7 @@ public class ProjectDal : IBaseEntityDal<int>
     public int Id { get; set; }
 
     /// <summary>
-    /// Имя проекта
+    /// Название проекта
     /// </summary>
     public string Name { get; set; }
 
@@ -23,7 +21,7 @@ public class ProjectDal : IBaseEntityDal<int>
     public string Description { get; set; }
 
     /// <summary>
-    /// Дата создания
+    /// Дата создания проекта
     /// </summary>
     public DateTime CreationDate { get; set; }
 
@@ -38,17 +36,7 @@ public class ProjectDal : IBaseEntityDal<int>
     public IList<string> ParticipantIds { get; set; }
 
     /// <summary>
-    /// Коллекция участников проекта
-    /// </summary>
-    public IList<UserDal> Participants { get; set; }
-
-    /// <summary>
     /// Список идентификаторов задач в проекте
     /// </summary>
     public IList<int> TaskIds { get; set; }
-
-    /// <summary>
-    /// Список задач в проекте
-    /// </summary>
-    public IList<TaskDal> Tasks { get; set; }
 }

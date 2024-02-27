@@ -1,7 +1,7 @@
 ﻿namespace Logic.DTO;
 
 /// <summary>
-/// DTO для ProjectTask
+/// DTO для TaskDal
 /// </summary>
 public class TaskDTO
 {

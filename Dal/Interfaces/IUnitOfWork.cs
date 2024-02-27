@@ -8,9 +8,14 @@ namespace Dal.Interfaces;
 public interface IUnitOfWork
 {
     /// <summary>
-    /// Получает репозиторий для работы с сущностями ProjectTask.
+    /// Получает репозиторий для работы с задачами.
     /// </summary>
     IRepository<TaskDal, int> Tasks { get; }
+
+    /// <summary>
+    /// Получает репозиторий для работы с сущностями проектами.
+    /// </summary>
+    IRepository<ProjectDal, int> Projects { get; }
 
     /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных.

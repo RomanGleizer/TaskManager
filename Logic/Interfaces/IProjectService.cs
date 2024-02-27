@@ -4,32 +4,32 @@ using Logic.DTO;
 namespace Logic.Interfaces;
 
 /// <summary>
-/// Сервис задач, предназначенный для операций над задачами
+/// Сервис задач, предназначенный для операций над проектами
 /// </summary>
-public interface ITaskService
+public interface IProjectService
 {
     /// <summary>
     /// Получает задачу по идентификатору асинхронно.
     /// </summary>
-    Task<TaskDTO> GetTaskByIdAsync(int id);
+    Task<ProjectDTO> GetProjectByIdAsync(int id);
 
     /// <summary>
     /// Получает все задачи.
     /// </summary>
-    IEnumerable<TaskDTO> GetAllTasks();
+    IEnumerable<ProjectDTO> GetAllProjects();
 
     /// <summary>
     /// Создает новую задачу асинхронно.
     /// </summary>
-    Task<TaskDTO> CreateTaskAsync(TaskDTO task);
+    Task<ProjectDTO> CreateProjectAsync(ProjectDTO task);
 
     /// <summary>
     /// Удаляет задачу по идентификатору асинхронно.
     /// </summary>
-    Task<TaskDTO> DeleteTaskAsync(int id);
+    Task<ProjectDTO> DeleteProjectAsync(int id);
 
     /// <summary>
     /// Обновляет задачу по идентификатору асинхронно.
     /// </summary>
-    Task<TaskDTO> UpdateTaskAsync(TaskDTO task, int id);
+    Task<ProjectDTO> UpdateProjectAsync(ProjectDTO task, int id);
 }

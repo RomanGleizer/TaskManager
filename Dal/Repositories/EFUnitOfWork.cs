@@ -13,6 +13,7 @@ public class EFUnitOfWork : IUnitOfWork
     private IRepository<TaskDal, int>? _taskRepository;
     private IRepository<ProjectDal, int>? _projectRepository;
     private IRepository<CommentDal, int>? _commentRepository;
+    private IRepository<UserDal, string>? _userRepository;
 
     /// <summary>
     /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных.
@@ -58,6 +59,19 @@ public class EFUnitOfWork : IUnitOfWork
             if (_commentRepository == null)
                 _commentRepository = new CommentRepository(_dbContext);
             return _commentRepository;
+        }
+    }
+
+    /// <summary>
+    /// Получает репозиторий для работы с сущностями CommentDal.
+    /// </summary>
+    public IRepository<UserDal, string> Users
+    {
+        get
+        {
+            if (_userRepository == null)
+                _userRepository = new UserRepository(_dbContext);
+            return _userRepository;
         }
     }
 

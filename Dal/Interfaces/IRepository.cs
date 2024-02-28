@@ -18,7 +18,7 @@ public interface IRepository<T, I>
     /// <summary>
     /// Возвращает сущность по заданному идентификатору.
     /// </summary>
-    Task<T?> GetByIdAsync(int id);
+    Task<T?> GetByIdAsync(I id);
 
     /// <summary>
     /// Создает новую сущность в хранилище данных.

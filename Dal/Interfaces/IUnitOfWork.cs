@@ -23,6 +23,11 @@ public interface IUnitOfWork
     IRepository<CommentDal, int> Comments { get; }
 
     /// <summary>
+    /// Репозиторий для работы с пользователями
+    /// </summary>
+    IRepository<UserDal, string> Users { get; }
+
+    /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных
     /// </summary>
     Task SaveChangesAsync();

@@ -22,6 +22,7 @@ builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 builder.Services.AddTransient<IDtoService<TaskDTO, int>, TaskService>();
 builder.Services.AddTransient<IDtoService<ProjectDTO, int>, ProjectService>();
 builder.Services.AddTransient<IDtoService<CommentDTO, int>, CommentService>();
+builder.Services.AddTransient<IProjectDtoManager, ProjectService>();
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 builder.Services
     .AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection))

@@ -11,22 +11,22 @@ public class UserDal : IdentityUser, IBaseEntityDal<string>
     /// <summary>
     /// Имя пользователя
     /// </summary>
-    public string? FirstName { get; set; }
+    public string FirstName { get; set; }
 
     /// <summary>
     /// Фамилия пользователя
     /// </summary>
-    public string? LastName { get; set; }
+    public string LastName { get; set; }
 
     /// <summary>
     /// Электронная почта пользователя
     /// </summary>
-    public override string? Email { get; set; }
+    public override string Email { get; set; }
 
     /// <summary>
     /// Номер телефона пользователя
     /// </summary>
-    public override string? PhoneNumber { get; set; }
+    public override string PhoneNumber { get; set; }
 
     /// <summary>
     /// День рождения пользователя

@@ -11,10 +11,12 @@ namespace Api.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IDtoService<ProjectDTO, int> _projectService;
+    private readonly IProjectDtoManager _projectDtoManager;
 
-    public ProjectsController(IDtoService<ProjectDTO, int> projectService)
+    public ProjectsController(IDtoService<ProjectDTO, int> projectService, IProjectDtoManager projectDtoManager)
     {
         _projectService = projectService;
+        _projectDtoManager = projectDtoManager;
     }
 
     [HttpGet("{projectId}")]
@@ -106,5 +108,11 @@ public class ProjectsController : ControllerBase
         });
     }
 
-    // Дописать ресты обновления, удаления, добавления (задачи, нового участника)
+    [HttpPost("add/participant/{projectId}/{participantId}")]
+    [ProducesResponseType<UpdateProjectResponse>(200)]
+    public async Task<IActionResult> AddNewParticipantAsync([FromQuery] int projectId, [FromQuery] string participantId)
+    {
+        var updatedProject = await _projectDtoManager.AddParticipantAsync(projectId, participantId);
+        return Ok(new UpdateProjectResponse { ParticipantIds = updatedProject.ParticipantIds });
+    }
 }

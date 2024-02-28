@@ -7,7 +7,7 @@ using Logic.Interfaces;
 
 namespace Logic.Services;
 
-public class ProjectService : IDtoService<ProjectDTO, int>
+public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -68,6 +68,22 @@ public class ProjectService : IDtoService<ProjectDTO, int>
         // Id обновляем, а сами задачи и участников - нет.
 
         _unitOfWork.Projects.Update(existingProjectDal);
+        await _unitOfWork.SaveChangesAsync();
+        return _mapper.Map<ProjectDTO>(existingProjectDal);
+    }
+
+    public async Task<ProjectDTO> AddNewParticipantAsync(int projectId, string participantId)
+    {
+        var existingUserDal = await _unitOfWork.Users.GetByIdAsync(participantId);
+        if (existingUserDal == null)
+            throw new ValidationException("User was not found in database", string.Empty);
+
+        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
+        if (existingProjectDal == null)
+            throw new ValidationException("Project was not found in database", string.Empty);
+
+        existingProjectDal.Participants.Add(existingUserDal);
+        existingProjectDal.ParticipantIds.Add(participantId);
         await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<ProjectDTO>(existingProjectDal);
     }

@@ -1,9 +1,11 @@
-﻿namespace Logic.DTO;
+﻿using Core.Dal.Base;
+
+namespace Logic.DTO;
 
 /// <summary>
 /// DTO для TaskDal
 /// </summary>
-public class TaskDTO
+public class TaskDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Идентификатор задачи
@@ -44,6 +46,11 @@ public class TaskDTO
     /// Идентификаторы исполнителей задачи
     /// </summary>
     public IList<string> PerformerIds { get; set; }
+
+    /// <summary>
+    /// Идентификаторы комментариев
+    /// </summary>
+    public IList<string> CommentIds { get; set; }
 
     /// <summary>
     /// Идентификатор проекта, к которому относится задача

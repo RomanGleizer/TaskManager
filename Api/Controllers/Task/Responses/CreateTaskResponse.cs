@@ -17,4 +17,6 @@ public class CreateTaskResponse
     public required int? ProjectId { get; init; }
 
     public required IEnumerable<string> PerformerIds { get; init; }
+
+    public required IList<string> CommentIds { get; set; }
 }

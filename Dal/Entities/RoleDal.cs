@@ -16,4 +16,14 @@ public class RoleDal : IBaseEntityDal<int>
     /// Название роли
     /// </summary>
     public string Name { get; set; }
+
+    /// <summary>
+    /// Уникальные идентификаторы участников с ролью
+    /// </summary>
+    public IList<string> UserIds { get; set; }
+
+    /// <summary>
+    /// Пользователи с ролью
+    /// </summary>
+    public IList<UserDal> User { get; set; }
 }

@@ -13,4 +13,6 @@ public class UpdateTaskRequest
     public DateTime LastUpdateDate { get; set; }
 
     public IList<string> PerformerIds { get; set; }
+
+    public IList<string> CommentIds { get; set; }
 }

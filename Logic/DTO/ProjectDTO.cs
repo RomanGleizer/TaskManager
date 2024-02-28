@@ -1,9 +1,11 @@
-﻿namespace Logic.DTO;
+﻿using Core.Dal.Base;
+
+namespace Logic.DTO;
 
 /// <summary>
 /// DTO для ProjectDal
 /// </summary>
-public class ProjectDTO
+public class ProjectDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Идентификатор проекта

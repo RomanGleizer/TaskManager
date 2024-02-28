@@ -34,7 +34,12 @@ public class UserDal : IdentityUser, IBaseEntityDal<string>
     public DateTime BirthDay { get; set; }
 
     /// <summary>
+    /// Уникальный идентификатор роли
+    /// </summary>
+    public int RoleId { get; set; }
+
+    /// <summary>
     /// Роль пользователя в проекте
     /// </summary>
-    public IList<RoleDal> Roles { get; set; }
+    public RoleDal Role { get; set; }
 }

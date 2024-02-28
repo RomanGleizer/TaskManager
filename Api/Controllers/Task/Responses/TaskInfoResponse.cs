@@ -16,5 +16,5 @@ public class TaskInfoResponse
 
     public required IEnumerable<string> PerformerIds { get; set; }
 
-    public required string StageDirectorId { get; set; }
+    public required IList<string> CommentIds { get; set; }
 }

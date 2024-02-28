@@ -31,6 +31,11 @@ public class TaskManagerDbContext : IdentityDbContext<UserDal>
     public DbSet<RoleDal> ProjectRoles { get; set; }
 
     /// <summary>
+    /// Комментарии к задачам
+    /// </summary>
+    public DbSet<CommentDal> Comments { get; set; }
+
+    /// <summary>
     /// Инициализирует новый экземпляр класса TaskManagerDbContext с указанными параметрами.
     /// </summary>
     /// <param name="options">Опции для этого контекста.</param>

@@ -14,5 +14,7 @@ public class DeleteTaskResponse
 
     public IList<string> PerformerIds { get; set; }
 
+    public required IList<string> CommentIds { get; set; }
+
     public int? ProjectId { get; set; }
 }

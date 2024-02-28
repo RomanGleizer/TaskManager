@@ -10,9 +10,9 @@ namespace Api.Controllers;
 [ApiController]
 public class TasksController : ControllerBase
 {
-    private readonly ITaskService _taskService;
+    private readonly IDtoService<TaskDTO, int> _taskService;
 
-    public TasksController(ITaskService taskService)
+    public TasksController(IDtoService<TaskDTO, int> taskService)
     {
         _taskService = taskService;
     }
@@ -21,7 +21,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType<TaskInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromQuery] int taskId)
     {
-        var task = await _taskService.GetTaskByIdAsync(taskId);
+        var task = await _taskService.GetDtoByIdAsync(taskId);
         return Ok(new TaskInfoResponse
         {
             Id = task.Id,
@@ -31,7 +31,7 @@ public class TasksController : ControllerBase
             CreatedDate = task.CreatedDate,
             LastUpdateDate = task.LastUpdateDate,
             PerformerIds = task.PerformerIds,
-            StageDirectorId = task.StageDirectorId
+            CommentIds = task.CommentIds,
         });
     }
 
@@ -39,7 +39,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType<CreateTaskResponse>(200)]
     public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskRequest request)
     {
-        var newTaskDal = await _taskService.CreateTaskAsync(new TaskDTO
+        var newTaskDal = await _taskService.CreateDtoAsync(new TaskDTO
         {
             Id = request.Id,
             Name = request.Name,
@@ -48,7 +48,8 @@ public class TasksController : ControllerBase
             CreatedDate = request.CreatedDate,
             LastUpdateDate = request.LastUpdateDate,
             ProjectId = request.ProjectId,
-            PerformerIds = request.PerformerIds
+            PerformerIds = request.PerformerIds,
+            CommentIds = request.CommentIds
         });
 
         return Ok(new CreateTaskResponse
@@ -60,7 +61,8 @@ public class TasksController : ControllerBase
             CreatedDate = newTaskDal.CreatedDate,
             LastUpdateDate = newTaskDal.LastUpdateDate,
             ProjectId = newTaskDal.ProjectId,
-            PerformerIds = newTaskDal.PerformerIds
+            PerformerIds = newTaskDal.PerformerIds,
+            CommentIds = newTaskDal.CommentIds
         });
     }
 
@@ -68,7 +70,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType<DeleteTaskResponse>(200)]
     public async Task<IActionResult> DeleteTaskAsync([FromQuery] int id)
     {
-        var deletedTask = await _taskService.DeleteTaskAsync(id);
+        var deletedTask = await _taskService.DeleteDtoAsync(id);
         return Ok(new DeleteTaskResponse
         {
             Name = deletedTask.Name,
@@ -77,7 +79,8 @@ public class TasksController : ControllerBase
             CreatedDate = deletedTask.CreatedDate,
             LastUpdateDate = deletedTask.LastUpdateDate,
             PerformerIds = deletedTask.PerformerIds,
-            ProjectId = deletedTask.ProjectId
+            ProjectId = deletedTask.ProjectId,
+            CommentIds = deletedTask.CommentIds
         });
     }
 
@@ -92,10 +95,11 @@ public class TasksController : ControllerBase
             ExecutionStatus = request.ExecutionStatus,
             CreatedDate = request.CreatedDate,
             LastUpdateDate = request.LastUpdateDate,
-            PerformerIds = request.PerformerIds
+            PerformerIds = request.PerformerIds,
+            CommentIds = request.CommentIds
         };
 
-        var updatedTaskDal = await _taskService.UpdateTaskAsync(taskDTO, taskId);
+        var updatedTaskDal = await _taskService.UpdateDtoAsync(taskDTO, taskId);
         return Ok(new UpdateTaskResponse
         {
             Name = updatedTaskDal.Name,
@@ -103,7 +107,8 @@ public class TasksController : ControllerBase
             ExecutionStatus = updatedTaskDal.ExecutionStatus,
             CreatedDate = updatedTaskDal.CreatedDate,
             LastUpdateDate = updatedTaskDal.LastUpdateDate,
-            PerformerIds = updatedTaskDal.PerformerIds
+            PerformerIds = updatedTaskDal.PerformerIds,
+            CommentIds = updatedTaskDal.CommentIds
         });
     }
 }

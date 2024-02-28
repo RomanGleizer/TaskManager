@@ -13,4 +13,6 @@ public class UpdateTaskResponse
     public DateTime LastUpdateDate { get; set; }
 
     public IList<string> PerformerIds { get; set; }
+
+    public required IList<string> CommentIds { get; set; }
 }

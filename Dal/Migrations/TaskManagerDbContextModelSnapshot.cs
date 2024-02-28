@@ -22,6 +22,37 @@ namespace Dal.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Dal.Entities.CommentDal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("Dal.Entities.ProjectDal", b =>
                 {
                     b.Property<int>("Id")
@@ -32,9 +63,6 @@ namespace Dal.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatorId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -47,9 +75,15 @@ namespace Dal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("ParticipantIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("CreatorId");
+                    b.Property<string>("TaskIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Projects");
                 });
@@ -66,12 +100,11 @@ namespace Dal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserDalId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserDalId");
 
                     b.ToTable("ProjectRoles");
                 });
@@ -83,6 +116,10 @@ namespace Dal.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -169,6 +206,9 @@ namespace Dal.Migrations
                     b.Property<int?>("ProjectDalId")
                         .HasColumnType("int");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -193,6 +233,8 @@ namespace Dal.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("ProjectDalId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("TaskDalId");
 
@@ -332,20 +374,23 @@ namespace Dal.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Dal.Entities.ProjectDal", b =>
+            modelBuilder.Entity("Dal.Entities.CommentDal", b =>
                 {
-                    b.HasOne("Dal.Entities.UserDal", "Creator")
+                    b.HasOne("Dal.Entities.UserDal", "Author")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Creator");
-                });
+                    b.HasOne("Dal.Entities.TaskDal", "Task")
+                        .WithMany("Comments")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Dal.Entities.RoleDal", b =>
-                {
-                    b.HasOne("Dal.Entities.UserDal", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("UserDalId");
+                    b.Navigation("Author");
+
+                    b.Navigation("Task");
                 });
 
             modelBuilder.Entity("Dal.Entities.TaskDal", b =>
@@ -363,9 +408,17 @@ namespace Dal.Migrations
                         .WithMany("Participants")
                         .HasForeignKey("ProjectDalId");
 
+                    b.HasOne("Dal.Entities.RoleDal", "Role")
+                        .WithMany("User")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Dal.Entities.TaskDal", null)
                         .WithMany("Performers")
                         .HasForeignKey("TaskDalId");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -426,14 +479,16 @@ namespace Dal.Migrations
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("Dal.Entities.TaskDal", b =>
+            modelBuilder.Entity("Dal.Entities.RoleDal", b =>
                 {
-                    b.Navigation("Performers");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Dal.Entities.UserDal", b =>
+            modelBuilder.Entity("Dal.Entities.TaskDal", b =>
                 {
-                    b.Navigation("Roles");
+                    b.Navigation("Comments");
+
+                    b.Navigation("Performers");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,9 +10,9 @@ namespace Api.Controllers;
 [ApiController]
 public class ProjectsController : ControllerBase
 {
-    private readonly IProjectService _projectService;
+    private readonly IDtoService<ProjectDTO, int> _projectService;
 
-    public ProjectsController(IProjectService projectService)
+    public ProjectsController(IDtoService<ProjectDTO, int> projectService)
     {
         _projectService = projectService;
     }
@@ -21,7 +21,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType<ProjectInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromQuery] int projectId)
     {
-        var project = await _projectService.GetProjectByIdAsync(projectId);
+        var project = await _projectService.GetDtoByIdAsync(projectId);
         return Ok(new ProjectInfoResponse
         {
             Id = project.Id,
@@ -38,7 +38,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType<CreateProjectResponse>(200)]
     public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectRequest request)
     {
-        var newProjectDal = await _projectService.CreateProjectAsync(new ProjectDTO
+        var newProjectDal = await _projectService.CreateDtoAsync(new ProjectDTO
         {
             Id = request.Id,
             Name = request.Name,
@@ -65,7 +65,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType<DeleteProjectResponse>(200)]
     public async Task<IActionResult> DeleteProjectAsync([FromQuery] int projectId)
     {
-        var deletedProject = await _projectService.DeleteProjectAsync(projectId);
+        var deletedProject = await _projectService.DeleteDtoAsync(projectId);
         return Ok(new DeleteProjectResponse
         {
             Id = deletedProject.Id,
@@ -93,7 +93,7 @@ public class ProjectsController : ControllerBase
             TaskIds = request.TaskIds
         };
 
-        var updatedProject = await _projectService.UpdateProjectAsync(projectDTO, projectId);
+        var updatedProject = await _projectService.UpdateDtoAsync(projectDTO, projectId);
         return Ok(new UpdateProjectResponse
         {
             Id = updatedProject.Id,

@@ -48,6 +48,16 @@ public class TaskDal : IBaseEntityDal<int>
     public IList<UserDal> Performers { get; set; }
 
     /// <summary>
+    /// Идентификаторы комментариев
+    /// </summary>
+    public IList<string> CommentIds { get; set; }
+
+    /// <summary>
+    /// Комментарии, которые были добавлены к задаче
+    /// </summary>
+    public IList<CommentDal> Comments { get; set; }
+
+    /// <summary>
     /// Идентификатор проекта, к которому относится задача 
     /// </summary>
     public int? ProjectId { get; set; }

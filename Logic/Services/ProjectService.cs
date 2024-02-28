@@ -7,7 +7,7 @@ using Logic.Interfaces;
 
 namespace Logic.Services;
 
-public class ProjectService : IProjectService
+public class ProjectService : IDtoService<ProjectDTO, int>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -18,22 +18,21 @@ public class ProjectService : IProjectService
         _mapper = mapper;
     }
 
-    public async Task<ProjectDTO> GetProjectByIdAsync(int id)
+    public async Task<ProjectDTO> GetDtoByIdAsync(int id)
     {
         var projectDal = await _unitOfWork.Projects.GetByIdAsync(id);
         if (projectDal == null)
             throw new ValidationException("Project was not found in database", string.Empty);
-
         return _mapper.Map<ProjectDTO>(projectDal);
     }
 
-    public IEnumerable<ProjectDTO> GetAllProjects()
+    public IEnumerable<ProjectDTO> GetAllDtos()
     {
         var allProjectDals = _unitOfWork.Projects.GetAll();
         return _mapper.Map<IEnumerable<ProjectDal>, IEnumerable<ProjectDTO>>(allProjectDals);
     }
 
-    public async Task<ProjectDTO> CreateProjectAsync(ProjectDTO projectDTO)
+    public async Task<ProjectDTO> CreateDtoAsync(ProjectDTO projectDTO)
     {
         var projectDal = _mapper.Map<ProjectDal>(projectDTO);
 
@@ -42,7 +41,7 @@ public class ProjectService : IProjectService
         return _mapper.Map<ProjectDTO>(projectDal);
     }
 
-    public async Task<ProjectDTO> DeleteProjectAsync(int id)
+    public async Task<ProjectDTO> DeleteDtoAsync(int id)
     {
         var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(id);
         if (existingProjectDal == null)
@@ -50,11 +49,10 @@ public class ProjectService : IProjectService
 
         _unitOfWork.Projects.Delete(existingProjectDal);
         await _unitOfWork.SaveChangesAsync();
-
         return _mapper.Map<ProjectDTO>(existingProjectDal);
     }
 
-    public async Task<ProjectDTO> UpdateProjectAsync(ProjectDTO projectDTO, int projectId)
+    public async Task<ProjectDTO> UpdateDtoAsync(ProjectDTO projectDTO, int projectId)
     {
         var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
         if (existingProjectDal == null)
@@ -71,7 +69,6 @@ public class ProjectService : IProjectService
 
         _unitOfWork.Projects.Update(existingProjectDal);
         await _unitOfWork.SaveChangesAsync();
-
         return _mapper.Map<ProjectDTO>(existingProjectDal);
     }
 }

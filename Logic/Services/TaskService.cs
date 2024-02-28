@@ -7,7 +7,7 @@ using Dal.Entities;
 
 namespace Logic.Services;
 
-public class TaskService : ITaskService
+public class TaskService : IDtoService<TaskDTO, int>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -18,22 +18,21 @@ public class TaskService : ITaskService
         _mapper = mapper;
     }
 
-    public async Task<TaskDTO> GetTaskByIdAsync(int id)
+    public async Task<TaskDTO> GetDtoByIdAsync(int id)
     {
         var taskDal = await _unitOfWork.Tasks.GetByIdAsync(id);
         if (taskDal == null)
             throw new ValidationException("Task was not found in database", string.Empty);
-
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
-    public IEnumerable<TaskDTO> GetAllTasks()
+    public IEnumerable<TaskDTO> GetAllDtos()
     {
         var allTaskDals = _unitOfWork.Tasks.GetAll();
         return _mapper.Map<IEnumerable<TaskDal>, IEnumerable<TaskDTO>>(allTaskDals);
     }
 
-    public async Task<TaskDTO> CreateTaskAsync(TaskDTO taskDTO)
+    public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)
     {
         // Логика проверки, зареган ли текущий пользователь.
 
@@ -44,7 +43,7 @@ public class TaskService : ITaskService
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
-    public async Task<TaskDTO> DeleteTaskAsync(int id)
+    public async Task<TaskDTO> DeleteDtoAsync(int id)
     {
         var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(id);
         if (existingTaskDal == null)
@@ -52,11 +51,10 @@ public class TaskService : ITaskService
 
         _unitOfWork.Tasks.Delete(existingTaskDal);
         await _unitOfWork.SaveChangesAsync();
-
         return _mapper.Map<TaskDTO>(existingTaskDal);
     }
 
-    public async Task<TaskDTO> UpdateTaskAsync(TaskDTO taskDTO, int taskId)
+    public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, int taskId)
     {
         var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
         if (existingTaskDal == null)
@@ -68,13 +66,13 @@ public class TaskService : ITaskService
         existingTaskDal.CreatedDate = taskDTO.CreatedDate;
         existingTaskDal.LastUpdateDate = taskDTO.LastUpdateDate;
         existingTaskDal.PerformerIds = taskDTO.PerformerIds;
+        existingTaskDal.CommentIds = taskDTO.CommentIds;
         existingTaskDal.ProjectId = taskDTO.ProjectId;
 
         // Id обновляем, а сам проект и участников - нет.
 
         _unitOfWork.Tasks.Update(existingTaskDal);
         await _unitOfWork.SaveChangesAsync();
-
         return _mapper.Map<TaskDTO>(existingTaskDal);
     }
 }

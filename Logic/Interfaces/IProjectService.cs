@@ -21,7 +21,7 @@ public interface IProjectService
     /// <summary>
     /// Создает новую задачу асинхронно.
     /// </summary>
-    Task<ProjectDTO> CreateProjectAsync(ProjectDTO task);
+    Task<ProjectDTO> CreateProjectAsync(ProjectDTO project);
 
     /// <summary>
     /// Удаляет задачу по идентификатору асинхронно.
@@ -31,5 +31,5 @@ public interface IProjectService
     /// <summary>
     /// Обновляет задачу по идентификатору асинхронно.
     /// </summary>
-    Task<ProjectDTO> UpdateProjectAsync(ProjectDTO task, int id);
+    Task<ProjectDTO> UpdateProjectAsync(ProjectDTO project, int id);
 }

@@ -31,9 +31,9 @@ public class TaskRepository : IRepository<TaskDal, int>
     /// <summary>
     /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных.
     /// </summary>
-    public void Delete(TaskDal task)
+    public void Delete(TaskDal item)
     {
-        _dbContext.Tasks.Remove(task);
+        _dbContext.Tasks.Remove(item);
     }
 
     /// <summary>

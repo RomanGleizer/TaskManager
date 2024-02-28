@@ -11,6 +11,7 @@ public class EFUnitOfWork : IUnitOfWork
 {
     private readonly TaskManagerDbContext _dbContext;
     private IRepository<TaskDal, int>? _taskRepository;
+    private IRepository<ProjectDal, int>? _projectRepository;
 
     /// <summary>
     /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных.
@@ -30,6 +31,16 @@ public class EFUnitOfWork : IUnitOfWork
             if (_taskRepository == null)
                 _taskRepository = new TaskRepository(_dbContext);
             return _taskRepository;
+        }
+    }
+
+    public IRepository<ProjectDal, int> Projects
+    {
+        get
+        {
+            if (_projectRepository == null)
+                _projectRepository = new ProjectRepository(_dbContext);
+            return _projectRepository;
         }
     }
 

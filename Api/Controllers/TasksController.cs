@@ -17,7 +17,7 @@ public class TasksController : ControllerBase
         _taskService = taskService;
     }
 
-    [HttpGet]
+    [HttpGet("{taskId}")]
     [ProducesResponseType<TaskInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromQuery] int taskId)
     {
@@ -64,7 +64,24 @@ public class TasksController : ControllerBase
         });
     }
 
-    [HttpPut]
+    [HttpDelete("{taskId}")]
+    [ProducesResponseType<DeleteTaskResponse>(200)]
+    public async Task<IActionResult> DeleteTaskAsync([FromQuery] int id)
+    {
+        var deletedTask = await _taskService.DeleteTaskAsync(id);
+        return Ok(new DeleteTaskResponse
+        {
+            Name = deletedTask.Name,
+            Description = deletedTask.Description,
+            ExecutionStatus = deletedTask.ExecutionStatus,
+            CreatedDate = deletedTask.CreatedDate,
+            LastUpdateDate = deletedTask.LastUpdateDate,
+            PerformerIds = deletedTask.PerformerIds,
+            ProjectId = deletedTask.ProjectId
+        });
+    }
+
+    [HttpPut("{taskId}")]
     [ProducesResponseType<UpdateTaskResponse>(200)]
     public async Task<IActionResult> UpdateTaskAsync([FromBody] UpdateTaskRequest request, [FromQuery] int taskId)
     {
@@ -87,23 +104,6 @@ public class TasksController : ControllerBase
             CreatedDate = updatedTaskDal.CreatedDate,
             LastUpdateDate = updatedTaskDal.LastUpdateDate,
             PerformerIds = updatedTaskDal.PerformerIds
-        });
-    }
-
-    [HttpDelete]
-    [ProducesResponseType<DeleteTaskResponse>(200)]
-    public async Task<IActionResult> DeleteTaskAsync([FromQuery] int id)
-    {
-        var existingTask = await _taskService.DeleteTaskAsync(id);
-        return Ok(new DeleteTaskResponse
-        {
-            Name = existingTask.Name,
-            Description = existingTask.Description,
-            ExecutionStatus = existingTask.ExecutionStatus,
-            CreatedDate = existingTask.CreatedDate,
-            LastUpdateDate = existingTask.LastUpdateDate,
-            PerformerIds = existingTask.PerformerIds,
-            ProjectId = existingTask.ProjectId
         });
     }
 }

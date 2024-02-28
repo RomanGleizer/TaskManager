@@ -12,6 +12,7 @@ public class EFUnitOfWork : IUnitOfWork
     private readonly TaskManagerDbContext _dbContext;
     private IRepository<TaskDal, int>? _taskRepository;
     private IRepository<ProjectDal, int>? _projectRepository;
+    private IRepository<CommentDal, int>? _commentRepository;
 
     /// <summary>
     /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных.
@@ -22,7 +23,7 @@ public class EFUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// Получает репозиторий для работы с сущностями ProjectTask.
+    /// Получает репозиторий для работы с сущностями TaskDal.
     /// </summary>
     public IRepository<TaskDal, int> Tasks
     {
@@ -34,6 +35,9 @@ public class EFUnitOfWork : IUnitOfWork
         }
     }
 
+    /// <summary>
+    /// Получает репозиторий для работы с сущностями ProjectDal.
+    /// </summary>
     public IRepository<ProjectDal, int> Projects
     {
         get
@@ -41,6 +45,19 @@ public class EFUnitOfWork : IUnitOfWork
             if (_projectRepository == null)
                 _projectRepository = new ProjectRepository(_dbContext);
             return _projectRepository;
+        }
+    }
+
+    /// <summary>
+    /// Получает репозиторий для работы с сущностями CommentDal.
+    /// </summary>
+    public IRepository<CommentDal, int> Comments
+    {
+        get
+        {
+            if (_commentRepository == null)
+                _commentRepository = new CommentRepository(_dbContext);
+            return _commentRepository;
         }
     }
 

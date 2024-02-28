@@ -16,7 +16,7 @@ public class CreateTaskRequest
 
     public required IList<string> PerformerIds { get; set; }
 
-    public IList<string> CommentIds { get; set; }
+    public required IList<string> CommentIds { get; set; }
 
     public required int ProjectId { get; set; }
 }

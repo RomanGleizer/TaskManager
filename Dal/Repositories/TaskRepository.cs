@@ -21,22 +21,6 @@ public class TaskRepository : IRepository<TaskDal, int>
     }
 
     /// <summary>
-    /// Асинхронно создает новую сущность ProjectTask в базе данных.
-    /// </summary>
-    public async Task CreateAsync(TaskDal item)
-    {
-        await _dbContext.Tasks.AddAsync(item);
-    }
-
-    /// <summary>
-    /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных.
-    /// </summary>
-    public void Delete(TaskDal item)
-    {
-        _dbContext.Tasks.Remove(item);
-    }
-
-    /// <summary>
     /// Возвращает все сущности ProjectTask из базы данных.
     /// </summary>
     public IEnumerable<TaskDal> GetAll()
@@ -50,6 +34,22 @@ public class TaskRepository : IRepository<TaskDal, int>
     public async Task<TaskDal?> GetByIdAsync(int id)
     {
         return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    /// <summary>
+    /// Асинхронно создает новую сущность ProjectTask в базе данных.
+    /// </summary>
+    public async Task CreateAsync(TaskDal item)
+    {
+        await _dbContext.Tasks.AddAsync(item);
+    }
+
+    /// <summary>
+    /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных.
+    /// </summary>
+    public void Delete(TaskDal item)
+    {
+        _dbContext.Tasks.Remove(item);
     }
 
     /// <summary>

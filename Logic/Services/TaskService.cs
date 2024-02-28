@@ -18,18 +18,18 @@ public class TaskService : IDtoService<TaskDTO, int>
         _mapper = mapper;
     }
 
+    public IEnumerable<TaskDTO> GetAllDtos()
+    {
+        var allTaskDals = _unitOfWork.Tasks.GetAll();
+        return _mapper.Map<IEnumerable<TaskDal>, IEnumerable<TaskDTO>>(allTaskDals);
+    }
+
     public async Task<TaskDTO> GetDtoByIdAsync(int id)
     {
         var taskDal = await _unitOfWork.Tasks.GetByIdAsync(id);
         if (taskDal == null)
             throw new ValidationException("Task was not found in database", string.Empty);
         return _mapper.Map<TaskDTO>(taskDal);
-    }
-
-    public IEnumerable<TaskDTO> GetAllDtos()
-    {
-        var allTaskDals = _unitOfWork.Tasks.GetAll();
-        return _mapper.Map<IEnumerable<TaskDal>, IEnumerable<TaskDTO>>(allTaskDals);
     }
 
     public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)

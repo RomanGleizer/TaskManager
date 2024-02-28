@@ -18,18 +18,18 @@ public class ProjectService : IDtoService<ProjectDTO, int>
         _mapper = mapper;
     }
 
+    public IEnumerable<ProjectDTO> GetAllDtos()
+    {
+        var allProjectDals = _unitOfWork.Projects.GetAll();
+        return _mapper.Map<IEnumerable<ProjectDal>, IEnumerable<ProjectDTO>>(allProjectDals);
+    }
+
     public async Task<ProjectDTO> GetDtoByIdAsync(int id)
     {
         var projectDal = await _unitOfWork.Projects.GetByIdAsync(id);
         if (projectDal == null)
             throw new ValidationException("Project was not found in database", string.Empty);
         return _mapper.Map<ProjectDTO>(projectDal);
-    }
-
-    public IEnumerable<ProjectDTO> GetAllDtos()
-    {
-        var allProjectDals = _unitOfWork.Projects.GetAll();
-        return _mapper.Map<IEnumerable<ProjectDal>, IEnumerable<ProjectDTO>>(allProjectDals);
     }
 
     public async Task<ProjectDTO> CreateDtoAsync(ProjectDTO projectDTO)

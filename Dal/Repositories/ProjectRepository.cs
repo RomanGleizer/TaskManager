@@ -14,16 +14,6 @@ public class ProjectRepository : IRepository<ProjectDal, int>
         _dbContext = dbContext;
     }
 
-    public async Task CreateAsync(ProjectDal item)
-    {
-        await _dbContext.Projects.AddAsync(item);
-    }
-
-    public void Delete(ProjectDal item)
-    {
-        _dbContext.Projects.Remove(item);
-    }
-
     public IEnumerable<ProjectDal> GetAll()
     {
         return _dbContext.Projects;
@@ -32,6 +22,16 @@ public class ProjectRepository : IRepository<ProjectDal, int>
     public async Task<ProjectDal?> GetByIdAsync(int id)
     {
         return await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task CreateAsync(ProjectDal item)
+    {
+        await _dbContext.Projects.AddAsync(item);
+    }
+
+    public void Delete(ProjectDal item)
+    {
+        _dbContext.Projects.Remove(item);
     }
 
     public void Update(ProjectDal item)

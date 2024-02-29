@@ -1,14 +1,34 @@
-﻿namespace Api.Controllers.Comment.Requests;
+﻿using System;
 
+namespace Api.Controllers.Comment.Requests;
+
+/// <summary>
+/// Модель запроса для создания комментария
+/// </summary>
 public class CreateCommentRequest
 {
-    public required int Id { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор комментария
+    /// </summary>
+    public required int Id { get; init; }
 
-    public required string Text { get; set; }
+    /// <summary>
+    /// Получает или устанавливает текст комментария
+    /// </summary>
+    public required string Text { get; init; }
 
-    public required DateTime CreatedDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату создания комментария
+    /// </summary>
+    public required DateTime CreatedDate { get; init; }
 
-    public required string AuthorId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор автора комментария
+    /// </summary>
+    public required string AuthorId { get; init; }
 
-    public required int TaskId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор задачи, к которой относится комментарий
+    /// </summary>
+    public required int TaskId { get; init; }
 }

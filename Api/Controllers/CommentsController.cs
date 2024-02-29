@@ -1,23 +1,33 @@
-﻿using Api.Controllers.Comment.Requests;
-using Api.Controllers.Comment.Responses;
-using Dal.Entities;
-using Logic.DTO;
+﻿using Logic.DTO;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Api.Controllers.Comment.Requests;
+using Api.Controllers.Comment.Responses;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Контроллер для управления комментариями
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class CommentsController : ControllerBase
 {
     private readonly IDtoService<CommentDTO, int> _commentService;
 
+    /// <summary>
+    /// Конструктор контроллера комментариев
+    /// </summary>
+    /// <param name="commentService">Сервис для работы с комментариями</param>
     public CommentsController(IDtoService<CommentDTO, int> commentService)
     {
         _commentService = commentService;
     }
 
+    /// <summary>
+    /// Получает информацию о комментарии по его идентификатору
+    /// </summary>
+    /// <param name="commentId">Идентификатор комментария</param>
     [HttpGet("{commentId}")]
     [ProducesResponseType<CommentInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromQuery] int commentId)
@@ -33,6 +43,10 @@ public class CommentsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Создает новый комментарий
+    /// </summary>
+    /// <param name="request">Запрос на создание комментария</param>
     [HttpPost]
     [ProducesResponseType<CreateCommentResponse>(200)]
     public async Task<IActionResult> CreateCommentAsync([FromBody] CreateCommentRequest request)
@@ -56,6 +70,10 @@ public class CommentsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Удаляет комментарий по его идентификатору
+    /// </summary>
+    /// <param name="commentId">Идентификатор комментария</param>
     [HttpDelete("{commentId}")]
     [ProducesResponseType<DeleteCommentResponse>(200)]
     public async Task<IActionResult> DeleteCommentAsync([FromQuery] int commentId)
@@ -71,6 +89,11 @@ public class CommentsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Обновляет информацию о комментарии
+    /// </summary>
+    /// <param name="request">Запрос на обновление информации о комментарии</param>
+    /// <param name="commentId">Идентификатор комментария</param>
     [HttpPut("{commentId}")]
     [ProducesResponseType<UpdateCommentResponse>(200)]
     public async Task<IActionResult> UpdateCommentAsync([FromBody] CreateCommentRequest request, [FromQuery] int commentId)

@@ -5,7 +5,7 @@ using Dal.Interfaces;
 namespace Dal.Repositories;
 
 /// <summary>
-/// Реализация интерфейса IUnitOfWork для работы с базой данных с использованием EF.
+/// Реализация интерфейса IUnitOfWork для работы с базой данных с использованием EF
 /// </summary>
 public class EFUnitOfWork : IUnitOfWork
 {
@@ -16,7 +16,7 @@ public class EFUnitOfWork : IUnitOfWork
     private IRepository<UserDal, string>? _userRepository;
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных.
+    /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных
     /// </summary>
     public EFUnitOfWork(TaskManagerDbContext dbContext)
     {
@@ -24,7 +24,7 @@ public class EFUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// Получает репозиторий для работы с сущностями TaskDal.
+    /// Получает репозиторий для работы с сущностями TaskDal
     /// </summary>
     public IRepository<TaskDal, int> Tasks
     {
@@ -37,7 +37,7 @@ public class EFUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// Получает репозиторий для работы с сущностями ProjectDal.
+    /// Получает репозиторий для работы с сущностями ProjectDal
     /// </summary>
     public IRepository<ProjectDal, int> Projects
     {
@@ -50,7 +50,7 @@ public class EFUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// Получает репозиторий для работы с сущностями CommentDal.
+    /// Получает репозиторий для работы с сущностями CommentDal
     /// </summary>
     public IRepository<CommentDal, int> Comments
     {
@@ -63,7 +63,7 @@ public class EFUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// Получает репозиторий для работы с сущностями CommentDal.
+    /// Получает репозиторий для работы с сущностями CommentDal
     /// </summary>
     public IRepository<UserDal, string> Users
     {
@@ -76,7 +76,7 @@ public class EFUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// Асинхронно сохраняет все изменения, сделанные в базе данных.
+    /// Асинхронно сохраняет все изменения, сделанные в базе данных
     /// </summary>
     public async Task SaveChangesAsync()
     {

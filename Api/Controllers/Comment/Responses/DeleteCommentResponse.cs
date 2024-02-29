@@ -1,14 +1,32 @@
 ﻿namespace Api.Controllers.Comment.Responses;
 
+/// <summary>
+/// Модель ответа при удалении комментария
+/// </summary>
 public class DeleteCommentResponse
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор удаленного комментария
+    /// </summary>
+    public required int Id { get; init; }
 
-    public string Text { get; set; }
+    /// <summary>
+    /// Получает или устанавливает текст удаленного комментария
+    /// </summary>
+    public required string Text { get; init; }
 
-    public DateTime CreatedDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату создания удаленного комментария
+    /// </summary>
+    public required DateTime CreatedDate { get; init; }
 
-    public string AuthorId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор автора удаленного комментария
+    /// </summary>
+    public required string AuthorId { get; init; }
 
-    public int TaskId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор задачи, к которой относится удаленный комментарий
+    /// </summary>
+    public required int TaskId { get; init; }
 }

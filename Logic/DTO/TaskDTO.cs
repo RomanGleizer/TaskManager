@@ -3,7 +3,7 @@
 namespace Logic.DTO;
 
 /// <summary>
-/// DTO для TaskDal
+/// DTO объект задачи
 /// </summary>
 public class TaskDTO : IBaseDTO<int>
 {

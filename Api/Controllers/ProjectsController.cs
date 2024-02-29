@@ -1,11 +1,14 @@
-﻿using Api.Controllers.Project.Requests;
-using Api.Controllers.Project.Responses;
+﻿using Logic.DTO;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Logic.DTO;
+using Api.Controllers.Project.Requests;
+using Api.Controllers.Project.Responses;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Контроллер для управления проектами
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class ProjectsController : ControllerBase
@@ -13,12 +16,21 @@ public class ProjectsController : ControllerBase
     private readonly IDtoService<ProjectDTO, int> _projectService;
     private readonly IProjectDtoManager _projectDtoManager;
 
+    /// <summary>
+    /// Конструктор контроллера проектов
+    /// </summary>
+    /// <param name="projectService">Сервис для работы с проектами</param>
+    /// <param name="projectDtoManager">Менеджер DTO для проектов</param>
     public ProjectsController(IDtoService<ProjectDTO, int> projectService, IProjectDtoManager projectDtoManager)
     {
         _projectService = projectService;
         _projectDtoManager = projectDtoManager;
     }
 
+    /// <summary>
+    /// Получает информацию о проекте по идентификатору
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
     [HttpGet("{projectId}")]
     [ProducesResponseType<ProjectInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromQuery] int projectId)
@@ -36,13 +48,16 @@ public class ProjectsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Создает новый проект
+    /// </summary>
+    /// <param name="request">Запрос на создание проекта</param>
     [HttpPost]
     [ProducesResponseType<CreateProjectResponse>(200)]
     public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectRequest request)
     {
         var newProjectDal = await _projectService.CreateDtoAsync(new ProjectDTO
         {
-            Id = request.Id,
             Name = request.Name,
             Description = request.Description,
             CreationDate = DateTime.Now,
@@ -63,6 +78,10 @@ public class ProjectsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Удаляет проект по идентификатору
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
     [HttpDelete("{projectId}")]
     [ProducesResponseType<DeleteProjectResponse>(200)]
     public async Task<IActionResult> DeleteProjectAsync([FromQuery] int projectId)
@@ -80,13 +99,17 @@ public class ProjectsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Обновляет информацию о проекте
+    /// </summary>
+    /// <param name="request">Запрос на обновление информации о проекте</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     [HttpPut("{projectId}")]
     [ProducesResponseType<UpdateProjectResponse>(200)]
     public async Task<IActionResult> UpdateProjectAsync([FromBody] UpdateProjectRequest request, [FromQuery] int projectId)
     {
         var projectDTO = new ProjectDTO
         {
-            Id = request.Id,
             Name = request.Name,
             Description = request.Description,
             CreationDate = request.CreationDate,
@@ -108,6 +131,11 @@ public class ProjectsController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Добавляет нового участника к проекту
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    /// <param name="participantId">Идентификатор участника</param>
     [HttpPost("add/participant/{projectId}/{participantId}")]
     [ProducesResponseType<UpdateProjectResponse>(200)]
     public async Task<IActionResult> AddNewParticipantAsync([FromQuery] int projectId, [FromQuery] string participantId)

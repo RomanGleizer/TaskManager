@@ -3,7 +3,7 @@
 namespace Logic.DTO;
 
 /// <summary>
-/// DTO для ProjectDal
+/// DTO объект проекта
 /// </summary>
 public class ProjectDTO : IBaseDTO<int>
 {

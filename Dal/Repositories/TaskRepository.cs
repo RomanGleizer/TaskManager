@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Dal.Repositories;
 
 /// <summary>
-/// Репозиторий для работы с сущностями ProjectTask.
+/// Репозиторий для работы с сущностями ProjectTask
 /// </summary>
 public class TaskRepository : IRepository<TaskDal, int>
 {
     private readonly TaskManagerDbContext _dbContext;
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса TaskRepository с заданным контекстом базы данных.
+    /// Инициализирует новый экземпляр класса TaskRepository с заданным контекстом базы данных
     /// </summary>
     public TaskRepository(TaskManagerDbContext dbContext)
     {
@@ -21,7 +21,7 @@ public class TaskRepository : IRepository<TaskDal, int>
     }
 
     /// <summary>
-    /// Возвращает все сущности ProjectTask из базы данных.
+    /// Возвращает все сущности ProjectTask из базы данных
     /// </summary>
     public IEnumerable<TaskDal> GetAll()
     {
@@ -29,7 +29,7 @@ public class TaskRepository : IRepository<TaskDal, int>
     }
 
     /// <summary>
-    /// Асинхронно возвращает сущность ProjectTask с заданным идентификатором из базы данных.
+    /// Асинхронно возвращает сущность ProjectTask с заданным идентификатором из базы данных
     /// </summary>
     public async Task<TaskDal?> GetByIdAsync(int id)
     {
@@ -37,7 +37,7 @@ public class TaskRepository : IRepository<TaskDal, int>
     }
 
     /// <summary>
-    /// Асинхронно создает новую сущность ProjectTask в базе данных.
+    /// Асинхронно создает новую сущность ProjectTask в базе данных
     /// </summary>
     public async Task CreateAsync(TaskDal item)
     {
@@ -45,7 +45,7 @@ public class TaskRepository : IRepository<TaskDal, int>
     }
 
     /// <summary>
-    /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных.
+    /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных
     /// </summary>
     public void Delete(TaskDal item)
     {
@@ -53,7 +53,7 @@ public class TaskRepository : IRepository<TaskDal, int>
     }
 
     /// <summary>
-    /// Обновляет существующую сущность ProjectTask в базе данных.
+    /// Обновляет существующую сущность ProjectTask в базе данных
     /// </summary>
     public void Update(TaskDal item)
     {

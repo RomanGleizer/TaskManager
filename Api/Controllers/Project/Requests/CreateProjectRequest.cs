@@ -1,18 +1,42 @@
 ﻿namespace Api.Controllers.Project.Requests;
 
+/// <summary>
+/// Модель запроса на создание нового проекта
+/// </summary>
 public class CreateProjectRequest
 {
-    public required int Id { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор проекта
+    /// </summary>
+    public required int Id { get; init; }
 
-    public required string Name { get; set; }
+    /// <summary>
+    /// Получает или устанавливает название проекта
+    /// </summary>
+    public required string Name { get; init; }
 
-    public required string Description { get; set; }
+    /// <summary>
+    /// Получает или устанавливает описание проекта
+    /// </summary>
+    public required string Description { get; init; }
 
-    public required DateTime CreationDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату создания проекта
+    /// </summary>
+    public required DateTime CreationDate { get; init; }
 
-    public required DateTime LastModifidedDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату последнего изменения проекта
+    /// </summary>
+    public required DateTime LastModifidedDate { get; init; }
 
-    public required IList<string> ParticipantIds { get; set; }
+    /// <summary>
+    /// Получает или устанавливает список идентификаторов участников проекта
+    /// </summary>
+    public required IList<string> ParticipantIds { get; init; }
 
-    public required IList<int> TaskIds { get; set; }
+    /// <summary>
+    /// Получает или устанавливает список идентификаторов задач, связанных с проектом
+    /// </summary>
+    public required IList<int> TaskIds { get; init; }
 }

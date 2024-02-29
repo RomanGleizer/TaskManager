@@ -1,22 +1,33 @@
-﻿using Api.Controllers.Task.Requests;
-using Api.Controllers.Task.Responses;
-using Logic.DTO;
+﻿using Logic.DTO;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Api.Controllers.Task.Requests;
+using Api.Controllers.Task.Responses;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Контроллер для управления задачами
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class TasksController : ControllerBase
 {
     private readonly IDtoService<TaskDTO, int> _taskService;
 
+    /// <summary>
+    /// Конструктор контроллера задач
+    /// </summary>
+    /// <param name="taskService">Сервис для работы с задачами</param>
     public TasksController(IDtoService<TaskDTO, int> taskService)
     {
         _taskService = taskService;
     }
 
+    /// <summary>
+    /// Получает информацию о задаче по идентификатору
+    /// </summary>
+    /// <param name="taskId">Идентификатор задачи</param>
     [HttpGet("{taskId}")]
     [ProducesResponseType<TaskInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromQuery] int taskId)
@@ -35,13 +46,16 @@ public class TasksController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Создает новую задачу
+    /// </summary>
+    /// <param name="request">Запрос на создание задачи</param>
     [HttpPost]
     [ProducesResponseType<CreateTaskResponse>(200)]
     public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskRequest request)
     {
         var newTaskDal = await _taskService.CreateDtoAsync(new TaskDTO
         {
-            Id = request.Id,
             Name = request.Name,
             Description = request.Description,
             ExecutionStatus = request.ExecutionStatus,
@@ -66,6 +80,10 @@ public class TasksController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Удаляет задачу по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор задачи</param>
     [HttpDelete("{taskId}")]
     [ProducesResponseType<DeleteTaskResponse>(200)]
     public async Task<IActionResult> DeleteTaskAsync([FromQuery] int id)
@@ -84,6 +102,11 @@ public class TasksController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Обновляет информацию о задаче
+    /// </summary>
+    /// <param name="request">Запрос на обновление информации о задаче</param>
+    /// <param name="taskId">Идентификатор задачи</param>
     [HttpPut("{taskId}")]
     [ProducesResponseType<UpdateTaskResponse>(200)]
     public async Task<IActionResult> UpdateTaskAsync([FromBody] UpdateTaskRequest request, [FromQuery] int taskId)

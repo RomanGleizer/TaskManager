@@ -1,18 +1,42 @@
 ﻿namespace Api.Controllers.Project.Responses;
 
+/// <summary>
+/// Представляет модель ответа на запрос удаления проекта
+/// </summary>
 public class DeleteProjectResponse
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор удаленного проекта
+    /// </summary>
+    public required int Id { get; init; }
 
-    public string Name { get; set; }
+    /// <summary>
+    /// Получает или устанавливает название удаленного проекта
+    /// </summary>
+    public required string Name { get; init; }
 
-    public string Description { get; set; }
+    /// <summary>
+    /// Получает или устанавливает описание удаленного проекта
+    /// </summary>
+    public required string Description { get; init; }
 
-    public DateTime CreationDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату создания удаленного проекта
+    /// </summary>
+    public required DateTime CreationDate { get; init; }
 
-    public DateTime LastModifidedDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату последнего изменения удаленного проекта
+    /// </summary>
+    public required DateTime LastModifidedDate { get; init; }
 
-    public IList<string> ParticipantIds { get; set; }
+    /// <summary>
+    /// Получает или устанавливает список идентификаторов участников удаленного проекта
+    /// </summary>
+    public required IList<string> ParticipantIds { get; init; }
 
-    public IList<int> TaskIds { get; set; }
+    /// <summary>
+    /// Получает или устанавливает список идентификаторов задач, связанных с удаленным проектом
+    /// </summary>
+    public required IList<int> TaskIds { get; init; }
 }

@@ -1,14 +1,32 @@
 ﻿namespace Api.Controllers.Comment.Responses;
 
+/// <summary>
+/// Модель ответа при обновлении комментария
+/// </summary>
 public class UpdateCommentResponse
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор обновленного комментария
+    /// </summary>
+    public required int Id { get; init; }
 
-    public string Text { get; set; }
+    /// <summary>
+    /// Получает или устанавливает текст обновленного комментария
+    /// </summary>
+    public required string Text { get; init; }
 
-    public DateTime CreatedDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату создания обновленного комментария
+    /// </summary>
+    public required DateTime CreatedDate { get; init; }
 
-    public string AuthorId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор автора обновленного комментария
+    /// </summary>
+    public required string AuthorId { get; init; }
 
-    public int TaskId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор задачи, к которой относится обновленный комментарий
+    /// </summary>
+    public required int TaskId { get; init; }
 }

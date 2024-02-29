@@ -1,14 +1,32 @@
 ﻿namespace Api.Controllers.Comment.Responses;
 
+/// <summary>
+/// Модель ответа с информацией о комментарии
+/// </summary>
 public class CommentInfoResponse
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор комментария
+    /// </summary>
+    public required int Id { get; init; }
 
-    public string Text { get; set; }
+    /// <summary>
+    /// Получает или устанавливает текст комментария
+    /// </summary>
+    public required string Text { get; init; }
 
-    public DateTime CreatedDate { get; set; }
+    /// <summary>
+    /// Получает или устанавливает дату создания комментария
+    /// </summary>
+    public required DateTime CreatedDate { get; init; }
 
-    public string AuthorId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор автора комментария
+    /// </summary>
+    public required string AuthorId { get; init; }
 
-    public int TaskId { get; set; }
+    /// <summary>
+    /// Получает или устанавливает идентификатор задачи, к которой относится комментарий
+    /// </summary>
+    public required int TaskId { get; init; }
 }

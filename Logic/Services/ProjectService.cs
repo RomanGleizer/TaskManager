@@ -7,23 +7,38 @@ using Logic.Interfaces;
 
 namespace Logic.Services;
 
+/// <summary>
+/// Сервис для работы с проектами
+/// </summary>
 public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
+    /// <summary>
+    /// Конструктор сервиса проектов
+    /// </summary>
+    /// <param name="unitOfWork">Единица работы с данными</param>
+    /// <param name="mapper">Маппер для преобразования между объектами</param>
     public ProjectService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Получить все объекты DTO проектов
+    /// </summary>
     public IEnumerable<ProjectDTO> GetAllDtos()
     {
         var allProjectDals = _unitOfWork.Projects.GetAll();
         return _mapper.Map<IEnumerable<ProjectDal>, IEnumerable<ProjectDTO>>(allProjectDals);
     }
 
+    /// <summary>
+    /// Получить объект DTO проекта по идентификатору асинхронно
+    /// </summary>
+    /// <param name="id">Идентификатор проекта</param>
     public async Task<ProjectDTO> GetDtoByIdAsync(int id)
     {
         var projectDal = await _unitOfWork.Projects.GetByIdAsync(id);
@@ -32,6 +47,10 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
         return _mapper.Map<ProjectDTO>(projectDal);
     }
 
+    /// <summary>
+    /// Создать объект DTO проекта асинхронно
+    /// </summary>
+    /// <param name="projectDTO">DTO проекта для создания</param>
     public async Task<ProjectDTO> CreateDtoAsync(ProjectDTO projectDTO)
     {
         var projectDal = _mapper.Map<ProjectDal>(projectDTO);
@@ -41,6 +60,10 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
         return _mapper.Map<ProjectDTO>(projectDal);
     }
 
+    /// <summary>
+    /// Удалить объект DTO проекта асинхронно по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор проекта</param>
     public async Task<ProjectDTO> DeleteDtoAsync(int id)
     {
         var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(id);
@@ -52,6 +75,11 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
         return _mapper.Map<ProjectDTO>(existingProjectDal);
     }
 
+    /// <summary>
+    /// Обновить объект DTO проекта асинхронно
+    /// </summary>
+    /// <param name="projectDTO">DTO проекта для обновления</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     public async Task<ProjectDTO> UpdateDtoAsync(ProjectDTO projectDTO, int projectId)
     {
         var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
@@ -72,7 +100,12 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
         return _mapper.Map<ProjectDTO>(existingProjectDal);
     }
 
-    public async Task<ProjectDTO> AddNewParticipantAsync(int projectId, string participantId)
+    /// <summary>
+    /// Добавить участника в проект асинхронно
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    /// <param name="participantId">Идентификатор участника</param>
+    public async Task<ProjectDTO> AddParticipantAsync(int projectId, string participantId)
     {
         var existingUserDal = await _unitOfWork.Users.GetByIdAsync(participantId);
         if (existingUserDal == null)

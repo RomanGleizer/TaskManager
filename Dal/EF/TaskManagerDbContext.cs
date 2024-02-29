@@ -5,13 +5,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Dal.EF;
 
 /// <summary>
-/// Описание:
-/// Представляет контекст базы данных для хранения сущностей.
+/// Представляет контекст базы данных для хранения сущностей
 /// </summary>
 public class TaskManagerDbContext : IdentityDbContext<UserDal>
 {
     /// <summary>
-    /// Пользователи в базе данных.
+    /// Пользователи в базе данных
     /// </summary>
     public override DbSet<UserDal> Users { get; set; }
 
@@ -21,12 +20,12 @@ public class TaskManagerDbContext : IdentityDbContext<UserDal>
     public DbSet<TaskDal> Tasks { get; set; }
 
     /// <summary>
-    /// Проекты в базе данных.
+    /// Проекты в базе данных
     /// </summary>
     public DbSet<ProjectDal> Projects { get; set; }
 
     /// <summary>
-    /// Роли для участников проекта.
+    /// Роли для участников проекта
     /// </summary>
     public DbSet<RoleDal> ProjectRoles { get; set; }
 
@@ -36,8 +35,8 @@ public class TaskManagerDbContext : IdentityDbContext<UserDal>
     public DbSet<CommentDal> Comments { get; set; }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса TaskManagerDbContext с указанными параметрами.
+    /// Инициализирует новый экземпляр класса TaskManagerDbContext с указанными параметрами
     /// </summary>
-    /// <param name="options">Опции для этого контекста.</param>
+    /// <param name="options">Опции для этого контекста</param>
     public TaskManagerDbContext(DbContextOptions<TaskManagerDbContext> options) : base(options) { }
 }

@@ -38,12 +38,10 @@ public class TaskService : IDtoService<TaskDTO, int>
     /// <summary>
     /// Получить объект DTO задачи по идентификатору асинхронно
     /// </summary>
-    /// <param name="id">Идентификатор задачи</param>
-    public async Task<TaskDTO> GetDtoByIdAsync(int id)
+    /// <param name="taskId">Идентификатор задачи</param>
+    public async Task<TaskDTO> GetDtoByIdAsync(int taskId)
     {
-        var taskDal = await _unitOfWork.Tasks.GetByIdAsync(id);
-        if (taskDal == null)
-            throw new ValidationException("Task was not found in database", string.Empty);
+        var taskDal = await GetExistingTaskAsync(taskId);
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
@@ -63,12 +61,10 @@ public class TaskService : IDtoService<TaskDTO, int>
     /// <summary>
     /// Удалить объект DTO задачи асинхронно по идентификатору
     /// </summary>
-    /// <param name="id">Идентификатор задачи</param>
-    public async Task<TaskDTO> DeleteDtoAsync(int id)
+    /// <param name="taskId">Идентификатор задачи</param>
+    public async Task<TaskDTO> DeleteDtoAsync(int taskId)
     {
-        var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(id);
-        if (existingTaskDal == null)
-            throw new ValidationException("Task was not found in database", string.Empty);
+        var existingTaskDal = await GetExistingTaskAsync(taskId);
 
         _unitOfWork.Tasks.Delete(existingTaskDal);
         await _unitOfWork.SaveChangesAsync();
@@ -82,9 +78,7 @@ public class TaskService : IDtoService<TaskDTO, int>
     /// <param name="taskId">Идентификатор задачи</param>
     public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, int taskId)
     {
-        var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
-        if (existingTaskDal == null)
-            throw new ValidationException("Task was not found in database", string.Empty);
+        var existingTaskDal = await GetExistingTaskAsync(taskId);
 
         existingTaskDal.Name = taskDTO.Name;
         existingTaskDal.Description = taskDTO.Description;
@@ -109,5 +103,17 @@ public class TaskService : IDtoService<TaskDTO, int>
         _unitOfWork.Tasks.Update(existingTaskDal);
         await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<TaskDTO>(existingTaskDal);
+    }
+
+    /// <summary>
+    /// Асинхронное получение задачи по Id
+    /// </summary>
+    /// <param name="taskId">Идентификатор задачи</param>
+    private async Task<TaskDal> GetExistingTaskAsync(int taskId)
+    {
+        var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
+        if (existingTaskDal == null)
+            throw new ValidationException("Task was not found in database", string.Empty);
+        return existingTaskDal;
     }
 }

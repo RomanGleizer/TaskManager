@@ -41,5 +41,5 @@ public class UpdateTaskResponse
     /// <summary>
     /// Получает или инициализирует список идентификаторов комментариев, связанных с задачей
     /// </summary>
-    public required IList<string> CommentIds { get; init; }
+    public required IList<int> CommentIds { get; init; }
 }

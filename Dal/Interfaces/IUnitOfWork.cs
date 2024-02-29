@@ -28,6 +28,11 @@ public interface IUnitOfWork
     IRepository<UserDal, string> Users { get; }
 
     /// <summary>
+    /// Репозиторий для работы с ролями
+    /// </summary>
+    IRepository<RoleDal, int> Roles { get; }
+
+    /// <summary>
     /// Асинхронно сохраняет все изменения, сделанные в базе данных
     /// </summary>
     Task SaveChangesAsync();

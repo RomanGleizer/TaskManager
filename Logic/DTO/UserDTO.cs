@@ -23,22 +23,22 @@ public class UserDTO : IBaseDTO<string>
     public string LastName { get; set; }
 
     /// <summary>
-    /// Дата создания пользователя
+    /// Электронная почта пользователя
     /// </summary>
-    public DateTime CreationDate { get; set; }
+    public string Email { get; set; }
 
     /// <summary>
-    /// Дата последнего изменения пользователя
+    /// Номер телефона пользователя
     /// </summary>
-    public DateTime LastModifidedDate { get; set; }
+    public string PhoneNumber { get; set; }
 
     /// <summary>
-    /// Список идентификаторов участников
+    /// День рождения пользователя
     /// </summary>
-    public IList<string> ParticipantIds { get; set; }
+    public DateTime BirthDay { get; set; }
 
     /// <summary>
-    /// Список идентификаторов задач
+    /// Уникальный идентификатор роли
     /// </summary>
-    public IList<int> TaskIds { get; set; }
+    public int RoleId { get; set; }
 }

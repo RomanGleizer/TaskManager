@@ -20,5 +20,9 @@ public class MappingProfile : Profile
         CreateMap<ProjectDTO, ProjectDal>();
         CreateMap<CommentDal, CommentDTO>();
         CreateMap<CommentDTO, CommentDTO>();
+        CreateMap<UserDal, UserDTO>();
+        CreateMap<UserDTO, UserDal>();
+        CreateMap<RoleDal, RoleDTO>();
+        CreateMap<RoleDTO, RoleDTO>();
     }
 }

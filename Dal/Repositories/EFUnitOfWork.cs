@@ -14,6 +14,7 @@ public class EFUnitOfWork : IUnitOfWork
     private IRepository<ProjectDal, int>? _projectRepository;
     private IRepository<CommentDal, int>? _commentRepository;
     private IRepository<UserDal, string>? _userRepository;
+    private IRepository<RoleDal, int>? _roleRepository;
 
     /// <summary>
     /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных
@@ -72,6 +73,19 @@ public class EFUnitOfWork : IUnitOfWork
             if (_userRepository == null)
                 _userRepository = new UserRepository(_dbContext);
             return _userRepository;
+        }
+    }
+
+    /// <summary>
+    /// Получает репозиторий для работы с сущностями RoleDal
+    /// </summary>
+    public IRepository<RoleDal, int> Roles
+    {
+        get
+        {
+            if (_roleRepository == null)
+                _roleRepository = new RoleRepository(_dbContext);
+            return _roleRepository;
         }
     }
 

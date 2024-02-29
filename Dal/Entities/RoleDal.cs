@@ -25,5 +25,5 @@ public class RoleDal : IBaseEntityDal<int>
     /// <summary>
     /// Пользователи с ролью
     /// </summary>
-    public IList<UserDal> User { get; set; }
+    public IList<UserDal> Users { get; set; }
 }

@@ -17,12 +17,20 @@ var mappingConfig = new MapperConfiguration(config => config.AddProfile(new Mapp
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<IRepository<TaskDal, int>, TaskRepository>();
+
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+builder.Services.AddTransient<IRepository<TaskDal, int>, TaskRepository>();
+builder.Services.AddTransient<IRepository<ProjectDal, int>, ProjectRepository>();
+builder.Services.AddTransient<IRepository<CommentDal, int>, CommentRepository>();
+builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
+builder.Services.AddTransient<IRepository<UserDal, string>, UserRepository>();
 builder.Services.AddTransient<IDtoService<TaskDTO, int>, TaskService>();
 builder.Services.AddTransient<IDtoService<ProjectDTO, int>, ProjectService>();
 builder.Services.AddTransient<IDtoService<CommentDTO, int>, CommentService>();
+builder.Services.AddTransient<IDtoService<RoleDTO, int>, RoleService>();
+builder.Services.AddTransient<IDtoService<UserDTO, string>, UserService>();
 builder.Services.AddTransient<IProjectDtoManager, ProjectService>();
+
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 builder.Services
     .AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection))

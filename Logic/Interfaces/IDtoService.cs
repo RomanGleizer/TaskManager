@@ -14,7 +14,7 @@ public interface IDtoService<T, I>
     /// Получает объект DTO по идентификатору асинхронно
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    Task<T> GetDtoByIdAsync(int id);
+    Task<T> GetDtoByIdAsync(I id);
 
     /// <summary>
     /// Получает все объекты DTO
@@ -24,19 +24,19 @@ public interface IDtoService<T, I>
     /// <summary>
     /// Создает объект DTO асинхронно
     /// </summary>
-    /// <param name="task">DTO объект для создания</param>
-    Task<T> CreateDtoAsync(T task);
+    /// <param name="dto">DTO объект для создания</param>
+    Task<T> CreateDtoAsync(T dto);
 
     /// <summary>
     /// Удаляет объект DTO асинхронно по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта для удаления</param>
-    Task<T> DeleteDtoAsync(int id);
+    Task<T> DeleteDtoAsync(I id);
 
     /// <summary>
     /// Обновляет объект DTO асинхронно
     /// </summary>
-    /// <param name="task">DTO объект для обновления</param>
+    /// <param name="dto">DTO объект для обновления</param>
     /// <param name="id">Идентификатор объекта для обновления</param>
-    Task<T> UpdateDtoAsync(T task, int id);
+    Task<T> UpdateDtoAsync(T dto, I id);
 }

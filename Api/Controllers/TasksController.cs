@@ -65,7 +65,6 @@ public class TasksController : ControllerBase
             PerformerIds = request.PerformerIds,
             CommentIds = request.CommentIds
         });
-
         return Ok(new CreateTaskResponse
         {
             Id = newTask.Id,

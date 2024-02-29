@@ -43,7 +43,7 @@ public class CreateTaskRequest
     /// <summary>
     /// Получает или устанавливает список идентификаторов комментариев, связанных с задачей
     /// </summary>
-    public required IList<string> CommentIds { get; init; }
+    public required IList<int> CommentIds { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор проекта, к которому принадлежит задача

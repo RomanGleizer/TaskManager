@@ -38,5 +38,5 @@ public class UpdateTaskRequest
     /// <summary>
     /// Получает или устанавливает список идентификаторов комментариев, связанных с задачей
     /// </summary>
-    public required IList<string> CommentIds { get; set; }
+    public required IList<int> CommentIds { get; set; }
 }

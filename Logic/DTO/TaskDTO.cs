@@ -50,7 +50,7 @@ public class TaskDTO : IBaseDTO<int>
     /// <summary>
     /// Идентификаторы комментариев
     /// </summary>
-    public IList<string> CommentIds { get; set; }
+    public IList<int> CommentIds { get; set; }
 
     /// <summary>
     /// Идентификатор проекта, к которому относится задача

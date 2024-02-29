@@ -143,7 +143,7 @@ public class ProjectsController : ControllerBase
     /// </summary>
     /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="participantId">Идентификатор участника</param>
-    [HttpPost("addParticipant/{projectId}/{participantId}")]
+    [HttpPost("{projectId}/addParticipant/{participantId}")]
     [ProducesResponseType<UpdateProjectResponse>(200)]
     public async Task<IActionResult> AddParticipantAsync([FromRoute] int projectId, [FromRoute] string participantId)
     {
@@ -164,7 +164,7 @@ public class ProjectsController : ControllerBase
     /// Возвращает всех участников проекта
     /// </summary>
     /// <param name="projectId">Идентификатор проекта</param>
-    [HttpGet("participants/{projectId}")]
+    [HttpGet("{projectId}/participants")]
     [ProducesResponseType<ParticipantsInfoResponse>(200)]
     public async Task<IActionResult> GetProjectParticipants([FromRoute] int projectId)
     {

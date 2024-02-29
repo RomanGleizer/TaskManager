@@ -53,8 +53,6 @@ public class TaskService : IDtoService<TaskDTO, int>
     /// <param name="taskDTO">DTO задачи для создания</param>
     public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)
     {
-        // Логика проверки, зареган ли текущий пользователь.
-
         var taskDal = _mapper.Map<TaskDal>(taskDTO);
 
         await _unitOfWork.Tasks.CreateAsync(taskDal);
@@ -97,7 +95,16 @@ public class TaskService : IDtoService<TaskDTO, int>
         existingTaskDal.CommentIds = taskDTO.CommentIds;
         existingTaskDal.ProjectId = taskDTO.ProjectId;
 
-        // Id обновляем, а сам проект и участников - нет.
+        foreach (var commentId in taskDTO.CommentIds)
+        {
+            var comment = await _unitOfWork.Comments.GetByIdAsync(commentId);
+            if (comment != null)
+                existingTaskDal.Comments.Add(comment);
+        }
+
+        var project = await _unitOfWork.Projects.GetByIdAsync(taskDTO.ProjectId);
+        if (project != null)
+            existingTaskDal.Project = project;
 
         _unitOfWork.Tasks.Update(existingTaskDal);
         await _unitOfWork.SaveChangesAsync();

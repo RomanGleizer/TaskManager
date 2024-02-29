@@ -65,6 +65,7 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
     public async Task<ProjectDTO> DeleteDtoAsync(int id)
     {
         var existingProjectDal = await GetExistingProjectAsync(id);
+
         _unitOfWork.Projects.Delete(existingProjectDal);
         await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<ProjectDTO>(existingProjectDal);
@@ -75,7 +76,6 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
     /// </summary>
     /// <param name="projectDTO">DTO проекта для обновления</param>
     /// <param name="projectId">Идентификатор проекта</param>
-    /// 
     public async Task<ProjectDTO> UpdateDtoAsync(ProjectDTO projectDTO, int projectId)
     {
         var existingProjectDal = await GetExistingProjectAsync(projectId);
@@ -87,7 +87,19 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
         existingProjectDal.ParticipantIds = projectDTO.ParticipantIds;
         existingProjectDal.TaskIds = projectDTO.TaskIds;
 
-        // Id обновляем, а сами задачи и участников - нет.
+        foreach (var participantId in projectDTO.ParticipantIds)
+        {
+            var participant = await _unitOfWork.Users.GetByIdAsync(participantId);
+            if (participant != null)
+                existingProjectDal.Participants.Add(participant);
+        }
+
+        foreach (var taskId in projectDTO.TaskIds)
+        {
+            var task = await _unitOfWork.Tasks.GetByIdAsync(taskId);
+            if (task != null)
+                existingProjectDal.Tasks.Add(task);
+        }
 
         _unitOfWork.Projects.Update(existingProjectDal);
         await _unitOfWork.SaveChangesAsync();
@@ -116,12 +128,10 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
     /// <summary>
     /// Получить всех участников проекта асинхронно
     /// </summary>
-    /// <param name="projectId"></param>
+    /// <param name="projectId">>Идентификатор проекта</param>
     public async Task<IList<UserDTO>> GetAllParticipantsAsync(int projectId)
     {
-        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
-        if (existingProjectDal == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
+        var existingProjectDal = await GetExistingProjectAsync(projectId);
         return _mapper.Map<IList<UserDTO>>(existingProjectDal.Participants);
     }
 

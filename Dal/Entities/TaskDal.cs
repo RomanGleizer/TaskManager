@@ -50,7 +50,7 @@ public class TaskDal : IBaseEntityDal<int>
     /// <summary>
     /// Идентификаторы комментариев
     /// </summary>
-    public IList<string> CommentIds { get; set; }
+    public IList<int> CommentIds { get; set; }
 
     /// <summary>
     /// Комментарии, которые были добавлены к задаче

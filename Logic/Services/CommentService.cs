@@ -91,7 +91,13 @@ public class CommentService : IDtoService<CommentDTO, int>
         existingCommentDal.AuthorId = commentDTO.AuthorId;
         existingCommentDal.TaskId = commentDTO.TaskId;
 
-        // Обновляется id автора и задачи, но не они сами
+        var author = await _unitOfWork.Users.GetByIdAsync(commentDTO.AuthorId);
+        if (author != null)
+            existingCommentDal.Author = author;
+
+        var task = await _unitOfWork.Tasks.GetByIdAsync(commentDTO.TaskId);
+        if (task != null)
+            existingCommentDal.Task = task;
 
         _unitOfWork.Comments.Update(existingCommentDal);
         await _unitOfWork.SaveChangesAsync();

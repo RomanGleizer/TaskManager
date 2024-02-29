@@ -41,9 +41,7 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
     /// <param name="id">Идентификатор проекта</param>
     public async Task<ProjectDTO> GetDtoByIdAsync(int id)
     {
-        var projectDal = await _unitOfWork.Projects.GetByIdAsync(id);
-        if (projectDal == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
+        var projectDal = await GetExistingProjectAsync(id);
         return _mapper.Map<ProjectDTO>(projectDal);
     }
 
@@ -66,10 +64,7 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
     /// <param name="id">Идентификатор проекта</param>
     public async Task<ProjectDTO> DeleteDtoAsync(int id)
     {
-        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(id);
-        if (existingProjectDal == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
-
+        var existingProjectDal = await GetExistingProjectAsync(id);
         _unitOfWork.Projects.Delete(existingProjectDal);
         await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<ProjectDTO>(existingProjectDal);
@@ -80,11 +75,10 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
     /// </summary>
     /// <param name="projectDTO">DTO проекта для обновления</param>
     /// <param name="projectId">Идентификатор проекта</param>
+    /// 
     public async Task<ProjectDTO> UpdateDtoAsync(ProjectDTO projectDTO, int projectId)
     {
-        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
-        if (existingProjectDal == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
+        var existingProjectDal = await GetExistingProjectAsync(projectId);
 
         existingProjectDal.Name = projectDTO.Name;
         existingProjectDal.Description = projectDTO.Description;
@@ -111,13 +105,35 @@ public class ProjectService : IDtoService<ProjectDTO, int>, IProjectDtoManager
         if (existingUserDal == null)
             throw new ValidationException("User was not found in database", string.Empty);
 
-        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
-        if (existingProjectDal == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
+        var existingProjectDal = await GetExistingProjectAsync(projectId);
 
         existingProjectDal.Participants.Add(existingUserDal);
         existingProjectDal.ParticipantIds.Add(participantId);
         await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<ProjectDTO>(existingProjectDal);
+    }
+
+    /// <summary>
+    /// Получить всех участников проекта асинхронно
+    /// </summary>
+    /// <param name="projectId"></param>
+    public async Task<IList<UserDTO>> GetAllParticipantsAsync(int projectId)
+    {
+        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
+        if (existingProjectDal == null)
+            throw new ValidationException("Project was not found in database", string.Empty);
+        return _mapper.Map<IList<UserDTO>>(existingProjectDal.Participants);
+    }
+
+    /// <summary>
+    /// Асинхронное получение проекта по Id
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    private async Task<ProjectDal> GetExistingProjectAsync(int projectId)
+    {
+        var existingProjectDal = await _unitOfWork.Projects.GetByIdAsync(projectId);
+        if (existingProjectDal == null)
+            throw new ValidationException("Project was not found in database", string.Empty);
+        return existingProjectDal;
     }
 }

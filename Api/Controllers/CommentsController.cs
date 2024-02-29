@@ -30,7 +30,7 @@ public class CommentsController : ControllerBase
     /// <param name="commentId">Идентификатор комментария</param>
     [HttpGet("{commentId}")]
     [ProducesResponseType<CommentInfoResponse>(200)]
-    public async Task<IActionResult> GetInfoAsync([FromQuery] int commentId)
+    public async Task<IActionResult> GetInfoAsync([FromRoute] int commentId)
     {
         var existingComment = await _commentService.GetDtoByIdAsync(commentId);
         return Ok(new CommentInfoResponse
@@ -76,7 +76,7 @@ public class CommentsController : ControllerBase
     /// <param name="commentId">Идентификатор комментария</param>
     [HttpDelete("{commentId}")]
     [ProducesResponseType<DeleteCommentResponse>(200)]
-    public async Task<IActionResult> DeleteCommentAsync([FromQuery] int commentId)
+    public async Task<IActionResult> DeleteCommentAsync([FromRoute] int commentId)
     {
         var deletedComment = await _commentService.DeleteDtoAsync(commentId);
         return Ok(new DeleteCommentResponse
@@ -96,7 +96,7 @@ public class CommentsController : ControllerBase
     /// <param name="commentId">Идентификатор комментария</param>
     [HttpPut("{commentId}")]
     [ProducesResponseType<UpdateCommentResponse>(200)]
-    public async Task<IActionResult> UpdateCommentAsync([FromBody] CreateCommentRequest request, [FromQuery] int commentId)
+    public async Task<IActionResult> UpdateCommentAsync([FromBody] CreateCommentRequest request, [FromRoute] int commentId)
     {
         var commentDTO = new CommentDTO
         {

@@ -30,7 +30,7 @@ public class TasksController : ControllerBase
     /// <param name="taskId">Идентификатор задачи</param>
     [HttpGet("{taskId}")]
     [ProducesResponseType<TaskInfoResponse>(200)]
-    public async Task<IActionResult> GetInfoAsync([FromQuery] int taskId)
+    public async Task<IActionResult> GetInfoAsync([FromRoute] int taskId)
     {
         var task = await _taskService.GetDtoByIdAsync(taskId);
         return Ok(new TaskInfoResponse
@@ -54,7 +54,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType<CreateTaskResponse>(200)]
     public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskRequest request)
     {
-        var newTaskDal = await _taskService.CreateDtoAsync(new TaskDTO
+        var newTask = await _taskService.CreateDtoAsync(new TaskDTO
         {
             Name = request.Name,
             Description = request.Description,
@@ -68,15 +68,15 @@ public class TasksController : ControllerBase
 
         return Ok(new CreateTaskResponse
         {
-            Id = newTaskDal.Id,
-            Name = newTaskDal.Name,
-            Description = newTaskDal.Description,
-            ExecutionStatus = newTaskDal.ExecutionStatus,
-            CreatedDate = newTaskDal.CreatedDate,
-            LastUpdateDate = newTaskDal.LastUpdateDate,
-            ProjectId = newTaskDal.ProjectId,
-            PerformerIds = newTaskDal.PerformerIds,
-            CommentIds = newTaskDal.CommentIds
+            Id = newTask.Id,
+            Name = newTask.Name,
+            Description = newTask.Description,
+            ExecutionStatus = newTask.ExecutionStatus,
+            CreatedDate = newTask.CreatedDate,
+            LastUpdateDate = newTask.LastUpdateDate,
+            ProjectId = newTask.ProjectId,
+            PerformerIds = newTask.PerformerIds,
+            CommentIds = newTask.CommentIds
         });
     }
 
@@ -86,7 +86,7 @@ public class TasksController : ControllerBase
     /// <param name="id">Идентификатор задачи</param>
     [HttpDelete("{taskId}")]
     [ProducesResponseType<DeleteTaskResponse>(200)]
-    public async Task<IActionResult> DeleteTaskAsync([FromQuery] int id)
+    public async Task<IActionResult> DeleteTaskAsync([FromRoute] int id)
     {
         var deletedTask = await _taskService.DeleteDtoAsync(id);
         return Ok(new DeleteTaskResponse
@@ -109,7 +109,7 @@ public class TasksController : ControllerBase
     /// <param name="taskId">Идентификатор задачи</param>
     [HttpPut("{taskId}")]
     [ProducesResponseType<UpdateTaskResponse>(200)]
-    public async Task<IActionResult> UpdateTaskAsync([FromBody] UpdateTaskRequest request, [FromQuery] int taskId)
+    public async Task<IActionResult> UpdateTaskAsync([FromRoute] UpdateTaskRequest request, [FromRoute] int taskId)
     {
         var taskDTO = new TaskDTO
         {

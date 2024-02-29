@@ -55,5 +55,5 @@ public class TaskDTO : IBaseDTO<int>
     /// <summary>
     /// Идентификатор проекта, к которому относится задача
     /// </summary>
-    public int? ProjectId { get; set; }
+    public int ProjectId { get; set; }
 }

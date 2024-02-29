@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Logic.DTO;
+﻿using Logic.DTO;
 
 namespace Logic.Interfaces;
 
@@ -14,4 +13,10 @@ public interface IProjectDtoManager
     /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="participantId">Идентификатор участника</param>
     Task<ProjectDTO> AddParticipantAsync(int projectId, string participantId);
+
+    /// <summary>
+    /// Асинхронное получение участников проекта
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    Task<IList<UserDTO>> GetAllParticipantsAsync(int projectId);
 }

@@ -6,6 +6,13 @@ using Api.Controllers.Project.Responses;
 
 namespace Api.Controllers;
 
+/*
+ * CRUD c несколькими операциями. Так как проект считается более главной моделью, по сравнению с пользователем, операции с участниками я прописал здесь
+ * Помимо обычных CRUD были добавлены методы:
+ * 1) Добавление нового пользователя в проект
+ * 2) Получение всех пользователей из проекта
+*/
+
 /// <summary>
 /// Контроллер для управления проектами
 /// </summary>
@@ -56,7 +63,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType<CreateProjectResponse>(200)]
     public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectRequest request)
     {
-        var newProjectDal = await _projectService.CreateDtoAsync(new ProjectDTO
+        var newProject = await _projectService.CreateDtoAsync(new ProjectDTO
         {
             Name = request.Name,
             Description = request.Description,
@@ -68,9 +75,9 @@ public class ProjectsController : ControllerBase
 
         return Ok(new CreateProjectResponse
         {
-            Id = newProjectDal.Id,
-            Name = newProjectDal.Name,
-            Description = newProjectDal.Description,
+            Id = newProject.Id,
+            Name = newProject.Name,
+            Description = newProject.Description,
             CreationDate = DateTime.Now,
             LastModifidedDate = default,
             ParticipantIds = new List<string>(),
@@ -84,7 +91,7 @@ public class ProjectsController : ControllerBase
     /// <param name="projectId">Идентификатор проекта</param>
     [HttpDelete("{projectId}")]
     [ProducesResponseType<DeleteProjectResponse>(200)]
-    public async Task<IActionResult> DeleteProjectAsync([FromQuery] int projectId)
+    public async Task<IActionResult> DeleteProjectAsync([FromRoute] int projectId)
     {
         var deletedProject = await _projectService.DeleteDtoAsync(projectId);
         return Ok(new DeleteProjectResponse
@@ -106,7 +113,7 @@ public class ProjectsController : ControllerBase
     /// <param name="projectId">Идентификатор проекта</param>
     [HttpPut("{projectId}")]
     [ProducesResponseType<UpdateProjectResponse>(200)]
-    public async Task<IActionResult> UpdateProjectAsync([FromBody] UpdateProjectRequest request, [FromQuery] int projectId)
+    public async Task<IActionResult> UpdateProjectAsync([FromBody] UpdateProjectRequest request, [FromRoute] int projectId)
     {
         var projectDTO = new ProjectDTO
         {
@@ -136,11 +143,35 @@ public class ProjectsController : ControllerBase
     /// </summary>
     /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="participantId">Идентификатор участника</param>
-    [HttpPost("add/participant/{projectId}/{participantId}")]
+    [HttpPost("addParticipant/{projectId}/{participantId}")]
     [ProducesResponseType<UpdateProjectResponse>(200)]
-    public async Task<IActionResult> AddNewParticipantAsync([FromQuery] int projectId, [FromQuery] string participantId)
+    public async Task<IActionResult> AddParticipantAsync([FromRoute] int projectId, [FromRoute] string participantId)
     {
         var updatedProject = await _projectDtoManager.AddParticipantAsync(projectId, participantId);
-        return Ok(new UpdateProjectResponse { ParticipantIds = updatedProject.ParticipantIds });
+        return Ok(new UpdateProjectResponse
+        {
+            Id = updatedProject.Id,
+            Name = updatedProject.Name,
+            Description = updatedProject.Description,
+            CreationDate = updatedProject.CreationDate,
+            LastModifidedDate = updatedProject.LastModifidedDate,
+            TaskIds = updatedProject.TaskIds,
+            ParticipantIds = updatedProject.ParticipantIds
+        });
+    }
+
+    /// <summary>
+    /// Возвращает всех участников проекта
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    [HttpGet("participants/{projectId}")]
+    [ProducesResponseType<ParticipantsInfoResponse>(200)]
+    public async Task<IActionResult> GetProjectParticipants([FromRoute] int projectId)
+    {
+        var participants = await _projectDtoManager.GetAllParticipantsAsync(projectId);
+        return Ok(new ParticipantsInfoResponse
+        {
+            Participants = participants
+        });
     }
 }

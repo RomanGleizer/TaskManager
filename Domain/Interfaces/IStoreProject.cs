@@ -4,5 +4,8 @@ namespace Domain.Interfaces;
 
 public interface IStoreProject
 {
-    Task<int> AddPost(Project project);
+    Task<Project?> GetProjectByIdAsync(int projectId);
+    Task<int> AddProjectAsync(Project project);
+    Task<int> DeleteProjectAsync(Project project);
+    Task<int> UpdateProjectAsync(int projectId, Project project);
 }

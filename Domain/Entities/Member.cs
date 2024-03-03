@@ -1,7 +1,7 @@
 ﻿namespace Domain.Entities;
 
 // Должна быть унаследована от интерфейса BaseEntityDal, но он сейчас не доступен. (Исправить, когда будет доступен)
-public class Member
+public record Member
 {
     public required string Id { get; init; }
 
@@ -16,4 +16,8 @@ public class Member
     public required int ProjectId { get; init; }
 
     public required Project Project { get; init; }
+
+    public required int RoleId { get; init; }
+
+    public required Role Role { get; init; }
 }

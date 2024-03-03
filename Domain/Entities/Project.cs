@@ -1,7 +1,7 @@
 ﻿namespace Domain.Entities;
 
 // Должна быть унаследована от интерфейса BaseEntityDal, но он сейчас не доступен. (Исправить, когда будет доступен)
-public class Project
+public record Project
 {
     public required int Id { get; init; }
 

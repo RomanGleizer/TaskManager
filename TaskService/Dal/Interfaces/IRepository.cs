@@ -1,5 +1,4 @@
 ﻿using Core.Dal.Base;
-using Dal.Entities;
 
 namespace Dal.Interfaces;
 

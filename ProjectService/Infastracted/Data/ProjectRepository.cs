@@ -22,7 +22,7 @@ public class ProjectRepository : IStoreProject
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteProjectAsync(int projectId)
+    public Task<int> DeleteProjectAsync(Project project)
     {
         throw new NotImplementedException();
     }

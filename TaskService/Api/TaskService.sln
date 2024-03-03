@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dal", "..\Dal\Dal.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "..\Logic\Logic.csproj", "{22EEC014-18BE-446D-9EDE-4D75CDE17163}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\..\Core\Core.csproj", "{DEA7C9F1-BD8D-49C4-A5C6-13144E678429}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{22EEC014-18BE-446D-9EDE-4D75CDE17163}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22EEC014-18BE-446D-9EDE-4D75CDE17163}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22EEC014-18BE-446D-9EDE-4D75CDE17163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEA7C9F1-BD8D-49C4-A5C6-13144E678429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEA7C9F1-BD8D-49C4-A5C6-13144E678429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEA7C9F1-BD8D-49C4-A5C6-13144E678429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEA7C9F1-BD8D-49C4-A5C6-13144E678429}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

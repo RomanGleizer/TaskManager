@@ -2,8 +2,8 @@
 using Dal.Entities;
 using Dal.Interfaces;
 using Logic.DTO;
-using Logic.Infrastructure;
 using Logic.Interfaces;
+using Core.Exceptions;
 
 namespace Logic.Services;
 

@@ -1,4 +1,4 @@
-﻿namespace Logic.Infrastructure;
+﻿namespace Core.Exceptions;
 
 /// <summary>
 /// Исключение, брошенное в случае ошибок валидации данных

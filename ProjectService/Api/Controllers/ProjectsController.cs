@@ -24,11 +24,11 @@ public class ProjectsController : ControllerBase
         _deleteProject = deleteProject;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{projectId}")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> GetProjectById([FromRoute] int id)
+    public async Task<IActionResult> GetProjectById([FromRoute] int projectId)
     {
-        var existingProject = await _findProject.GetProjectByIdAsync(id);
+        var existingProject = await _findProject.GetProjectByIdAsync(projectId);
         return Ok(existingProject);
     }
 
@@ -50,9 +50,9 @@ public class ProjectsController : ControllerBase
         return Ok(createdProjectId);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{projectId}")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> UpdateProjectAsync([FromQuery] int id, [FromBody] UpdateProjectRequest request)
+    public async Task<IActionResult> UpdateProjectAsync([FromQuery] int projectId, [FromBody] UpdateProjectRequest request)
     {
         var projectData = new UpdateProjectData
         {
@@ -62,15 +62,15 @@ public class ProjectsController : ControllerBase
             MemberIds = request.MemberIds
         };
 
-        var updatedProjectId = await _updateProject.UpdateProjectAsync(id, projectData);
+        var updatedProjectId = await _updateProject.UpdateProjectAsync(projectId, projectData);
         return Ok(updatedProjectId);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{projectId}")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> DeleteProjectAsync([FromQuery] int id)
+    public async Task<IActionResult> DeleteProjectAsync([FromQuery] int projectId)
     {
-        var deletedProjectId = await _deleteProject.DeleteProjectAsync(id);
+        var deletedProjectId = await _deleteProject.DeleteProjectAsync(projectId);
         return Ok(deletedProjectId);
     }
 }

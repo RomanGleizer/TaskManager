@@ -5,7 +5,7 @@ namespace Domain.Interfaces;
 public interface IStoreProject
 {
     Task<Project?> GetProjectByIdAsync(int projectId);
-    Task<int> AddProjectAsync(Project project);
-    Task<int> DeleteProjectAsync(Project project);
-    Task<int> UpdateProjectAsync(int projectId, Project project);
+    Task AddProjectAsync(Project project);
+    Task DeleteProjectAsync(Project project);
+    Task UpdateProjectAsync(Project project);
 }

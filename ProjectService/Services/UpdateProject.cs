@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Updated;
 using Services.Interfaces.Project_Interfaces;
+using Core.Exceptions;
 
 namespace Services;
 
@@ -19,7 +20,8 @@ public class UpdateProject : IUpdateProject
     public async Task<int> UpdateProjectAsync(int projectId, UpdateProjectData projectData)
     {
         var existingProject = await _storeProject.GetProjectByIdAsync(projectId);
-        // Валидация (если не найден, бросаем исключение);
+        if (existingProject == null)
+            throw new ValidationException("Project was not found in database", string.Empty);
 
         existingProject = existingProject with
         {

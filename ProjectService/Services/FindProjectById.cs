@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Services.Interfaces.ProjectInterfaces;
+using Core.Exceptions;
 
 namespace Services;
 
@@ -16,7 +17,9 @@ public class FindProjectById : IFindProject
     public async Task<Project?> GetProjectByIdAsync(int projectId)
     {
         var existingProject = await _storeProject.GetProjectByIdAsync(projectId);
-        // Валидация (если не найден, бросаем исключение);
+        if (existingProject == null)
+            throw new ValidationException("Project was not found in database", string.Empty);
+
         return existingProject;
     }
 }

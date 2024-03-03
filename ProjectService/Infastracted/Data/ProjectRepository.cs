@@ -1,29 +1,39 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Infastracted.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infastracted.Data;
 
 public class ProjectRepository : IStoreProject
 {
-    // Логика для работы с EF
+    private readonly ProjectServiceDbContext _dbContext;
 
-    public Task<Project?> GetProjectByIdAsync(int project)
+    public ProjectRepository(ProjectServiceDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
-    public Task<int> AddProjectAsync(Project project)
+    public async Task<Project?> GetProjectByIdAsync(int projectId)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
     }
 
-    public Task<int> UpdateProjectAsync(int projectId, Project project)
+    public async Task AddProjectAsync(Project project)
     {
-        throw new NotImplementedException();
+        await _dbContext.Projects.AddAsync(project);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task<int> DeleteProjectAsync(Project project)
+    public async Task UpdateProjectAsync(Project project)
     {
-        throw new NotImplementedException();
+        _dbContext.Entry(project).State = EntityState.Modified;
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteProjectAsync(Project project)
+    {
+        _dbContext.Projects.Remove(project);
+        await _dbContext.SaveChangesAsync();
     }
 }

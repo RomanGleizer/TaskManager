@@ -2,7 +2,7 @@
 using Services.Interfaces;
 using Services.ViewModels.MemberViewModels;
 
-namespace ProjectService.Controllers;
+namespace Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,7 +17,7 @@ public class MembersController : ControllerBase
 
     [HttpGet("{memberId}")]
     [ProducesResponseType<MemberViewModel>(200)]
-    public async Task<IActionResult> GetMemberByIdAsync([FromQuery] string memberId)
+    public async Task<IActionResult> GetMemberByIdAsync([FromRoute] string memberId)
     {
         var existingMember = await _memberService.GetById(memberId);
         return Ok(existingMember);

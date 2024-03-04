@@ -4,5 +4,5 @@ namespace Domain.Interfaces;
 
 public interface IMemberRepository
 {
-    Task<Member> GetMemberByIdAsync(string id);
+    Task<Member?> GetMemberByIdAsync(string id);
 }

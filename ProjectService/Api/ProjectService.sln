@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectService", "ProjectService.csproj", "{0E032378-02F3-4766-B0E8-5819ED60F323}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api.csproj", "{0E032378-02F3-4766-B0E8-5819ED60F323}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\Domain\Domain.csproj", "{D8B93D58-8A6D-4DC9-A21B-83CB3694618B}"
 EndProject

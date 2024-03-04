@@ -2,13 +2,13 @@
 
 public record UpdateProjectViewModel
 {
-    public required int Id { get; init; }
+    public int Id { get; init; }
 
-    public required string Name { get; init; }
+    public string Name { get; init; }
 
-    public required string Description { get; init; }
+    public string Description { get; init; }
 
-    public required DateTime LastUpdatedDate { get; init; }
+    public DateTime LastUpdatedDate { get; init; }
 
-    public required IList<string> MemberIds { get; init; }
+    public IList<string> MemberIds { get; init; }
 }

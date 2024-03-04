@@ -1,18 +1,21 @@
 ﻿using Domain.Entities;
+using Domain.Interfaces;
+using Infastracted.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infastracted.Data;
 
-public class MemberRepository
+public class MemberRepository : IMemberRepository
 {
-    // Логика для работы с EF
+    private readonly ProjectServiceDbContext _dbContext;
 
-    public Task CheckMemberRegisterAsync(string memberId)
+    public MemberRepository(ProjectServiceDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
-    public Task FindProjectCreatorAsync(IList<Member> members)
+    public async Task<Member?> GetMemberByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == id);
     }
 }

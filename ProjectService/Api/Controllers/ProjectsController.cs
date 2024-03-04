@@ -2,7 +2,7 @@
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
 
-namespace ProjectApi.Controllers;
+namespace Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -16,34 +16,34 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{projectId}")]
-    [ProducesResponseType<ProjectViewModel>(200)]
+    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProjectById([FromRoute] int projectId)
     {
-        var existingProject = await _projectService.GetById(projectId);
-        return Ok(existingProject);
+        var existingProjectViewModel = await _projectService.GetById(projectId);
+        return Ok(existingProjectViewModel);
     }
 
     [HttpPost]
-    [ProducesResponseType<ProjectViewModel>(200)]
+    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectViewModel model)
     {
-        var createdProjectId = await _projectService.Create(model);
-        return Ok(createdProjectId);
+        var createdProjectViewModel = await _projectService.Create(model);
+        return Ok(createdProjectViewModel);
     }
 
     [HttpPut("{projectId}")]
-    [ProducesResponseType<ProjectViewModel>(200)]
-    public async Task<IActionResult> UpdateProjectAsync([FromQuery] int projectId, [FromBody] UpdateProjectViewModel model)
+    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UpdateProjectAsync([FromRoute] int projectId, [FromBody] UpdateProjectViewModel model)
     {
-        var updatedProjectId = await _projectService.Update(projectId, model);
-        return Ok(updatedProjectId);
+        var updatedProjectViewModel = await _projectService.Update(projectId, model);
+        return Ok(updatedProjectViewModel);
     }
 
     [HttpDelete("{projectId}")]
-    [ProducesResponseType<ProjectViewModel>(200)]
-    public async Task<IActionResult> DeleteProjectAsync([FromQuery] int projectId)
+    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteProjectAsync([FromRoute] int projectId)
     {
-        var deletedProjectId = await _projectService.Delete(projectId);
-        return Ok(deletedProjectId);
+        var deletedProjectViewModel = await _projectService.Delete(projectId);
+        return Ok(deletedProjectViewModel);
     }
 }

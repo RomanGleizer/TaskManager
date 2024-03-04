@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces;
 
-public interface IStoreProject
+public interface IProjectRepository
 {
     Task<Project?> GetProjectByIdAsync(int projectId);
     Task<Project?> AddProjectAsync(Project project);

@@ -1,4 +1,4 @@
-﻿using Services.ViewModels;
+﻿using Services.ViewModels.ProjectViewModels;
 
 namespace Services.Interfaces;
 

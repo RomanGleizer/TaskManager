@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastracted.Data;
 
-public class ProjectRepository : IStoreProject
+public class ProjectRepository : IProjectRepository
 {
     private readonly ProjectServiceDbContext _dbContext;
 

@@ -1,4 +1,4 @@
-﻿namespace Services.ViewModels;
+﻿namespace Services.ViewModels.ProjectViewModels;
 
 public record UpdateProjectViewModel
 {

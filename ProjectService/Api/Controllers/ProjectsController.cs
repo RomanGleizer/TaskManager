@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
-using Services.ViewModels;
+using Services.ViewModels.ProjectViewModels;
 
 namespace ProjectApi.Controllers;
 

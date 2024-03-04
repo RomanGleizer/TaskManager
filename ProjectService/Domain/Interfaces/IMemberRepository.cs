@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces;
 
-public interface IStoreMember
+public interface IMemberRepository
 {
     Task<Member> GetMemberByIdAsync(string id);
 }

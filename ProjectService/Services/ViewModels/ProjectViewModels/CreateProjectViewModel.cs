@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Services.ViewModels;
+namespace Services.ViewModels.ProjectViewModels;
 
 public record CreateProjectViewModel
 {

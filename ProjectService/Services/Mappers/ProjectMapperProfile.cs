@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using Services.ViewModels;
+using Services.ViewModels.ProjectViewModels;
 
 namespace Services.Mappers;
 
-public class MapperProfile : Profile
+public class ProjectMapperProfile : Profile
 {
-    public MapperProfile()
+    public ProjectMapperProfile()
     {
         CreateMap<Project, ProjectViewModel>();
         CreateMap<ProjectViewModel, Project>();

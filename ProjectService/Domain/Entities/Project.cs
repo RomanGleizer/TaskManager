@@ -1,7 +1,8 @@
-﻿namespace Domain.Entities;
+﻿using Core.Dal.Base;
 
-// Должна быть унаследована от интерфейса BaseEntityDal, но он сейчас не доступен. (Исправить, когда будет доступен)
-public record Project
+namespace Domain.Entities;
+
+public record Project : IBaseEntity<int>
 {
     public required int Id { get; init; }
 

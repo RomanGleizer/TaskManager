@@ -3,10 +3,10 @@
 /// <summary>
 /// Интерфейс, представляющий сущность с идентификатором типа <typeparamref name="T"/>
 /// </summary>
-public interface IBaseEntityDal<T>
+public interface IBaseEntity<T>
 {
     /// <summary>
     /// Идентификатор сущности
     /// </summary>
-    T Id { get; set; }
+    T Id { get; init; }
 }

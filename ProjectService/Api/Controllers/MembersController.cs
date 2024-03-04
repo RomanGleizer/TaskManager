@@ -2,7 +2,7 @@
 using Services.Interfaces;
 using Services.ViewModels.MemberViewModels;
 
-namespace ProjectService.Controllers;
+namespace Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

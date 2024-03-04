@@ -19,21 +19,28 @@ public class ProjectRepository : IStoreProject
         return await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
     }
 
-    public async Task AddProjectAsync(Project project)
+    public async Task<Project?> AddProjectAsync(Project project)
     {
-        await _dbContext.Projects.AddAsync(project);
+        var createdProject = await _dbContext.Projects.AddAsync(project);
         await _dbContext.SaveChangesAsync();
+
+        return createdProject.Entity;
     }
 
-    public async Task UpdateProjectAsync(Project project)
+    public async Task<Project?> UpdateProjectAsync(Project project)
     {
-        _dbContext.Entry(project).State = EntityState.Modified;
+        var entityEntry = _dbContext.Entry(project);
+        entityEntry.State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
+
+        return entityEntry.Entity;
     }
 
-    public async Task DeleteProjectAsync(Project project)
+    public async Task<Project?> DeleteProjectAsync(Project project)
     {
-        _dbContext.Projects.Remove(project);
+        var removedProject = _dbContext.Projects.Remove(project);
         await _dbContext.SaveChangesAsync();
+
+        return removedProject.Entity;
     }
 }

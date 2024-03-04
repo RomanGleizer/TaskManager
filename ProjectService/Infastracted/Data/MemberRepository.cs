@@ -1,9 +1,8 @@
 ﻿using Domain.Entities;
-using Services.Interfaces.MemberInterfaces;
 
 namespace Infastracted.Data;
 
-public class MemberRepository : ICheckMember, IFindProjectCreator
+public class MemberRepository
 {
     // Логика для работы с EF
 

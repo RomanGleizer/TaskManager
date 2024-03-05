@@ -6,6 +6,9 @@ using Services.Interfaces;
 using Services.Mappers;
 using Services.Services;
 using Microsoft.EntityFrameworkCore;
+using Core.HttpLogic;
+using Core.Logs;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -24,6 +27,7 @@ builder.Services.AddTransient<IMemberRepository, MemberRepository>();
 builder.Services.AddTransient<IMemberService, MemberService>();
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<IRoleService, RoleService>();
+builder.Services.AddHttpRequestService();
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
 

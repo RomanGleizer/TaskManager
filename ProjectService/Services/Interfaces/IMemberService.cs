@@ -1,8 +1,8 @@
-﻿using Services.ViewModels.RoleViewModels;
+﻿using Services.ViewModels.MemberViewModels;
 
 namespace Services.Interfaces;
 
 public interface IMemberService
 {
-    Task<RoleViewModel?> GetById(string id);
+    Task<MemberViewModel?> GetById(string id);
 }

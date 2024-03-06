@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dal.Migrations
 {
     [DbContext(typeof(TaskManagerDbContext))]
-    [Migration("20240229092827_Initial")]
+    [Migration("20240306134306_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,41 +54,6 @@ namespace Dal.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Dal.Entities.ProjectDal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastModifidedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParticipantIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TaskIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("Dal.Entities.RoleDal", b =>
@@ -150,8 +115,6 @@ namespace Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("Tasks");
                 });
 
@@ -210,9 +173,6 @@ namespace Dal.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ProjectDalId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -238,8 +198,6 @@ namespace Dal.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("ProjectDalId");
 
                     b.HasIndex("RoleId");
 
@@ -400,23 +358,10 @@ namespace Dal.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("Dal.Entities.TaskDal", b =>
-                {
-                    b.HasOne("Dal.Entities.ProjectDal", "Project")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectId");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("Dal.Entities.UserDal", b =>
                 {
-                    b.HasOne("Dal.Entities.ProjectDal", null)
-                        .WithMany("Participants")
-                        .HasForeignKey("ProjectDalId");
-
                     b.HasOne("Dal.Entities.RoleDal", "Role")
-                        .WithMany("User")
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -479,16 +424,9 @@ namespace Dal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Dal.Entities.ProjectDal", b =>
-                {
-                    b.Navigation("Participants");
-
-                    b.Navigation("Tasks");
-                });
-
             modelBuilder.Entity("Dal.Entities.RoleDal", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Dal.Entities.TaskDal", b =>

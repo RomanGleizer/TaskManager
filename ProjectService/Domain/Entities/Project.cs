@@ -41,4 +41,9 @@ public record Project : IBaseEntity<int>
     /// Получает или задает список участников проекта
     /// </summary>
     public required IList<Member> Members { get; init; }
+
+    /// <summary>
+    /// Получает или задает список задач проекта
+    /// </summary>
+    public required IList<int> TaskIds {  get; init; }
 }

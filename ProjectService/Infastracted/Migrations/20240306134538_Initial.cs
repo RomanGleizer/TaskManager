@@ -21,7 +21,8 @@ namespace Infastracted.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MemberIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    MemberIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TaskIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -14,6 +14,7 @@ public record CreateProjectViewModel
         LastUpdatedDate = DateTime.Now;
         MemberIds = new List<string>();
         Members = new List<Member>();
+        TaskIds = new List<int>();
     }
 
     /// <summary>
@@ -54,4 +55,10 @@ public record CreateProjectViewModel
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
     public IList<Member> Members { get; init; }
+
+    /// <summary>
+    /// Получает или задает список идентификаторов задач, связанных с проектом
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public IList<int> TaskIds { get; init; }
 }

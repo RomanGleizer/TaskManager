@@ -61,9 +61,4 @@ public class TaskDal : IBaseEntity<int>
     /// Идентификатор проекта, к которому относится задача 
     /// </summary>
     public int? ProjectId { get; set; }
-
-    /// <summary>
-    /// Ссылка на проект, к которому относится задача
-    /// </summary>
-    public ProjectDal Project { get; set; }
 }

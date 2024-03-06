@@ -13,11 +13,6 @@ public interface IUnitOfWork
     IRepository<TaskDal, int> Tasks { get; }
 
     /// <summary>
-    /// Репозиторий для работы с сущностями проектами
-    /// </summary>
-    IRepository<ProjectDal, int> Projects { get; }
-
-    /// <summary>
     /// Репозиторий для работы с комментариями
     /// </summary>
     IRepository<CommentDal, int> Comments { get; }

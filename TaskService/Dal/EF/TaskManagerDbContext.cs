@@ -20,11 +20,6 @@ public class TaskManagerDbContext : IdentityDbContext<UserDal>
     public DbSet<TaskDal> Tasks { get; set; }
 
     /// <summary>
-    /// Проекты в базе данных
-    /// </summary>
-    public DbSet<ProjectDal> Projects { get; set; }
-
-    /// <summary>
     /// Роли для участников проекта
     /// </summary>
     public DbSet<RoleDal> ProjectRoles { get; set; }

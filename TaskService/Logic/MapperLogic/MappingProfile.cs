@@ -16,8 +16,6 @@ public class MappingProfile : Profile
     {
         CreateMap<TaskDal, TaskDTO>();
         CreateMap<TaskDTO, TaskDal>();
-        CreateMap<ProjectDal, ProjectDTO>();
-        CreateMap<ProjectDTO, ProjectDal>();
         CreateMap<CommentDal, CommentDTO>();
         CreateMap<CommentDTO, CommentDTO>();
         CreateMap<UserDal, UserDTO>();

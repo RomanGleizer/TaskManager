@@ -11,7 +11,6 @@ public class EFUnitOfWork : IUnitOfWork
 {
     private readonly TaskManagerDbContext _dbContext;
     private IRepository<TaskDal, int>? _taskRepository;
-    private IRepository<ProjectDal, int>? _projectRepository;
     private IRepository<CommentDal, int>? _commentRepository;
     private IRepository<UserDal, string>? _userRepository;
     private IRepository<RoleDal, int>? _roleRepository;
@@ -34,19 +33,6 @@ public class EFUnitOfWork : IUnitOfWork
             if (_taskRepository == null)
                 _taskRepository = new TaskRepository(_dbContext);
             return _taskRepository;
-        }
-    }
-
-    /// <summary>
-    /// Получает репозиторий для работы с сущностями ProjectDal
-    /// </summary>
-    public IRepository<ProjectDal, int> Projects
-    {
-        get
-        {
-            if (_projectRepository == null)
-                _projectRepository = new ProjectRepository(_dbContext);
-            return _projectRepository;
         }
     }
 

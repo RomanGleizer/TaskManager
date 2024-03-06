@@ -94,9 +94,9 @@ public class TaskService : IDtoService<TaskDTO, int>
                 existingTaskDal.Comments.Add(comment);
         }
 
-        var project = await _unitOfWork.Projects.GetByIdAsync(taskDTO.ProjectId);
-        if (project != null)
-            existingTaskDal.Project = project;
+        //var project = await _unitOfWork.Projects.GetByIdAsync(taskDTO.ProjectId);
+        //if (project != null)
+        //    existingTaskDal.Project = project;
 
         await _unitOfWork.Tasks.UpdateAsync(existingTaskDal);
         return _mapper.Map<TaskDTO>(existingTaskDal);

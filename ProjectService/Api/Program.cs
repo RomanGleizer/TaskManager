@@ -7,8 +7,9 @@ using Services.Mappers;
 using Services.Services;
 using Microsoft.EntityFrameworkCore;
 using Core.HttpLogic;
-using Core.Logs;
-using Serilog;
+using ProjectConnectionLib.ConnectionServices.Interfaces;
+using ProjectConnectionLib.ConnectionServices;
+using Core.HttpLogic.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -27,9 +28,16 @@ builder.Services.AddTransient<IMemberRepository, MemberRepository>();
 builder.Services.AddTransient<IMemberService, MemberService>();
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<IRoleService, RoleService>();
-builder.Services.AddHttpRequestService();
+builder.Services.AddTransient<ITaskConnectionService>(provider =>
+{
+    var httpRequestService = provider.GetRequiredService<IHttpRequestService>();
+    return new TaskConnectionService(httpRequestService);
+});
+
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
+
+builder.Services.AddHttpRequestService();
 
 builder.Services.AddDbContext<ProjectServiceDbContext>(options => options.UseSqlServer(connection));
 

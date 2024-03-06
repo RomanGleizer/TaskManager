@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectConnectionLib.ConnectionServices.Interfaces;
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
+using ProjectConnectionLib.ConnectionServices.DtoModels.PendingTaskNameLists;
 
 namespace Api.Controllers;
 
@@ -12,10 +14,12 @@ namespace Api.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IProjectService _projectService;
+    private readonly ITaskConnectionService _taskConnectionService;
 
-    public ProjectsController(IProjectService projectService)
+    public ProjectsController(IProjectService projectService, ITaskConnectionService taskConnectionService)
     {
         _projectService = projectService;
+        _taskConnectionService = taskConnectionService;
     }
 
     /// <summary>
@@ -69,5 +73,17 @@ public class ProjectsController : ControllerBase
     {
         var deletedProjectViewModel = await _projectService.Delete(projectId);
         return Ok(deletedProjectViewModel);
+    }
+
+    [HttpGet("{projectId}/tasks/pending")]
+    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetSpecialTaskById([FromQuery] int id)
+    {
+        var res = await _taskConnectionService.GetPendingTaskListAsync(new TaskByIdApiRequest
+        {
+            TaskId = id
+        });
+
+        return Ok(res);
     }
 }

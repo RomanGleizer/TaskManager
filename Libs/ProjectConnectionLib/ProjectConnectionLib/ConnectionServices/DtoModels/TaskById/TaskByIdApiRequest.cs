@@ -1,6 +1,6 @@
 ﻿namespace ProjectConnectionLib.ConnectionServices.DtoModels.PendingTaskNameLists;
 
-public record PendingTaskListTaskApiResponse
+public record TaskByIdApiRequest
 {
-
+    public required int TaskId { get; init; }
 }

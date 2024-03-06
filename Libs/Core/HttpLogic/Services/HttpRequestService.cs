@@ -112,13 +112,11 @@ public record HttpResponse<TResponse> : BaseHttpResponse
     public TResponse Body { get; set; }
 }
 
-/// <inheritdoc />
 internal class HttpRequestService : IHttpRequestService
 {
     private readonly IHttpConnectionService _httpConnectionService;
     private readonly IEnumerable<ITraceWriter> _traceWriterList;
 
-    ///
     public HttpRequestService(
         IHttpConnectionService httpConnectionService,
         IEnumerable<ITraceWriter> traceWriterList)
@@ -127,21 +125,39 @@ internal class HttpRequestService : IHttpRequestService
         _traceWriterList = traceWriterList;
     }
 
-    /// <inheritdoc />
-    public async Task<HttpResponse<TResponse>> SendRequestAsync<TResponse>(HttpRequestData requestData,
-        HttpConnectionData connectionData)
+    public async Task<HttpResponse<TResponse>> SendRequestAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData)
     {
         var client = _httpConnectionService.CreateHttpClient(connectionData);
-
-        var httpRequestMessage = new HttpRequestMessage();
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = requestData.Method,
+            RequestUri = requestData.Uri
+        };
 
         foreach (var traceWriter in _traceWriterList)
-        {
             httpRequestMessage.Headers.Add(traceWriter.Name, traceWriter.GetValue());
+
+        var responseMessage = await _httpConnectionService.SendRequestAsync(httpRequestMessage, client, CancellationToken.None);
+        var responseBody = await responseMessage.Content.ReadAsStringAsync();
+        var responseObject = JsonConvert.DeserializeObject<TResponse>(responseBody);
+
+        if (responseObject != null)
+        {
+            return new HttpResponse<TResponse>
+            {
+                StatusCode = responseMessage.StatusCode,
+                Headers = responseMessage.Headers,
+                ContentHeaders = responseMessage.Content.Headers,
+                Body = responseObject
+            };
         }
 
-        var res = await _httpConnectionService.SendRequestAsync(httpRequestMessage, null, default);
-        return null;
+        return new HttpResponse<TResponse>
+        {
+            StatusCode = responseMessage.StatusCode,
+            Headers = responseMessage.Headers,
+            ContentHeaders = responseMessage.Content.Headers
+        };
     }
 
     private static HttpContent PrepairContent(object body, ContentType contentType)

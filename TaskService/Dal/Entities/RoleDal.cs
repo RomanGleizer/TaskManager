@@ -5,12 +5,12 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность роли для базы данных
 /// </summary>
-public class RoleDal : IBaseEntityDal<int>
+public class RoleDal : IBaseEntity<int>
 {
     /// <summary>
     /// Идентификатор роли
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Название роли

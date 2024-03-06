@@ -5,12 +5,12 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность проекта для базы данных
 /// </summary>
-public class ProjectDal : IBaseEntityDal<int>
+public class ProjectDal : IBaseEntity<int>
 {
     /// <summary>
     /// Идентификатор проекта
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Имя проекта

@@ -10,8 +10,13 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность пользователя для бд
 /// </summary>
-public class UserDal : IdentityUser, IBaseEntityDal<string>
+public class UserDal : IdentityUser, IBaseEntity<string>
 {
+    /// <summary>
+    /// Уникальный идентификатор пользователя
+    /// </summary>
+    public string Id { get; init; }
+
     /// <summary>
     /// Имя пользователя
     /// </summary>

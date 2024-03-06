@@ -5,12 +5,12 @@ namespace Dal.Entities;
 /// <summary>
 /// Сущность задачи для базы данных
 /// </summary>
-public class TaskDal : IBaseEntityDal<int>
+public class TaskDal : IBaseEntity<int>
 {
     /// <summary>
     /// Идентификатор задачи
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Название задачи

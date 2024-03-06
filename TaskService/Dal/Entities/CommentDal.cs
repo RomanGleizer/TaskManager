@@ -5,12 +5,12 @@ namespace Dal.Entities;
 /// <summary>
 /// Представляет класс доступа к данным для управления комментариями
 /// </summary>
-public class CommentDal : IBaseEntityDal<int>
+public class CommentDal : IBaseEntity<int>
 {
     /// <summary>
     /// Идентификатор комментария
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Текст комментария

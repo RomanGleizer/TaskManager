@@ -1,4 +1,4 @@
-﻿namespace ProjectConnectionLib.ConnectionServices.DtoModels.PendingTaskNameLists;
+﻿namespace ConnectionLib.ConnectionServices.DtoModels.TaskById;
 
 public record ExistingTaskApiRequest
 {

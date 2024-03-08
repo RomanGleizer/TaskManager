@@ -154,6 +154,7 @@ internal class HttpRequestService : IHttpRequestService
 
         var response = await client.SendAsync(httpRequestMessage);
         var responseBody = await response.Content.ReadAsStringAsync();
+
         var deserializedResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<TResponse>(
             new MemoryStream(Encoding.UTF8.GetBytes(responseBody)));
 

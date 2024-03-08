@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "..\Services\Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\..\Libs\Core\Core.csproj", "{6DD37747-568A-4540-8C59-0A8489799AA1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectConnectionLib", "..\..\Libs\ProjectConnectionLib\ProjectConnectionLib\ProjectConnectionLib.csproj", "{77E9F436-E923-4CF9-A523-C148798DE535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectionLib", "..\..\Libs\ConnectionLib\ConnectionLib.csproj", "{F456D2F3-13B7-4184-A214-F2AD286A4CDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{6DD37747-568A-4540-8C59-0A8489799AA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DD37747-568A-4540-8C59-0A8489799AA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DD37747-568A-4540-8C59-0A8489799AA1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77E9F436-E923-4CF9-A523-C148798DE535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77E9F436-E923-4CF9-A523-C148798DE535}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77E9F436-E923-4CF9-A523-C148798DE535}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77E9F436-E923-4CF9-A523-C148798DE535}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F456D2F3-13B7-4184-A214-F2AD286A4CDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F456D2F3-13B7-4184-A214-F2AD286A4CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F456D2F3-13B7-4184-A214-F2AD286A4CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F456D2F3-13B7-4184-A214-F2AD286A4CDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

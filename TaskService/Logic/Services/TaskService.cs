@@ -4,6 +4,8 @@ using Logic.Interfaces;
 using AutoMapper;
 using Dal.Entities;
 using Core.Exceptions;
+using ConnectionLib.ConnectionServices.Interfaces;
+using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 
 namespace Logic.Services;
 
@@ -14,16 +16,18 @@ public class TaskService : IDtoService<TaskDTO, int>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IProjectConnectionService _projectConnectionService;
 
     /// <summary>
     /// Конструктор сервиса задач
     /// </summary>
     /// <param name="unitOfWork">Единица работы с данными</param>
     /// <param name="mapper">Маппер для преобразования между объектами</param>
-    public TaskService(IUnitOfWork unitOfWork, IMapper mapper)
+    public TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnectionService projectConnectionService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _projectConnectionService = projectConnectionService;
     }
 
     /// <summary>
@@ -52,8 +56,13 @@ public class TaskService : IDtoService<TaskDTO, int>
     public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)
     {
         var taskDal = _mapper.Map<TaskDal>(taskDTO);
-
         await _unitOfWork.Tasks.CreateAsync(taskDal);
+
+        await _projectConnectionService.AddTaskInProjectAsync(new AddTaskInProjectApiRequest 
+        { 
+            ProjectId = taskDal.ProjectId 
+        });
+
         return _mapper.Map<TaskDTO>(taskDal);
     }
 

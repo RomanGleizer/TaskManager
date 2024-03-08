@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectConnectionLib.ConnectionServices.Interfaces;
+using ConnectionLib.ConnectionServices.Interfaces;
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
-using ProjectConnectionLib.ConnectionServices.DtoModels.PendingTaskNameLists;
+using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 
 namespace Api.Controllers;
 

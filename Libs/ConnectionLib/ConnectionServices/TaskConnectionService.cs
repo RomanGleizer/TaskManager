@@ -1,12 +1,10 @@
-﻿using Core.Exceptions;
-using Core.HttpLogic.Services;
+﻿using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectConnectionLib.ConnectionServices.DtoModels.PendingTaskNameLists;
-using ProjectConnectionLib.ConnectionServices.Interfaces;
-using System.Net;
+using ConnectionLib.ConnectionServices.DtoModels.TaskById;
+using ConnectionLib.ConnectionServices.Interfaces;
 
-namespace ProjectConnectionLib.ConnectionServices;
+namespace ConnectionLib.ConnectionServices;
 
 public class TaskConnectionService : ITaskConnectionService
 {
@@ -36,10 +34,7 @@ public class TaskConnectionService : ITaskConnectionService
         var response = await _httpRequestService.SendRequestAsync<ExistingTaskApiResponse>(requestData, connectionData);
 
         if (response.IsSuccessStatusCode)
-        {
-            response.Body.IsExists = true;
-            return response.Body;
-        }
+            return new ExistingTaskApiResponse { IsExists = true };
         else
             throw new Exception($"Request failed with status code {response.StatusCode}");
     }

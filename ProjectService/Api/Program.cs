@@ -7,8 +7,8 @@ using Services.Mappers;
 using Services.Services;
 using Microsoft.EntityFrameworkCore;
 using Core.HttpLogic;
-using ProjectConnectionLib.ConnectionServices.Interfaces;
-using ProjectConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -27,8 +27,8 @@ builder.Services.AddTransient<IMemberRepository, MemberRepository>();
 builder.Services.AddTransient<IMemberService, MemberService>();
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<IRoleService, RoleService>();
-builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
 
+builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
 

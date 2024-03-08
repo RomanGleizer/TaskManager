@@ -127,36 +127,42 @@ internal class HttpRequestService : IHttpRequestService
 
     public async Task<HttpResponse<TResponse>> SendRequestAsync<TResponse>(HttpRequestData requestData, HttpConnectionData connectionData)
     {
-        var client = _httpConnectionService.CreateHttpClient(connectionData);
+        using var client = _httpConnectionService.CreateHttpClient(connectionData);
+
         var httpRequestMessage = new HttpRequestMessage
         {
             Method = requestData.Method,
-            RequestUri = requestData.Uri
+            RequestUri = requestData.Uri,
+            Content = requestData.Body != null
+                      ? new StringContent(JsonConvert.SerializeObject(requestData.Body), Encoding.UTF8, requestData.ContentType.ToString())
+                      : null
         };
 
+        // Заголовки
+        foreach (var header in requestData.HeaderDictionary)
+            httpRequestMessage.Headers.Add(header.Key, header.Value);
+
+        // Параметры запроса
+        var uriBuilder = new UriBuilder(httpRequestMessage.RequestUri);
+        foreach (var queryParameter in requestData.QueryParameterList)
+            uriBuilder.Query += $"{uriBuilder.Query}&{queryParameter.Key}={queryParameter.Value}";
+        httpRequestMessage.RequestUri = uriBuilder.Uri;
+
+        // Trace
         foreach (var traceWriter in _traceWriterList)
             httpRequestMessage.Headers.Add(traceWriter.Name, traceWriter.GetValue());
 
-        var responseMessage = await _httpConnectionService.SendRequestAsync(httpRequestMessage, client, CancellationToken.None);
-        var responseBody = await responseMessage.Content.ReadAsStringAsync();
-        var responseObject = JsonConvert.DeserializeObject<TResponse>(responseBody);
-
-        if (responseObject != null)
-        {
-            return new HttpResponse<TResponse>
-            {
-                StatusCode = responseMessage.StatusCode,
-                Headers = responseMessage.Headers,
-                ContentHeaders = responseMessage.Content.Headers,
-                Body = responseObject
-            };
-        }
+        var response = await client.SendAsync(httpRequestMessage);
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var deserializedResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<TResponse>(
+            new MemoryStream(Encoding.UTF8.GetBytes(responseBody)));
 
         return new HttpResponse<TResponse>
         {
-            StatusCode = responseMessage.StatusCode,
-            Headers = responseMessage.Headers,
-            ContentHeaders = responseMessage.Content.Headers
+            StatusCode = response.StatusCode,
+            Headers = response.Headers,
+            ContentHeaders = response.Content.Headers,
+            Body = deserializedResponse
         };
     }
 

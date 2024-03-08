@@ -4,5 +4,5 @@ namespace ProjectConnectionLib.ConnectionServices.Interfaces;
 
 public interface ITaskConnectionService
 {
-    Task<TaskByIdApiResponse[]> GetPendingTaskListAsync(TaskByIdApiRequest request);
+    Task<ExistingTaskApiResponse> GetExistingTaskAsync(ExistingTaskApiRequest request);
 }

@@ -75,15 +75,26 @@ public class ProjectsController : ControllerBase
         return Ok(deletedProjectViewModel);
     }
 
-    [HttpGet("{projectId}/tasks/pending")]
-    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetSpecialTaskById([FromQuery] int id)
+    /// <summary>
+    /// Получает задачу проекта по её идентификатору
+    /// </summary>
+    /// <param name="taskId">Идентификатор задачи</param>
+    /// <returns>Ответ с информацией о задаче</returns>
+    [HttpGet("tasks/{taskId}")]
+    [ProducesResponseType(typeof(ExistingTaskApiResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetExistingTask([FromRoute] int taskId)
     {
-        var res = await _taskConnectionService.GetPendingTaskListAsync(new TaskByIdApiRequest
+        try
         {
-            TaskId = id
-        });
-
-        return Ok(res);
+            var existingTask = await _taskConnectionService.GetExistingTaskAsync(new ExistingTaskApiRequest { TaskId = taskId });
+            if (existingTask != null && existingTask.IsExists)
+                return Ok(existingTask);
+            else
+                return NotFound("The task was not found in database");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 }

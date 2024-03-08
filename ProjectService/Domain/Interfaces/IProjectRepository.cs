@@ -34,4 +34,9 @@ public interface IProjectRepository
     /// <param name="project">Проект для обновления</param>
     /// <returns>Обновленный проект или null, если операция не удалась</returns>
     Task<Project?> UpdateProjectAsync(Project project);
+
+    /// <summary>
+    /// Асинхронно сохраняет примененные изменения
+    /// </summary>
+    Task SaveChangesAsync();
 }

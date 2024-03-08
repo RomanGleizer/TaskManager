@@ -45,5 +45,5 @@ public record Project : IBaseEntity<int>
     /// <summary>
     /// Получает или задает список задач проекта
     /// </summary>
-    public required IList<int> TaskIds {  get; init; }
+    public required IList<int> TaskIds { get; init; }
 }

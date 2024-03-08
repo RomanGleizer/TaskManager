@@ -6,6 +6,7 @@ using Dal.Entities;
 using Core.Exceptions;
 using ConnectionLib.ConnectionServices.Interfaces;
 using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
 
 namespace Logic.Services;
 
@@ -58,9 +59,17 @@ public class TaskService : IDtoService<TaskDTO, int>
         var taskDal = _mapper.Map<TaskDal>(taskDTO);
         await _unitOfWork.Tasks.CreateAsync(taskDal);
 
+        /// Получаем проект по его Id из микросервиса ProjectService
+        var project = await _projectConnectionService.GetProjectByIdAsync(new ExistingProjectApiRequest
+        {
+            ProjectId = taskDal.ProjectId 
+        });
+
+        /// Добавляем задачу в спискок задач полученного проекта
         await _projectConnectionService.AddTaskInProjectAsync(new AddTaskInProjectApiRequest 
         { 
-            ProjectId = taskDal.ProjectId 
+            ProjectId = project.Id,
+            TaskId = taskDal.Id 
         });
 
         return _mapper.Map<TaskDTO>(taskDal);

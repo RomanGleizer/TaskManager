@@ -1,6 +1,21 @@
-﻿namespace ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+﻿using System.Text.Json.Serialization;
 
+namespace ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+
+/// <summary>
+/// Представляет ответ API на запрос добавления задачи в проект
+/// </summary>
 public record AddTaskInProjectApiResponse
 {
+    /// <summary>
+    /// Получает или устанавливает идентификатор проекта
+    /// </summary>
+    [JsonPropertyName("id")]
     public required int ProjectId { get; init; }
+
+    /// <summary>
+    /// Получает или устанавливает список идентификаторов задач
+    /// </summary>
+    [JsonPropertyName("taskIds")]
+    public required IList<int> TaskIds { get; init; }
 }

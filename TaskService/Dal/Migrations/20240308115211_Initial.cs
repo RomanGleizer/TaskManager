@@ -52,7 +52,7 @@ namespace Dal.Migrations
                     LastUpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PerformerIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CommentIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProjectId = table.Column<int>(type: "int", nullable: true)
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

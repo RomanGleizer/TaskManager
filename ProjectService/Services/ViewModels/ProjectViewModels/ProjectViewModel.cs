@@ -19,4 +19,9 @@ public record ProjectViewModel
     /// Получает или задает список идентификаторов участников, связанных с проектом
     /// </summary>
     public IList<string> MemberIds { get; init; }
+
+    /// <summary>
+    /// Получает или задает список идентификаторов задач, связанных с проектом
+    /// </summary>
+    public IList<int> TaskIds { get; init; }
 }

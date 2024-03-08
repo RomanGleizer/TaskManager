@@ -35,4 +35,11 @@ public interface IProjectService
     /// <param name="model">Модель обновления проекта</param>
     /// <returns>Модель представления обновленного проекта или null, если операция не удалась</returns>
     Task<ProjectViewModel?> Update(int id, UpdateProjectViewModel model);
+
+    /// <summary>
+    /// Добавляет новую задачу в проект
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    /// <param name="taskId">Идентификатор добавляемой задачи</param>
+    Task AddNewTaskInProject(int projectId, int taskId);
 }

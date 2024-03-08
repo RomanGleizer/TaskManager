@@ -3,6 +3,8 @@ using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Api.Controllers.Task.Requests;
 using Api.Controllers.Task.Responses;
+using ConnectionLib.ConnectionServices.Interfaces;
+using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 
 namespace Api.Controllers;
 

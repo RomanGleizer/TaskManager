@@ -35,7 +35,7 @@ public class ProjectRepository : IProjectRepository
     public async Task<Project?> AddProjectAsync(Project project)
     {
         var createdProject = await _dbContext.Projects.AddAsync(project);
-        await _dbContext.SaveChangesAsync();
+        await SaveChangesAsync();
 
         return createdProject.Entity;
     }
@@ -49,7 +49,7 @@ public class ProjectRepository : IProjectRepository
     {
         var entityEntry = _dbContext.Entry(project);
         entityEntry.State = EntityState.Modified;
-        await _dbContext.SaveChangesAsync();
+        await SaveChangesAsync();
 
         return entityEntry.Entity;
     }
@@ -62,8 +62,16 @@ public class ProjectRepository : IProjectRepository
     public async Task<Project?> DeleteProjectAsync(Project project)
     {
         var removedProject = _dbContext.Projects.Remove(project);
-        await _dbContext.SaveChangesAsync();
+        await SaveChangesAsync();
 
         return removedProject.Entity;
+    }
+
+    /// <summary>
+    /// Асинхронно сохраняет примененные изменения
+    /// </summary>
+    public async Task SaveChangesAsync()
+    {
+        await _dbContext.SaveChangesAsync();
     }
 }

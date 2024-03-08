@@ -6,6 +6,7 @@ using Core.HttpLogic.Services.Interfaces;
 using Core.TraceLogic.Interfaces;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace Core.HttpLogic.Services;
 
@@ -129,34 +130,19 @@ internal class HttpRequestService : IHttpRequestService
     {
         using var client = _httpConnectionService.CreateHttpClient(connectionData);
 
-        var httpRequestMessage = new HttpRequestMessage
-        {
-            Method = requestData.Method,
-            RequestUri = requestData.Uri,
-            Content = requestData.Body != null
-                      ? new StringContent(JsonConvert.SerializeObject(requestData.Body), Encoding.UTF8, requestData.ContentType.ToString())
-                      : null
-        };
-
-        // Заголовки
-        foreach (var header in requestData.HeaderDictionary)
-            httpRequestMessage.Headers.Add(header.Key, header.Value);
-
-        // Параметры запроса
-        var uriBuilder = new UriBuilder(httpRequestMessage.RequestUri);
-        foreach (var queryParameter in requestData.QueryParameterList)
-            uriBuilder.Query += $"{uriBuilder.Query}&{queryParameter.Key}={queryParameter.Value}";
-        httpRequestMessage.RequestUri = uriBuilder.Uri;
-
-        // Trace
-        foreach (var traceWriter in _traceWriterList)
-            httpRequestMessage.Headers.Add(traceWriter.Name, traceWriter.GetValue());
-
+        var httpRequestMessage = BuildRequestMessage(requestData);
         var response = await client.SendAsync(httpRequestMessage);
         var responseBody = await response.Content.ReadAsStringAsync();
 
-        var deserializedResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<TResponse>(
-            new MemoryStream(Encoding.UTF8.GetBytes(responseBody)));
+        TResponse deserializedResponse = default;
+        try
+        {
+            deserializedResponse = JsonConvert.DeserializeObject<TResponse>(responseBody);
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error deserializing response: {ex.Message}");
+        }
 
         return new HttpResponse<TResponse>
         {
@@ -228,5 +214,35 @@ internal class HttpRequestService : IHttpRequestService
             default:
                 throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
         }
+    }
+
+    private HttpRequestMessage BuildRequestMessage(HttpRequestData requestData)
+    {
+        var httpRequestMessage = new HttpRequestMessage
+        {
+            Method = requestData.Method,
+            RequestUri = requestData.Uri,
+            Content = requestData.Body != null
+                      ? new StringContent(JsonConvert.SerializeObject(requestData.Body), Encoding.UTF8, requestData.ContentType.ToString())
+                      : null
+        };
+
+        // Headers
+        foreach (var header in requestData.HeaderDictionary)
+            httpRequestMessage.Headers.Add(header.Key, header.Value);
+
+        // Query Parameters
+        var uriBuilder = new UriBuilder(httpRequestMessage.RequestUri);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        foreach (var queryParameter in requestData.QueryParameterList)
+            query[queryParameter.Key] = queryParameter.Value;
+        uriBuilder.Query = query.ToString();
+        httpRequestMessage.RequestUri = uriBuilder.Uri;
+
+        // Trace Headers
+        foreach (var traceWriter in _traceWriterList)
+            httpRequestMessage.Headers.Add(traceWriter.Name, traceWriter.GetValue());
+
+        return httpRequestMessage;
     }
 }

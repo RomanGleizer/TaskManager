@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dal.Migrations
 {
     [DbContext(typeof(TaskManagerDbContext))]
-    [Migration("20240306134306_Initial")]
+    [Migration("20240308115211_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -110,7 +110,7 @@ namespace Dal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectId")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

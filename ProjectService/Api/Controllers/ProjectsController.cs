@@ -3,6 +3,7 @@ using ConnectionLib.ConnectionServices.Interfaces;
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
 using ConnectionLib.ConnectionServices.DtoModels.TaskById;
+using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 
 namespace Api.Controllers;
 
@@ -96,5 +97,13 @@ public class ProjectsController : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
+    }
+
+    [HttpPost("{projectId}/tasks/{taskId}")]
+    [ProducesResponseType(typeof(AddTaskInProjectApiResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> AddTaskInProject([FromRoute] int projectId, [FromRoute] int taskId)
+    {
+        await _projectService.AddNewTaskInProject(projectId, taskId);
+        return Ok();
     }
 }

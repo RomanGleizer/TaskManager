@@ -6,22 +6,25 @@ using ConnectionLib.ConnectionServices.Interfaces;
 
 namespace ConnectionLib.ConnectionServices;
 
+/// <summary>
+/// Сервис для управления соединением с задачами
+/// </summary>
 public class TaskConnectionService : ITaskConnectionService
 {
     private readonly IHttpRequestService _httpRequestService;
     private readonly string _baseUrl;
 
+    /// <summary>
+    /// Инициализирует новый экземпляр класса TaskConnectionService с указанным провайдером сервисов
+    /// </summary>
+    /// <param name="serviceProvider">Провайдер сервисов</param>
     public TaskConnectionService(IServiceProvider serviceProvider)
     {
         _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
         _baseUrl = "https://localhost:7101/api/Tasks";
     }
 
-    /// <summary>
-    /// Получает существующую задачу асинхронно
-    /// </summary>
-    /// <param name="request">Запрос на получение существующей задачи</param>
-    /// <returns>Ответ существующей задачи.</returns>
+    /// <inheritdoc/>
     public async Task<ExistingTaskApiResponse> GetExistingTaskAsync(ExistingTaskApiRequest request)
     {
         var requestData = new HttpRequestData
@@ -31,11 +34,11 @@ public class TaskConnectionService : ITaskConnectionService
         };
 
         var connectionData = new HttpConnectionData();
-        var response = await _httpRequestService.SendRequestAsync<ExistingTaskApiResponse>(requestData, connectionData);
+        var response = await _httpRequestService.SendRequestAsync<ExistingTaskApiResponse>(requestData, connectionData).ConfigureAwait(false);
 
         if (response.IsSuccessStatusCode)
             return new ExistingTaskApiResponse { IsExists = true };
         else
-            throw new Exception($"Request failed with status code {response.StatusCode}");
+            throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
     }
 }

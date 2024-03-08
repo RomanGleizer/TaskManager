@@ -99,4 +99,21 @@ public class ProjectService : IProjectService
         var updatedProject = await _repository.UpdateProjectAsync(existingProject);
         return _mapper.Map<ProjectViewModel>(updatedProject);
     }
+
+    /// <summary>
+    /// Добавляет новую задачу в проект
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта</param>
+    /// <param name="taskId">Идентификатор добавляемой задачи</param>
+    public async Task AddNewTaskInProject(int projectId, int taskId)
+    {
+        var existingProject = await _repository.GetProjectByIdAsync(projectId);
+        if (existingProject == null)
+            throw new ValidationException("Project was not found in database", string.Empty);
+
+        if (!existingProject.TaskIds.Contains(taskId))
+            existingProject.TaskIds.Add(taskId);
+
+        await _repository.SaveChangesAsync();
+    }
 }

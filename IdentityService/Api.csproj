@@ -7,7 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dal\**" />
+    <Content Remove="Dal\**" />
+    <EmbeddedResource Remove="Dal\**" />
+    <None Remove="Dal\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Libs\Core\Core.csproj" />
   </ItemGroup>
 
 </Project>

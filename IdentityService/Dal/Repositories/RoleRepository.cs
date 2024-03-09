@@ -1,7 +1,7 @@
-﻿using Dal.Ef;
+﻿using Core.Dal.Base;
+using Dal.Ef;
 using Dal.Entities;
 using Microsoft.EntityFrameworkCore;
-using Core.Dal.Base;
 
 namespace Dal.Repositories;
 

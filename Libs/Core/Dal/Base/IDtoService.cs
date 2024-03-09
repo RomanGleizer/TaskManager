@@ -18,7 +18,7 @@ public interface IDtoService<TEntity, TId>
     /// Создает объект DTO асинхронно
     /// </summary>
     /// <param name="dto">DTO объект для создания</param>
-    Task<TEntity?> CreateDtoAsync(TEntity dto);
+    Task<TEntity> CreateDtoAsync(TEntity dto);
 
     /// <summary>
     /// Удаляет объект DTO асинхронно по идентификатору

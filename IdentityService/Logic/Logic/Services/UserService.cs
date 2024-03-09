@@ -2,9 +2,9 @@
 using Core.Exceptions;
 using Dal.Entities;
 using Logic.Dto.User;
+using Logic.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Logic.Interfaces;
 
 namespace Logic.Services;
 
@@ -39,30 +39,30 @@ public class UserService(IMapper mapper, UserManager<UserDal> userManager) : IUs
     }
 
     /// <inheritdoc/>
-    public async Task<IdentityResult?> CreateUserAsync(UserDto dto)
+    public async Task<IdentityResult> CreateUserAsync(UserDto dto)
     {
         var userDal = _mapper.Map<UserDal>(dto);
         return await _userManager.CreateAsync(userDal, dto.Password);
     }
 
     /// <inheritdoc/>
-    public async Task<IdentityResult?> DeleteUserAsync(Guid id)
+    public async Task<IdentityResult> DeleteUserAsync(Guid id)
     {
         var existingUserDto = await GetUserByIdAsync(id);
         var existingUserDal = _mapper.Map<UserDal>(existingUserDto);
-        
+
         return await _userManager.DeleteAsync(existingUserDal);
     }
 
     /// <inheritdoc/>
-    public async Task<IdentityResult?> UpdateUserAsync(UserDto dto, Guid id)
+    public async Task<IdentityResult> UpdateUserAsync(UserDto dto, Guid id)
     {
         var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
 
         if (existingUserDal == null)
             throw new ValidationException("User was not found in database", string.Empty);
 
-        _mapper.Map(dto, existingUserDal);   
+        _mapper.Map(dto, existingUserDal);
         return await _userManager.UpdateAsync(existingUserDal);
     }
 }

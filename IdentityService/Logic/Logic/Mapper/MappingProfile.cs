@@ -11,8 +11,6 @@ public class MappingProfile : Profile
     {
         CreateMap<UserDto, UserDal>();
         CreateMap<UserDal, UserDto>();
-        CreateMap<UserDto, UniversalUserResponse>();
-        CreateMap<CreateUserDTO, UserDto>();
 
         CreateMap<RoleDto, RoleDal>();
     }

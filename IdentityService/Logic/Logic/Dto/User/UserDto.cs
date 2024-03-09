@@ -37,6 +37,9 @@ public record UserDto : IBaseDTO<Guid>
     /// </summary>
     public required DateTime BirthDay { get; init; }
 
+    /// <summary>
+    /// Получает или устанавливает пароль для пользователя
+    /// </summary>
     public required string Password { get; init; }
 
     /// <summary>

@@ -6,7 +6,7 @@ public class PollyExample
 {
     public static async Task<string> ActionAsync()
     {
-        var res = await Policy 
+        var res = await Policy
             .Handle<Exception>()
             .WaitAndRetryForeverAsync(
                 i => TimeSpan.FromSeconds(5 + i), (result, retryCount, _) =>

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Core.Dal.Base;
+﻿using Core.Dal.Base;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logic.Interfaces;
 
@@ -29,14 +29,14 @@ public interface IUserService<TEntity, TId>
     /// </summary>
     /// <param name="dto">Данные пользователя для создания</param>
     /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции создания пользователя</returns>
-    Task<IdentityResult?> CreateUserAsync(TEntity dto);
+    Task<IdentityResult> CreateUserAsync(TEntity dto);
 
     /// <summary>
     /// Удаляет пользователя по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор пользователя для удаления</param>
     /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции удаления пользователя</returns>
-    Task<IdentityResult?> DeleteUserAsync(TId id);
+    Task<IdentityResult> DeleteUserAsync(TId id);
 
     /// <summary>
     /// Обновляет данные пользователя
@@ -44,5 +44,5 @@ public interface IUserService<TEntity, TId>
     /// <param name="dto">Новые данные пользователя</param>
     /// <param name="id">Идентификатор пользователя для обновления</param>
     /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции обновления данных пользователя</returns>
-    Task<IdentityResult?> UpdateUserAsync(TEntity dto, TId id);
+    Task<IdentityResult> UpdateUserAsync(TEntity dto, TId id);
 }

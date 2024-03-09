@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Core.Dal.Base;
-using Dal.Interfaces;
 using Core.Exceptions;
 using Dal.Entities;
+using Dal.Interfaces;
 using Logic.Dto.Role;
 
 namespace Logic.Services;
@@ -10,21 +10,15 @@ namespace Logic.Services;
 /// <summary>
 /// Сервисный класс для управления объектами RoleDTO
 /// </summary>
-public class RoleService : IDtoService<RoleDto, int>
+/// <remarks>
+/// Инициализирует новый экземпляр класса <see cref="RoleService"/>
+/// </remarks>
+/// <param name="unitOfWork">UnitOfWork</param>
+/// <param name="mapper">Маппер</param>
+public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IDtoService<RoleDto, int>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="RoleService"/>
-    /// </summary>
-    /// <param name="unitOfWork">UnitOfWork</param>
-    /// <param name="mapper">Маппер</param>
-    public RoleService(IUnitOfWork unitOfWork, IMapper mapper)
-    {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc/>
     public async Task<IList<RoleDto>> GetAllDtosAsync()
@@ -43,7 +37,7 @@ public class RoleService : IDtoService<RoleDto, int>
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDto?> CreateDtoAsync(RoleDto dto)
+    public async Task<RoleDto> CreateDtoAsync(RoleDto dto)
     {
         var roleDal = _mapper.Map<RoleDal>(dto);
         var createdRoleDal = await _unitOfWork.Roles.CreateAsync(roleDal);

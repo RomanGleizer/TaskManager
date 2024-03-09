@@ -1,6 +1,4 @@
-﻿using Core.Dal.Base;
-
-namespace Dal.Interfaces;
+﻿namespace Core.Dal.Base;
 
 /// <summary>
 /// Представляет общий интерфейс репозитория для работы с сущностями

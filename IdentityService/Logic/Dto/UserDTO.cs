@@ -1,9 +1,11 @@
-﻿namespace Logic.Dto;
+﻿using Core.Dal.Base;
+
+namespace Logic.Dto;
 
 /// <summary>
 /// Представляет объект передачи данных пользователя
 /// </summary>
-public record UserDTO
+public record UserDTO : IBaseDTO<Guid>
 {
     /// <summary>
     /// Получает или устанавливает идентификатор пользователя

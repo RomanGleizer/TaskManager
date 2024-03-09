@@ -8,5 +8,5 @@ public interface IBaseDTO<T>
     /// <summary>
     /// Получает или задает идентификатор объекта
     /// </summary>
-    T Id { get; set; }
+    T Id { get; init; }
 }

@@ -1,22 +1,21 @@
 ﻿using Core.Dal.Base;
-using Microsoft.AspNetCore.Identity;
 
-namespace Dal.Entities;
+namespace Logic.Dto;
 
 /// <summary>
-/// Представляет сущность роли в базе данных
+/// Представляет объект передачи данных (DTO) роли
 /// </summary>
-public class RoleDal : IdentityRole, IBaseEntity<int>
+public record RoleDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Получает или устанавливает идентификатор роли
     /// </summary>
-    public required new int Id { get; init; }
+    public required int Id { get; init; }
 
     /// <summary>
-    /// Получает или устанавливает название роли.
+    /// Получает или устанавливает название роли
     /// </summary>
-    public required new string Name { get; init; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Получает или устанавливает список идентификаторов пользователей, связанных с данной ролью

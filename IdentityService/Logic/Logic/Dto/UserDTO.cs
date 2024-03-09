@@ -1,17 +1,16 @@
 ﻿using Core.Dal.Base;
-using Microsoft.AspNetCore.Identity;
 
-namespace Dal.Entities;
+namespace Logic.Dto;
 
 /// <summary>
-/// Представляет сущность пользователя в базе данных
+/// Представляет объект передачи данных пользователя
 /// </summary>
-public class UserDal : IdentityUser, IBaseEntity<Guid>
+public record UserDTO : IBaseDTO<Guid>
 {
     /// <summary>
     /// Получает или устанавливает идентификатор пользователя
     /// </summary>
-    public required new Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или устанавливает имя пользователя
@@ -26,12 +25,12 @@ public class UserDal : IdentityUser, IBaseEntity<Guid>
     /// <summary>
     /// Получает или устанавливает электронную почту пользователя
     /// </summary>
-    public required new string Email { get; init; }
+    public required string Email { get; init; }
 
     /// <summary>
     /// Получает или устанавливает номер телефона пользователя
     /// </summary>
-    public required new string PhoneNumber { get; init; }
+    public required string PhoneNumber { get; init; }
 
     /// <summary>
     /// Получает или устанавливает дату рождения пользователя
@@ -44,7 +43,7 @@ public class UserDal : IdentityUser, IBaseEntity<Guid>
     public required int RoleId { get; init; }
 
     /// <summary>
-    /// Получает или устанавливает список идентификаторов проектов, в которых состоит пользователь
+    /// Получает или устанавливает список идентификаторов проектов, связанных с пользователем
     /// </summary>
     public required IList<int> ProjectIds { get; init; }
 }

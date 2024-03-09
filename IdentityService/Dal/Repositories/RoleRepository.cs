@@ -34,24 +34,31 @@ public class RoleRepository : IRepository<RoleDal, int>
     }
 
     /// <inheritdoc/>
-    public async Task CreateAsync(RoleDal entity)
+    public async Task<RoleDal?> CreateAsync(RoleDal entity)
     {
-        await _context.Roles.AddAsync(entity);
+        var createdRole = await _context.Roles.AddAsync(entity);
         await SaveChangesAsync();
+
+        return createdRole.Entity;
     }
 
     /// <inheritdoc/>
-    public async Task DeleteAsync(RoleDal item)
+    public async Task<RoleDal?> DeleteAsync(RoleDal item)
     {
-        _context.Roles.Remove(item);
+        var deletedRole = _context.Roles.Remove(item);
         await SaveChangesAsync();
+
+        return deletedRole.Entity;
     }
 
     /// <inheritdoc/>
-    public async Task UpdateAsync(RoleDal entity)
+    public async Task<RoleDal?> UpdateAsync(RoleDal entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        var entriedRole = _context.Entry(entity);
+        entriedRole.State = EntityState.Modified;
         await SaveChangesAsync();
+
+        return entriedRole.Entity;
     }
 
     /// <inheritdoc/>

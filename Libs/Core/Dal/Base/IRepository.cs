@@ -28,19 +28,19 @@ public interface IRepository<TEntity, TId>
     /// Асинхронно создает новую сущность
     /// </summary>
     /// <param name="entity">Создаваемая сущность</param>
-    Task CreateAsync(TEntity entity);
+    Task<TEntity?> CreateAsync(TEntity entity);
 
     /// <summary>
     /// Асинхронно обновляет существующую сущность
     /// </summary>
     /// <param name="entity">Обновляемая сущность</param>
-    Task UpdateAsync(TEntity entity);
+    Task<TEntity?> UpdateAsync(TEntity entity);
 
     /// <summary>
     /// Асинхронно удаляет сущность
     /// </summary>
-    /// <param name="item">Удаляемая сущность</param>
-    Task DeleteAsync(TEntity item);
+    /// <param name="entity">Удаляемая сущность</param>
+    Task<TEntity?> DeleteAsync(TEntity entity);
 
     /// <summary>
     /// Асинхронно сохраняет изменения

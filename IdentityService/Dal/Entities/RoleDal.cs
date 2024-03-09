@@ -22,9 +22,4 @@ public class RoleDal : IdentityRole, IBaseEntity<int>
     /// Получает или устанавливает список идентификаторов пользователей, связанных с данной ролью
     /// </summary>
     public required IList<string> UserIds { get; init; }
-
-    /// <summary>
-    /// Получает или устанавливает список пользователей, связанных с данной ролью
-    /// </summary>
-    public required IList<UserDal> Users { get; init; }
 }

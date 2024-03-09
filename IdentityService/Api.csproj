@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Dal\**" />
+    <Compile Remove="Logic\**" />
     <Content Remove="Dal\**" />
+    <Content Remove="Logic\**" />
     <EmbeddedResource Remove="Dal\**" />
+    <EmbeddedResource Remove="Logic\**" />
     <None Remove="Dal\**" />
+    <None Remove="Logic\**" />
   </ItemGroup>
 
   <ItemGroup>

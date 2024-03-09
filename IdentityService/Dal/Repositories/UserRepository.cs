@@ -34,24 +34,29 @@ public class UserRepository : IRepository<UserDal, Guid>
     }
 
     /// <inheritdoc/>
-    public async Task CreateAsync(UserDal entity)
+    public async Task<UserDal?> CreateAsync(UserDal entity)
     {
-        await _context.Users.AddAsync(entity);
+        var createdEntity = await _context.Users.AddAsync(entity);
         await SaveChangesAsync();
+        return createdEntity.Entity;
     }
 
     /// <inheritdoc/>
-    public async Task DeleteAsync(UserDal item)
+    public async Task<UserDal?> DeleteAsync(UserDal item)
     {
-        _context.Users.Remove(item);
+        var removedEntity = _context.Users.Remove(item);
         await SaveChangesAsync();
+        return removedEntity.Entity;
     }
 
     /// <inheritdoc/>
-    public async Task UpdateAsync(UserDal entity)
+    public async Task<UserDal?> UpdateAsync(UserDal entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        var entriedUser = _context.Entry(entity);
+        entriedUser.State = EntityState.Modified;
         await SaveChangesAsync();
+
+        return entriedUser.Entity;
     }
 
     /// <inheritdoc/>

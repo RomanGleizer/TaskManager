@@ -44,11 +44,6 @@ public class UserDal : IdentityUser, IBaseEntity<Guid>
     public required int RoleId { get; init; }
 
     /// <summary>
-    /// Получает или устанавливает роль пользователя
-    /// </summary>
-    public required RoleDal Role { get; set; }
-
-    /// <summary>
     /// Получает или устанавливает список идентификаторов проектов, в которых состоит пользователь
     /// </summary>
     public required IList<int> ProjectIds { get; init; }

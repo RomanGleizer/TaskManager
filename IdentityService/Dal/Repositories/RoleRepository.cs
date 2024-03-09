@@ -8,18 +8,13 @@ namespace Dal.Repositories;
 /// <summary>
 /// Представляет репозиторий для работы с ролями
 /// </summary>
-public class RoleRepository : IRepository<RoleDal, int>
+/// <remarks>
+/// Инициализирует новый экземпляр класса RoleRepository с указанным контекстом базы данных
+/// </remarks>
+/// <param name="context">Контекст базы данных Entity Framework</param>
+public class RoleRepository(IdentityServiceDbContext context) : IRepository<RoleDal, int>
 {
-    private readonly IdentityServiceDbContext _context;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса RoleRepository с указанным контекстом базы данных
-    /// </summary>
-    /// <param name="context">Контекст базы данных Entity Framework</param>
-    public RoleRepository(IdentityServiceDbContext context)
-    {
-        _context = context;
-    }
+    private readonly IdentityServiceDbContext _context = context;
 
     /// <inheritdoc/>
     public async Task<IList<RoleDal>> GetAllAsync()

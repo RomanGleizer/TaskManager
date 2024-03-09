@@ -11,7 +11,6 @@ namespace Dal.Repositories;
 public class EFUnitOfWork : IUnitOfWork
 {
     private readonly IdentityServiceDbContext _context;
-    private IRepository<UserDal, Guid>? _userRepository;
     private IRepository<RoleDal, int>? _roleRepository;
 
     /// <summary>
@@ -21,18 +20,6 @@ public class EFUnitOfWork : IUnitOfWork
     public EFUnitOfWork(IdentityServiceDbContext context)
     {
         _context = context;
-    }
-
-    /// <summary>
-    /// Получает репозиторий для работы с пользователями
-    /// </summary>
-    public IRepository<UserDal, Guid> Users
-    {
-        get
-        {
-            _userRepository ??= new UserRepository(_context);
-            return _userRepository;
-        }
     }
 
     /// <summary>

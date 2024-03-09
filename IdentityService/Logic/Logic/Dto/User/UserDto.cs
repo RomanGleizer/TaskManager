@@ -1,11 +1,11 @@
 ﻿using Core.Dal.Base;
 
-namespace Logic.Dto;
+namespace Logic.Dto.User;
 
 /// <summary>
 /// Представляет объект передачи данных пользователя
 /// </summary>
-public record UserDTO : IBaseDTO<Guid>
+public record UserDto : IBaseDTO<Guid>
 {
     /// <summary>
     /// Получает или устанавливает идентификатор пользователя
@@ -37,6 +37,8 @@ public record UserDTO : IBaseDTO<Guid>
     /// </summary>
     public required DateTime BirthDay { get; init; }
 
+    public required string Password { get; init; }
+
     /// <summary>
     /// Получает или устанавливает идентификатор роли пользователя
     /// </summary>
@@ -46,4 +48,10 @@ public record UserDTO : IBaseDTO<Guid>
     /// Получает или устанавливает список идентификаторов проектов, связанных с пользователем
     /// </summary>
     public required IList<int> ProjectIds { get; init; }
+
+    /// <summary>
+    /// Возвращает или устанавливает имя пользователя, которое используется для аутентификации и идентификации пользователя
+    /// Для объекта UserDto возвращает значение свойства Email
+    /// </summary>
+    public string UserName => Email;
 }

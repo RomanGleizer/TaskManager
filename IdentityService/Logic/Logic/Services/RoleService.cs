@@ -2,15 +2,15 @@
 using Core.Dal.Base;
 using Dal.Interfaces;
 using Core.Exceptions;
-using Logic.Dto;
 using Dal.Entities;
+using Logic.Dto.Role;
 
 namespace Logic.Services;
 
 /// <summary>
 /// Сервисный класс для управления объектами RoleDTO
 /// </summary>
-public class RoleService : IDtoService<RoleDTO, int>
+public class RoleService : IDtoService<RoleDto, int>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -27,42 +27,41 @@ public class RoleService : IDtoService<RoleDTO, int>
     }
 
     /// <inheritdoc/>
-    public async Task<IList<RoleDTO>> GetAllDtosAsync()
+    public async Task<IList<RoleDto>> GetAllDtosAsync()
     {
         var roleDals = await _unitOfWork.Roles.GetAllAsync();
-        return _mapper.Map<IList<RoleDTO>>(roleDals);
+        return _mapper.Map<IList<RoleDto>>(roleDals);
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDTO?> GetDtoByIdAsync(int id)
+    public async Task<RoleDto?> GetDtoByIdAsync(int id)
     {
         var existingRole = await _unitOfWork.Roles.GetByIdAsync(id);
-        if (existingRole == null)
-            throw new ValidationException("Роль не найдена в базе данных", string.Empty);
-
-        return _mapper.Map<RoleDTO>(existingRole);
+        return existingRole == null
+            ? throw new ValidationException("Роль не найдена в базе данных", string.Empty)
+            : _mapper.Map<RoleDto>(existingRole);
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDTO?> CreateDtoAsync(RoleDTO dto)
+    public async Task<RoleDto?> CreateDtoAsync(RoleDto dto)
     {
         var roleDal = _mapper.Map<RoleDal>(dto);
         var createdRoleDal = await _unitOfWork.Roles.CreateAsync(roleDal);
-        return _mapper.Map<RoleDTO>(createdRoleDal);
+        return _mapper.Map<RoleDto>(createdRoleDal);
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDTO?> DeleteDtoAsync(int id)
+    public async Task<RoleDto?> DeleteDtoAsync(int id)
     {
         var existingRoleDto = await GetDtoByIdAsync(id);
         var existingRoleDal = _mapper.Map<RoleDal>(existingRoleDto);
         var deletedRoleDal = await _unitOfWork.Roles.DeleteAsync(existingRoleDal);
 
-        return _mapper.Map<RoleDTO>(deletedRoleDal);
+        return _mapper.Map<RoleDto>(deletedRoleDal);
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDTO?> UpdateDtoAsync(RoleDTO dto, int id)
+    public async Task<RoleDto?> UpdateDtoAsync(RoleDto dto, int id)
     {
         var existingRoleDal = await _unitOfWork.Roles.GetByIdAsync(id);
 
@@ -78,6 +77,6 @@ public class RoleService : IDtoService<RoleDTO, int>
 
         existingRoleDal = updatedRoleDal;
         updatedRoleDal = await _unitOfWork.Roles.UpdateAsync(existingRoleDal);
-        return _mapper.Map<RoleDTO>(updatedRoleDal);
+        return _mapper.Map<RoleDto>(updatedRoleDal);
     }
 }

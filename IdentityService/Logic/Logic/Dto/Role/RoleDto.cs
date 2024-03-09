@@ -1,11 +1,11 @@
 ﻿using Core.Dal.Base;
 
-namespace Logic.Dto;
+namespace Logic.Dto.Role;
 
 /// <summary>
 /// Представляет объект передачи данных (DTO) роли
 /// </summary>
-public record RoleDTO : IBaseDTO<int>
+public record RoleDto : IBaseDTO<int>
 {
     /// <summary>
     /// Получает или устанавливает идентификатор роли

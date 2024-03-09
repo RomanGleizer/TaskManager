@@ -1,88 +1,68 @@
 ﻿using AutoMapper;
-using Core.Dal.Base;
-using Dal.Interfaces;
-using Logic.Dto;
 using Core.Exceptions;
 using Dal.Entities;
+using Logic.Dto.User;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Logic.Interfaces;
 
 namespace Logic.Services;
 
 /// <summary>
 /// Сервис для работы с пользователями. Реализует интерфейс IDtoService для объектов типа UserDTO с идентификатором типа Guid
 /// </summary>
-public class UserService : IDtoService<UserDTO, Guid>
+/// <remarks>
+/// Конструктор класса UserService
+/// </remarks>
+/// <param name="unitOfWork">Единица работы, предоставляющая доступ к операциям над данными</param>
+/// <param name="mapper">Объект для отображения объектов между различными типами, используя AutoMapper</param>
+public class UserService(IMapper mapper, UserManager<UserDal> userManager) : IUserService<UserDto, Guid>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IMapper _mapper = mapper;
+    private readonly UserManager<UserDal> _userManager = userManager;
 
-    /// <summary>
-    /// Конструктор класса UserService
-    /// </summary>
-    /// <param name="unitOfWork">Единица работы, предоставляющая доступ к операциям над данными</param>
-    /// <param name="mapper">Объект для отображения объектов между различными типами, используя AutoMapper</param>
-    public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+    /// <inheritdoc/>
+    public async Task<IList<UserDto>> GetAllUsersAsync()
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        var userDals = await _userManager.Users.ToListAsync();
+        return _mapper.Map<IList<UserDto>>(userDals);
     }
 
     /// <inheritdoc/>
-    public async Task<IList<UserDTO>> GetAllDtosAsync()
+    public async Task<UserDto?> GetUserByIdAsync(Guid id)
     {
-        var userDals = await _unitOfWork.Users.GetAllAsync();
-        return _mapper.Map<IList<UserDTO>>(userDals);
-    }
-
-    /// <inheritdoc/>
-    public async Task<UserDTO?> GetDtoByIdAsync(Guid id)
-    {
-        var existingUserDal = await _unitOfWork.Users.GetByIdAsync(id);
+        var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
 
         if (existingUserDal != null)
-            return _mapper.Map<UserDTO>(existingUserDal);
+            return _mapper.Map<UserDto>(existingUserDal);
         throw new ValidationException("User was not found in database", string.Empty);
     }
 
     /// <inheritdoc/>
-    public async Task<UserDTO?> CreateDtoAsync(UserDTO dto)
+    public async Task<IdentityResult?> CreateUserAsync(UserDto dto)
     {
         var userDal = _mapper.Map<UserDal>(dto);
-        var createdUserDal = await _unitOfWork.Users.CreateAsync(userDal);
-        return _mapper.Map<UserDTO>(createdUserDal);
+        return await _userManager.CreateAsync(userDal, dto.Password);
     }
 
     /// <inheritdoc/>
-    public async Task<UserDTO?> DeleteDtoAsync(Guid id)
+    public async Task<IdentityResult?> DeleteUserAsync(Guid id)
     {
-        var existingUserDto = await GetDtoByIdAsync(id);
+        var existingUserDto = await GetUserByIdAsync(id);
         var existingUserDal = _mapper.Map<UserDal>(existingUserDto);
-        var deletedUserDal = await _unitOfWork.Users.DeleteAsync(existingUserDal);
-
-        return _mapper.Map<UserDTO>(deletedUserDal);
+        
+        return await _userManager.DeleteAsync(existingUserDal);
     }
 
     /// <inheritdoc/>
-    public async Task<UserDTO?> UpdateDtoAsync(UserDTO dto, Guid id)
+    public async Task<IdentityResult?> UpdateUserAsync(UserDto dto, Guid id)
     {
-        var existingUserDal = await _unitOfWork.Users.GetByIdAsync(id);
+        var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
 
         if (existingUserDal == null)
             throw new ValidationException("User was not found in database", string.Empty);
 
-        var updatedUserDal = new UserDal
-        {
-            Id = dto.Id,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-            PhoneNumber = dto.PhoneNumber,
-            BirthDay = dto.BirthDay,
-            RoleId = dto.RoleId,
-            ProjectIds = dto.ProjectIds
-        };
-
-        existingUserDal = updatedUserDal;
-        updatedUserDal = await _unitOfWork.Users.UpdateAsync(existingUserDal);
-        return _mapper.Map<UserDTO>(updatedUserDal);
+        _mapper.Map(dto, existingUserDal);   
+        return await _userManager.UpdateAsync(existingUserDal);
     }
 }

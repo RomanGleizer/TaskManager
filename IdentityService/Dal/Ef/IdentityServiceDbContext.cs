@@ -7,7 +7,11 @@ namespace Dal.Ef;
 /// <summary>
 /// Представляет контекст базы данных для службы идентификации
 /// </summary>
-public class IdentityServiceDbContext : IdentityDbContext<UserDal>
+/// <remarks>
+/// Инициализирует новый экземпляр класса IdentityServiceDbContext с указанными параметрами
+/// </remarks>
+/// <param name="options">Опции для этого контекста</param>
+public class IdentityServiceDbContext(DbContextOptions<IdentityServiceDbContext> options) : IdentityDbContext<UserDal>(options)
 {
     /// <summary>
     /// Получает или устанавливает набор пользователей

@@ -9,11 +9,6 @@ namespace Dal.Interfaces;
 public interface IUnitOfWork
 {
     /// <summary>
-    /// Получает репозиторий для работы с пользователями
-    /// </summary>
-    IRepository<UserDal, Guid> Users { get; }
-
-    /// <summary>
     /// Получает репозиторий для работы с ролями
     /// </summary>
     IRepository<RoleDal, int> Roles { get; }

@@ -23,7 +23,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly IProjectConnectionService _projectConnectionService = projectConnectionService;
-
+     
     /// <inheritdoc/>
     public async Task<IList<TaskDTO>> GetAllDtosAsync()
     {
@@ -47,15 +47,18 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
         /// Получаем проект по его Id из микросервиса ProjectService
         var project = await _projectConnectionService.GetProjectByIdAsync(new ExistingProjectApiRequest
         {
-            ProjectId = taskDal.ProjectId 
+            ProjectId = taskDal.ProjectId
         });
 
-        /// Добавляем задачу в спискок задач полученного проекта
-        await _projectConnectionService.AddTaskInProjectAsync(new AddTaskInProjectApiRequest 
-        { 
-            ProjectId = project.Id,
-            TaskId = taskDal.Id 
-        });
+        /// Добавляем задачу в спискок задач проекта
+        if (project != null)
+        {
+            await _projectConnectionService.AddTaskInProjectAsync(new AddTaskInProjectApiRequest
+            {
+                ProjectId = project.Id,
+                TaskId = taskDal.Id
+            });
+        }
 
         return _mapper.Map<TaskDTO>(taskDal);
     }

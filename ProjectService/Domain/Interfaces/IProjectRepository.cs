@@ -19,7 +19,7 @@ public interface IProjectRepository
     /// </summary>
     /// <param name="project">Проект для добавления</param>
     /// <returns>Добавленный проект или null, если операция не удалась</returns>
-    Task<Project?> AddProjectAsync(Project project);
+    Task<Project> AddProjectAsync(Project project);
 
     /// <summary>
     /// Удаляет проект

@@ -16,7 +16,8 @@ namespace Logic.Services;
 /// </remarks>
 /// <param name="unitOfWork">Единица работы, предоставляющая доступ к операциям над данными</param>
 /// <param name="mapper">Объект для отображения объектов между различными типами, используя AutoMapper</param>
-public class UserService(IMapper mapper, UserManager<UserDal> userManager) : IUserService<UserDto, Guid>
+public class UserService(IMapper mapper, UserManager<UserDal> userManager)
+    : IUserService<UserDto, Guid>
 {
     private readonly IMapper _mapper = mapper;
     private readonly UserManager<UserDal> _userManager = userManager;
@@ -33,9 +34,9 @@ public class UserService(IMapper mapper, UserManager<UserDal> userManager) : IUs
     {
         var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
 
-        if (existingUserDal != null)
-            return _mapper.Map<UserDto>(existingUserDal);
-        throw new ValidationException("User was not found in database", string.Empty);
+        return existingUserDal != null
+            ? _mapper.Map<UserDto>(existingUserDal)
+            : throw new ValidationException("User was not found in database", string.Empty);
     }
 
     /// <inheritdoc/>
@@ -57,12 +58,20 @@ public class UserService(IMapper mapper, UserManager<UserDal> userManager) : IUs
     /// <inheritdoc/>
     public async Task<IdentityResult> UpdateUserAsync(UserDto dto, Guid id)
     {
-        var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
-
-        if (existingUserDal == null)
-            throw new ValidationException("User was not found in database", string.Empty);
+        var existingUserDal = await _userManager.FindByIdAsync(id.ToString()) 
+            ?? throw new ValidationException("User was not found in database", string.Empty);
 
         _mapper.Map(dto, existingUserDal);
+        return await _userManager.UpdateAsync(existingUserDal);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IdentityResult> AddNewProject(int projectId, Guid memberId)
+    {
+        var existingUserDal = await _userManager.FindByIdAsync(memberId.ToString()) 
+            ?? throw new ValidationException("User was not found in database", string.Empty);
+
+        existingUserDal.ProjectIds.Add(projectId);
         return await _userManager.UpdateAsync(existingUserDal);
     }
 }

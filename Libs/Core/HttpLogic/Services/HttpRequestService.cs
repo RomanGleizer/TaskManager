@@ -234,8 +234,10 @@ internal class HttpRequestService : IHttpRequestService
         // Query Parameters
         var uriBuilder = new UriBuilder(httpRequestMessage.RequestUri);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+
         foreach (var queryParameter in requestData.QueryParameterList)
             query[queryParameter.Key] = queryParameter.Value;
+
         uriBuilder.Query = query.ToString();
         httpRequestMessage.RequestUri = uriBuilder.Uri;
 

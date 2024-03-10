@@ -24,7 +24,7 @@ public class ProjectRepository : IProjectRepository
     }
 
     /// <inheritdoc/>
-    public async Task<Project?> AddProjectAsync(Project project)
+    public async Task<Project> AddProjectAsync(Project project)
     {
         var createdProject = await _dbContext.Projects.AddAsync(project);
         await SaveChangesAsync();

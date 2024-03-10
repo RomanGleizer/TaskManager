@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+using ConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Exceptions;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -10,10 +13,11 @@ namespace Services.Services;
 /// <summary>
 /// Сервис для управления проектами
 /// </summary>
-public class ProjectService(IProjectRepository storeProject, IMapper mapper) : IProjectService
+public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUserConnectionService userConnectionService) : IProjectService
 {
     private readonly IProjectRepository _repository = storeProject;
     private readonly IMapper _mapper = mapper;
+    private readonly IUserConnectionService _userConnectionService = userConnectionService;
 
     private async Task<Project> GetExistingProject(int id)
     {
@@ -33,6 +37,17 @@ public class ProjectService(IProjectRepository storeProject, IMapper mapper) : I
     {
         var mappedProject = _mapper.Map<Project>(model);
         var createdProject = await _repository.AddProjectAsync(mappedProject);
+
+        // Самый первый участник - создатель проекта
+        var projectCreatorId = createdProject.MemberIds.FirstOrDefault();
+
+        // При создании проекта он появляется в списке проектов создателя
+        await _userConnectionService.AddNewProjectAsync(new AddMemberInProjectApiRequest
+        {
+            ProjectId = createdProject.Id,
+            MemberId = projectCreatorId
+        });
+
         return _mapper.Map<ProjectViewModel>(createdProject);
     }
 

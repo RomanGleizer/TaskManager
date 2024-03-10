@@ -10,20 +10,14 @@ namespace ConnectionLib.ConnectionServices;
 /// <summary>
 /// Сервис для управления соединением с проектами
 /// </summary>
-public class ProjectConnectionService : IProjectConnectionService
+/// <remarks>
+/// Инициализирует новый экземпляр класса ProjectConnectionService с указанным провайдером сервисов
+/// </remarks>
+/// <param name="serviceProvider">Провайдер сервисов</param>
+public class ProjectConnectionService(IServiceProvider serviceProvider) : IProjectConnectionService
 {
-    private readonly IHttpRequestService _httpRequestService;
-    private readonly string _baseUrl;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса ProjectConnectionService с указанным провайдером сервисов
-    /// </summary>
-    /// <param name="serviceProvider">Провайдер сервисов</param>
-    public ProjectConnectionService(IServiceProvider serviceProvider)
-    {
-        _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
-        _baseUrl = "https://localhost:7047/api/Projects";
-    }
+    private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+    private readonly string _baseUrl = "https://localhost:7047/api/Projects";
 
     /// <inheritdoc/>
     public async Task<ExistingProjectApiResponse> GetProjectByIdAsync(ExistingProjectApiRequest request)
@@ -35,7 +29,7 @@ public class ProjectConnectionService : IProjectConnectionService
         };
 
         var connectionData = new HttpConnectionData();
-        var projectIdResponse = await _httpRequestService.SendRequestAsync<ExistingProjectApiResponse>(getIdRequestData, connectionData).ConfigureAwait(false);
+        var projectIdResponse = await _httpRequestService.SendRequestAsync<ExistingProjectApiResponse>(getIdRequestData, connectionData);
 
         if (projectIdResponse.IsSuccessStatusCode)
             return projectIdResponse.Body;
@@ -53,7 +47,7 @@ public class ProjectConnectionService : IProjectConnectionService
         };
 
         var connectionData = new HttpConnectionData();
-        var addTaskResponse = await _httpRequestService.SendRequestAsync<AddTaskInProjectApiResponse>(addTaskInProjectData, connectionData).ConfigureAwait(false);
+        var addTaskResponse = await _httpRequestService.SendRequestAsync<AddTaskInProjectApiResponse>(addTaskInProjectData, connectionData);
 
         if (addTaskResponse.IsSuccessStatusCode)
             return addTaskResponse.Body;

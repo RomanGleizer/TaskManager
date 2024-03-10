@@ -4,6 +4,7 @@ using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
 using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
 
 namespace Api.Controllers;
 
@@ -12,16 +13,10 @@ namespace Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class ProjectsController : ControllerBase
+public class ProjectsController(IProjectService projectService, ITaskConnectionService taskConnectionService) : ControllerBase
 {
-    private readonly IProjectService _projectService;
-    private readonly ITaskConnectionService _taskConnectionService;
-
-    public ProjectsController(IProjectService projectService, ITaskConnectionService taskConnectionService)
-    {
-        _projectService = projectService;
-        _taskConnectionService = taskConnectionService;
-    }
+    private readonly IProjectService _projectService = projectService;
+    private readonly ITaskConnectionService _taskConnectionService = taskConnectionService;
 
     /// <summary>
     /// Получает проект по его идентификатору

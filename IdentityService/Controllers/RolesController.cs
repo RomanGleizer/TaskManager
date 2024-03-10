@@ -5,13 +5,30 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Контроллер для управления ролями.
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class RolesController(RoleService roleService, IMapper mapper) : ControllerBase
+public class RolesController : ControllerBase
 {
-    private readonly RoleService _roleService = roleService;
-    private readonly IMapper _mapper = mapper;
+    private readonly RoleService _roleService;
+    private readonly IMapper _mapper;
 
+    /// <summary>
+    /// Инициализирует новый экземпляр контроллера ролей
+    /// </summary>
+    /// <param name="roleService">Сервис ролей</param>
+    /// <param name="mapper">Маппер</param>
+    public RolesController(RoleService roleService, IMapper mapper)
+    {
+        _roleService = roleService;
+        _mapper = mapper;
+    }
+
+    /// <summary>
+    /// Получает все роли
+    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<RoleDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllRoles()
@@ -20,6 +37,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
         return Ok(roles);
     }
 
+    /// <summary>
+    /// Получает роль по идентификатору
+    /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -32,6 +52,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
         return Ok(role);
     }
 
+    /// <summary>
+    /// Создает новую роль
+    /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -41,6 +64,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
         return CreatedAtAction(nameof(GetRoleById), new { id = createdRole.Id }, createdRole);
     }
 
+    /// <summary>
+    /// Обновляет роль
+    /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -54,6 +80,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
         return Ok(updatedRole);
     }
 
+    /// <summary>
+    /// Удаляет роль
+    /// </summary>
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]

@@ -9,20 +9,14 @@ namespace ConnectionLib.ConnectionServices;
 /// <summary>
 /// Сервис для управления соединением с задачами
 /// </summary>
-public class TaskConnectionService : ITaskConnectionService
+/// <remarks>
+/// Инициализирует новый экземпляр класса TaskConnectionService с указанным провайдером сервисов
+/// </remarks>
+/// <param name="serviceProvider">Провайдер сервисов</param>
+public class TaskConnectionService(IServiceProvider serviceProvider) : ITaskConnectionService
 {
-    private readonly IHttpRequestService _httpRequestService;
-    private readonly string _baseUrl;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса TaskConnectionService с указанным провайдером сервисов
-    /// </summary>
-    /// <param name="serviceProvider">Провайдер сервисов</param>
-    public TaskConnectionService(IServiceProvider serviceProvider)
-    {
-        _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
-        _baseUrl = "https://localhost:7101/api/Tasks";
-    }
+    private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+    private readonly string _baseUrl = "https://localhost:7101/api/Tasks";
 
     /// <inheritdoc/>
     public async Task<ExistingTaskApiResponse> GetExistingTaskAsync(ExistingTaskApiRequest request)

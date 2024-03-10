@@ -25,6 +25,7 @@ builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
 builder.Services.AddTransient<IProjectService, ProjectService>();
 
 builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
+builder.Services.AddTransient<IUserConnectionService, UserConnectionService>();
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
 

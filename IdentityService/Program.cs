@@ -10,6 +10,9 @@ using Logic.Interfaces;
 using Logic.Mapper;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
+using Core.HttpLogic;
+using ConnectionLib.ConnectionServices.Interfaces;
+using ConnectionLib.ConnectionServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -26,6 +29,8 @@ builder.Services.AddTransient<IUserService<UserDto, Guid>, UserService>();
 builder.Services.AddTransient<IDtoService<RoleDto, int>, RoleService>();
 builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
 
+builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
+
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 
 builder.Services
@@ -41,6 +46,8 @@ builder.Services
         options.SignIn.RequireConfirmedAccount = false;
     })
     .AddEntityFrameworkStores<IdentityServiceDbContext>();
+
+builder.Services.AddHttpRequestService();
 
 var app = builder.Build();
 

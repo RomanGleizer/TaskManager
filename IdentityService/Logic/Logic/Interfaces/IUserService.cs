@@ -45,4 +45,11 @@ public interface IUserService<TEntity, TId>
     /// <param name="id">Идентификатор пользователя для обновления</param>
     /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции обновления данных пользователя</returns>
     Task<IdentityResult> UpdateUserAsync(TEntity dto, TId id);
+
+    /// <summary>
+    /// Вступление в проект
+    /// </summary>
+    /// <param name="projectId">Идентификатор проекта, в который вступает пользователь</param>
+    /// <param name="memberId">Идентификатор пользователя</param>
+    Task<IdentityResult> AddNewProject(int projectId, Guid memberId);
 }

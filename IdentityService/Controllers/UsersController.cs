@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using Logic.Dto.User;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Контроллер для управления операциями, связанными с пользователями
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userService) : ControllerBase
@@ -12,6 +16,10 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
     private readonly IMapper _mapper = mapper;
     private readonly IUserService<UserDto, Guid> _userService = userService;
 
+    /// <summary>
+    /// Получает всех пользователей из базы данных
+    /// </summary>
+    /// <returns>Результат действия, содержащий коллекцию пользователей</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllUsers()
@@ -20,6 +28,11 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
         return Ok(users);
     }
 
+    /// <summary>
+    /// Получает пользователя по его уникальному идентификатору
+    /// </summary>
+    /// <param name="userId">Уникальный идентификатор пользователя для получения</param>
+    /// <returns>Результат действия, содержащий информацию о пользователе, если найден, в противном случае возвращает NotFound</returns>
     [HttpGet("{userId}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,6 +45,11 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
         return Ok(user);
     }
 
+    /// <summary>
+    /// Создает нового пользователя
+    /// </summary>
+    /// <param name="dto">DTO, представляющий пользователя, который должен быть создан</param>
+    /// <returns>Результат действия, указывающий на успешность или неудачу операции создания</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,6 +65,11 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
         return BadRequest();
     }
 
+    /// <summary>
+    /// Удаляет пользователя по его уникальному идентификатору
+    /// </summary>
+    /// <param name="userId">Уникальный идентификатор пользователя для удаления</param>
+    /// <returns>Результат действия, указывающий на успешность или неудачу операции удаления</returns>
     [HttpDelete("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,6 +82,12 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
         return NotFound();
     }
 
+    /// <summary>
+    /// Обновляет информацию о пользователе
+    /// </summary>
+    /// <param name="userId">Уникальный идентификатор пользователя для обновления</param>
+    /// <param name="dto">DTO, содержащий обновленную информацию о пользователе</param>
+    /// <returns>Результат действия, указывающий на успешность или неудачу операции обновления</returns>
     [HttpPut("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -73,5 +102,19 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
             return Ok();
 
         return NotFound();
+    }
+
+    /// <summary>
+    /// Добавляет пользователя в проект
+    /// </summary>
+    /// <param name="projectId">Уникальный идентификатор проекта для присоединения</param>
+    /// <param name="memberId">Уникальный идентификатор пользователя для добавления в проект</param>
+    /// <returns>Результат действия, указывающий на успешность операции</returns>
+    [HttpPost("{memberId}/projects/{projectId}")]
+    [ProducesResponseType(typeof(AddTaskInProjectApiResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> JoinInProject([FromRoute] int projectId, [FromRoute] Guid memberId)
+    {
+        await _userService.AddNewProject(projectId, memberId);
+        return Ok();
     }
 }

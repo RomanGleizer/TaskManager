@@ -28,11 +28,6 @@ public class CommentDal : IBaseEntity<int>
     public string AuthorId { get; set; }
 
     /// <summary>
-    /// Автор комментария
-    /// </summary>
-    public UserDal Author { get; set; }
-
-    /// <summary>
     /// Уникальный идентификатор задачи
     /// </summary>
     public int TaskId { get; set; }

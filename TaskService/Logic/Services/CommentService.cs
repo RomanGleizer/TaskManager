@@ -89,9 +89,9 @@ public class CommentService : IDtoService<CommentDTO, int>
         existingCommentDal.AuthorId = commentDTO.AuthorId;
         existingCommentDal.TaskId = commentDTO.TaskId;
 
-        var author = await _unitOfWork.Users.GetByIdAsync(commentDTO.AuthorId);
-        if (author != null)
-            existingCommentDal.Author = author;
+        //var author = await _unitOfWork.Users.GetByIdAsync(commentDTO.AuthorId);
+        //if (author != null)
+        //    existingCommentDal.Author = author;
 
         var task = await _unitOfWork.Tasks.GetByIdAsync(commentDTO.TaskId);
         if (task != null)

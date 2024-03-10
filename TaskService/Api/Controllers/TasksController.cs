@@ -1,10 +1,8 @@
-﻿using Logic.DTO;
+﻿using Api.Controllers.Task.Requests;
+using Api.Controllers.Task.Responses;
+using Logic.DTO;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Api.Controllers.Task.Requests;
-using Api.Controllers.Task.Responses;
-using ConnectionLib.ConnectionServices.Interfaces;
-using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 
 namespace Api.Controllers;
 
@@ -58,6 +56,7 @@ public class TasksController : ControllerBase
     {
         var newTask = await _taskService.CreateDtoAsync(new TaskDTO
         {
+            Id = request.Id,
             Name = request.Name,
             Description = request.Description,
             ExecutionStatus = request.ExecutionStatus,
@@ -114,13 +113,15 @@ public class TasksController : ControllerBase
     {
         var taskDTO = new TaskDTO
         {
+            Id = taskId,
             Name = request.Name,
             Description = request.Description,
             ExecutionStatus = request.ExecutionStatus,
             CreatedDate = request.CreatedDate,
             LastUpdateDate = request.LastUpdateDate,
             PerformerIds = request.PerformerIds,
-            CommentIds = request.CommentIds
+            CommentIds = request.CommentIds,
+            ProjectId = request.ProjectId
         };
 
         var updatedTaskDal = await _taskService.UpdateDtoAsync(taskDTO, taskId);

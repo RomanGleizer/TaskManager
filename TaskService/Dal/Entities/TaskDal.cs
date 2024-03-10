@@ -43,11 +43,6 @@ public class TaskDal : IBaseEntity<int>
     public IList<string> PerformerIds { get; set; }
 
     /// <summary>
-    /// Исполнители задачи
-    /// </summary>
-    public IList<UserDal> Performers { get; set; }
-
-    /// <summary>
     /// Идентификаторы комментариев
     /// </summary>
     public IList<int> CommentIds { get; set; }

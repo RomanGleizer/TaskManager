@@ -16,14 +16,4 @@ public interface IUnitOfWork
     /// Репозиторий для работы с комментариями
     /// </summary>
     IRepository<CommentDal, int> Comments { get; }
-
-    /// <summary>
-    /// Репозиторий для работы с пользователями
-    /// </summary>
-    IRepository<UserDal, string> Users { get; }
-
-    /// <summary>
-    /// Репозиторий для работы с ролями
-    /// </summary>
-    IRepository<RoleDal, int> Roles { get; }
 }

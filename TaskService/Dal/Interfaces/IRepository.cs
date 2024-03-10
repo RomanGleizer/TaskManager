@@ -5,33 +5,33 @@ namespace Dal.Interfaces;
 /// <summary>
 /// Интерфейс репозитория для операций с сущностями
 /// </summary>
-/// <typeparam name="T">Сущность, реализующая интерфейс IDbEntity</typeparam>
-/// <typeparam name="I">Тип уникального идентификатора сущности</typeparam>
-public interface IRepository<T, I> 
-    where T : IBaseEntity<I>
+/// <typeparam name="TEntity">Сущность, реализующая интерфейс IDbEntity</typeparam>
+/// <typeparam name="TIndex">Тип уникального идентификатора сущности</typeparam>
+public interface IRepository<TEntity, TIndex> 
+    where TEntity : IBaseEntity<TIndex>
 {
     /// <summary>
     /// Возвращает все сущности данного типа
     /// </summary>
-    Task<IList<T>> GetAllAsync();
+    Task<IList<TEntity>> GetAllAsync();
 
     /// <summary>
     /// Возвращает сущность по заданному идентификатору
     /// </summary>
-    Task<T?> GetByIdAsync(I id);
+    Task<TEntity?> GetByIdAsync(TIndex id);
 
     /// <summary>
     /// Создает новую сущность в хранилище данных
     /// </summary>
-    Task CreateAsync(T item);
+    Task CreateAsync(TEntity item);
 
     /// <summary>
     /// Обновляет существующую сущность в хранилище данных
     /// </summary>
-    Task UpdateAsync(T item);
+    Task UpdateAsync(TEntity item);
 
     /// <summary>
     /// Удаляет сущность с заданным идентификатором из хранилища данных
     /// </summary>
-    Task DeleteAsync(T item);
+    Task DeleteAsync(TEntity item);
 }

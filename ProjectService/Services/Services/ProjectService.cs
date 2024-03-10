@@ -10,23 +10,15 @@ namespace Services.Services;
 /// <summary>
 /// Сервис для управления проектами
 /// </summary>
-public class ProjectService : IProjectService
+public class ProjectService(IProjectRepository storeProject, IMapper mapper) : IProjectService
 {
-    private readonly IProjectRepository _repository;
-    private readonly IMapper _mapper;
-
-    public ProjectService(IProjectRepository storeProject, IMapper mapper)
-    {
-        _repository = storeProject;
-        _mapper = mapper;
-    }
+    private readonly IProjectRepository _repository = storeProject;
+    private readonly IMapper _mapper = mapper;
 
     private async Task<Project> GetExistingProject(int id)
     {
         var existingProject = await _repository.GetProjectByIdAsync(id);
-        if (existingProject == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
-        return existingProject;
+        return existingProject ?? throw new ValidationException("Project was not found in database", string.Empty);
     }
 
     /// <inheritdoc/>

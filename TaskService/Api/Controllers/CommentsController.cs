@@ -1,5 +1,5 @@
 ﻿using Logic.DTO;
-using Logic.Interfaces;
+using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
 using Api.Controllers.Comment.Requests;
 using Api.Controllers.Comment.Responses;
@@ -9,20 +9,15 @@ namespace Api.Controllers;
 /// <summary>
 /// Контроллер для управления комментариями
 /// </summary>
+/// <remarks>
+/// Конструктор контроллера комментариев
+/// </remarks>
+/// <param name="commentService">Сервис для работы с комментариями</param>
 [Route("api/[controller]")]
 [ApiController]
-public class CommentsController : ControllerBase
+public class CommentsController(IDtoService<CommentDTO, int> commentService) : ControllerBase
 {
-    private readonly IDtoService<CommentDTO, int> _commentService;
-
-    /// <summary>
-    /// Конструктор контроллера комментариев
-    /// </summary>
-    /// <param name="commentService">Сервис для работы с комментариями</param>
-    public CommentsController(IDtoService<CommentDTO, int> commentService)
-    {
-        _commentService = commentService;
-    }
+    private readonly IDtoService<CommentDTO, int> _commentService = commentService;
 
     /// <summary>
     /// Получает информацию о комментарии по его идентификатору

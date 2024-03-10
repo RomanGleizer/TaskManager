@@ -8,20 +8,20 @@ public record ProjectViewModel
     /// <summary>
     /// Получает или задает идентификатор проекта
     /// </summary>
-    public int Id { get; init; }
+    public required int Id { get; init; }
 
     /// <summary>
     /// Получает или задает имя проекта
     /// </summary>
-    public string Name { get; init; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Получает или задает список идентификаторов участников, связанных с проектом
     /// </summary>
-    public IList<string> MemberIds { get; init; }
+    public required IList<Guid> MemberIds { get; init; }
 
     /// <summary>
     /// Получает или задает список идентификаторов задач, связанных с проектом
     /// </summary>
-    public IList<int> TaskIds { get; init; }
+    public required IList<int> TaskIds { get; init; }
 }

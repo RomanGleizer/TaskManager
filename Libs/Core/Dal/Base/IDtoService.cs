@@ -7,7 +7,7 @@ public interface IDtoService<TEntity, TId>
     /// Получает объект DTO по идентификатору асинхронно
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
-    Task<TEntity?> GetDtoByIdAsync(TId id);
+    Task<TEntity> GetDtoByIdAsync(TId id);
 
     /// <summary>
     /// Получает все объекты DTO
@@ -24,12 +24,12 @@ public interface IDtoService<TEntity, TId>
     /// Удаляет объект DTO асинхронно по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор объекта для удаления</param>
-    Task<TEntity?> DeleteDtoAsync(TId id);
+    Task<TEntity> DeleteDtoAsync(TId id);
 
     /// <summary>
     /// Обновляет объект DTO асинхронно
     /// </summary>
     /// <param name="dto">DTO объект для обновления</param>
     /// <param name="id">Идентификатор объекта для обновления</param>
-    Task<TEntity?> UpdateDtoAsync(TEntity dto, TId id);
+    Task<TEntity> UpdateDtoAsync(TEntity dto, TId id);
 }

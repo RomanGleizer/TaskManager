@@ -23,10 +23,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
 builder.Services.AddTransient<IProjectService, ProjectService>();
-builder.Services.AddTransient<IMemberRepository, MemberRepository>();
-builder.Services.AddTransient<IMemberService, MemberService>();
-builder.Services.AddTransient<IRoleRepository, RoleRepository>();
-builder.Services.AddTransient<IRoleService, RoleService>();
 
 builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
 

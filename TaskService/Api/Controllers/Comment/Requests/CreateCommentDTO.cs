@@ -25,7 +25,7 @@ public record CreateCommentDTO
     /// <summary>
     /// Получает или устанавливает идентификатор автора комментария
     /// </summary>
-    public required string AuthorId { get; init; }
+    public required Guid AuthorId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор задачи, к которой относится комментарий

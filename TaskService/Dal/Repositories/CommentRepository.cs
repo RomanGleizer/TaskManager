@@ -1,6 +1,6 @@
 ﻿using Dal.EF;
 using Dal.Entities;
-using Dal.Interfaces;
+using Core.Dal.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dal.Repositories;
@@ -21,50 +21,49 @@ public class CommentRepository : IRepository<CommentDal, int>
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// Получает все комментарии
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<IList<CommentDal>> GetAllAsync()
     {
         return await _dbContext.Comments.ToListAsync();
     }
 
-    /// <summary>
-    /// Получает комментарий по идентификатору асинхронно
-    /// </summary>
-    /// <param name="id">Идентификатор комментария</param>
+    /// <inheritdoc/>
     public async Task<CommentDal?> GetByIdAsync(int id)
     {
         return await _dbContext.Comments.FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    /// <summary>
-    /// Создает комментарий асинхронно
-    /// </summary>
-    /// <param name="item">Комментарий для создания</param>
-    public async Task CreateAsync(CommentDal item)
+    /// <inheritdoc/>
+    public async Task<CommentDal?> CreateAsync(CommentDal item)
     {
-        await _dbContext.Comments.AddAsync(item);
-        await _dbContext.SaveChangesAsync();
+        var createdComment = await _dbContext.Comments.AddAsync(item);
+        await SaveChangesAsync();
+
+        return createdComment.Entity;
     }
 
-    /// <summary>
-    /// Асинхронно обновляет комментарий
-    /// </summary>
-    /// <param name="item">Комментарий для обновления</param>
-    public async Task UpdateAsync(CommentDal item)
+    /// <inheritdoc/>
+    public async Task<CommentDal?> UpdateAsync(CommentDal item)
     {
-        _dbContext.Entry(item).State = EntityState.Modified;
-        await _dbContext.SaveChangesAsync();
+        var entriedEntry = _dbContext.Entry(item);
+        entriedEntry.State = EntityState.Modified;
+        await SaveChangesAsync();
+
+        return entriedEntry.Entity;
     }
 
-    /// <summary>
-    /// Асинхронно Удаляет комментарий
-    /// </summary>
-    /// <param name="item">Комментарий для удаления</param>
-    public async Task DeleteAsync(CommentDal item)
+    /// <inheritdoc/>
+    public async Task<CommentDal?> DeleteAsync(CommentDal item)
     {
-        _dbContext.Comments.Remove(item);
+        var removedEntity = _dbContext.Comments.Remove(item);
+        await SaveChangesAsync();
+
+        return removedEntity.Entity;
+    }
+
+    /// <inheritdoc/>
+    public async Task SaveChangesAsync()
+    {
         await _dbContext.SaveChangesAsync();
     }
 }

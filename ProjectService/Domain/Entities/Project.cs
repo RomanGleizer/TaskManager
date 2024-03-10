@@ -35,12 +35,7 @@ public record Project : IBaseEntity<int>
     /// <summary>
     /// Получает или задает список идентификаторов участников проекта
     /// </summary>
-    public required IList<string> MemberIds { get; init; }
-
-    /// <summary>
-    /// Получает или задает список участников проекта
-    /// </summary>
-    public required IList<Member> Members { get; init; }
+    public required IList<Guid> MemberIds { get; init; }
 
     /// <summary>
     /// Получает или задает список задач проекта

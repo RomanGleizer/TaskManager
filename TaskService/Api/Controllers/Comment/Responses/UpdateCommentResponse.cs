@@ -23,7 +23,7 @@ public class UpdateCommentResponse
     /// <summary>
     /// Получает или устанавливает идентификатор автора обновленного комментария
     /// </summary>
-    public required string AuthorId { get; init; }
+    public required Guid AuthorId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор задачи, к которой относится обновленный комментарий

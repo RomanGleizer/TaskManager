@@ -1,7 +1,7 @@
 ﻿using Api.Controllers.Task.Requests;
 using Api.Controllers.Task.Responses;
 using Logic.DTO;
-using Logic.Interfaces;
+using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -9,20 +9,15 @@ namespace Api.Controllers;
 /// <summary>
 /// Контроллер для управления задачами
 /// </summary>
+/// <remarks>
+/// Конструктор контроллера задач
+/// </remarks>
+/// <param name="taskService">Сервис для работы с задачами</param>
 [Route("api/[controller]")]
 [ApiController]
-public class TasksController : ControllerBase
+public class TasksController(IDtoService<TaskDTO, int> taskService) : ControllerBase
 {
-    private readonly IDtoService<TaskDTO, int> _taskService;
-
-    /// <summary>
-    /// Конструктор контроллера задач
-    /// </summary>
-    /// <param name="taskService">Сервис для работы с задачами</param>
-    public TasksController(IDtoService<TaskDTO, int> taskService)
-    {
-        _taskService = taskService;
-    }
+    private readonly IDtoService<TaskDTO, int> _taskService = taskService;
 
     /// <summary>
     /// Получает информацию о задаче по идентификатору
@@ -83,12 +78,12 @@ public class TasksController : ControllerBase
     /// <summary>
     /// Удаляет задачу по идентификатору
     /// </summary>
-    /// <param name="id">Идентификатор задачи</param>
+    /// <param name="taskId">Идентификатор задачи</param>
     [HttpDelete("{taskId}")]
     [ProducesResponseType<DeleteTaskResponse>(200)]
-    public async Task<IActionResult> DeleteTaskAsync([FromRoute] int id)
+    public async Task<IActionResult> DeleteTaskAsync([FromRoute] int taskId)
     {
-        var deletedTask = await _taskService.DeleteDtoAsync(id);
+        var deletedTask = await _taskService.DeleteDtoAsync(taskId);
         return Ok(new DeleteTaskResponse
         {
             Name = deletedTask.Name,

@@ -5,7 +5,7 @@ namespace Logic.DTO;
 /// <summary>
 /// DTO объект задачи
 /// </summary>
-public class TaskDTO : IBaseDTO<int>
+public record TaskDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Идентификатор задачи
@@ -40,7 +40,7 @@ public class TaskDTO : IBaseDTO<int>
     /// <summary>
     /// Идентификаторы исполнителей задачи
     /// </summary>
-    public required IList<string> PerformerIds { get; init; }
+    public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
     /// Идентификаторы комментариев

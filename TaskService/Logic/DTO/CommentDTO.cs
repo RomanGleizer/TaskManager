@@ -5,7 +5,7 @@ namespace Logic.DTO;
 /// <summary>
 /// DTO объект комментария
 /// </summary>
-public class CommentDTO : IBaseDTO<int>
+public record CommentDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Идентификатор комментария
@@ -25,7 +25,7 @@ public class CommentDTO : IBaseDTO<int>
     /// <summary>
     /// Идентификатор автора комментария
     /// </summary>
-    public required string AuthorId { get; init; }
+    public required Guid AuthorId { get; init; }
 
     /// <summary>
     /// Идентификатор связанной задачи

@@ -22,7 +22,7 @@ public interface IUserService<TEntity, TId>
     /// </summary>
     /// <param name="id">Идентификатор пользователя</param>
     /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит объект пользователя</returns>
-    Task<TEntity?> GetUserByIdAsync(TId id);
+    Task<TEntity> GetUserByIdAsync(TId id);
 
     /// <summary>
     /// Создает нового пользователя

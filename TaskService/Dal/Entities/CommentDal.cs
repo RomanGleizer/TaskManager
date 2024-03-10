@@ -5,35 +5,30 @@ namespace Dal.Entities;
 /// <summary>
 /// Представляет класс доступа к данным для управления комментариями
 /// </summary>
-public class CommentDal : IBaseEntity<int>
+public record CommentDal : IBaseEntity<int>
 {
     /// <summary>
     /// Идентификатор комментария
     /// </summary>
-    public int Id { get; init; }
+    public required int Id { get; init; }
 
     /// <summary>
     /// Текст комментария
     /// </summary>
-    public string Text { get; set; }
+    public required string Text { get; init; }
 
     /// <summary>
     /// Дата создания комментария
     /// </summary>
-    public DateTime CreatedDate { get; set; }
+    public required DateTime CreatedDate { get; init; }
 
     /// <summary>
     /// Уникальный идентификатор автора
     /// </summary>
-    public string AuthorId { get; set; }
+    public required string AuthorId { get; init; }
 
     /// <summary>
     /// Уникальный идентификатор задачи
     /// </summary>
-    public int TaskId { get; set; }
-
-    /// <summary>
-    /// Задание, к которому относится комментарий
-    /// </summary>
-    public TaskDal Task { get; set; }
+    public required int TaskId { get; init; }
 }

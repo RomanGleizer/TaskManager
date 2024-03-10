@@ -29,7 +29,7 @@ public class UserService(IMapper mapper, UserManager<UserDal> userManager) : IUs
     }
 
     /// <inheritdoc/>
-    public async Task<UserDto?> GetUserByIdAsync(Guid id)
+    public async Task<UserDto> GetUserByIdAsync(Guid id)
     {
         var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
 

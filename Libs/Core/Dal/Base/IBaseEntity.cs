@@ -1,12 +1,12 @@
 ﻿namespace Core.Dal.Base;
 
 /// <summary>
-/// Интерфейс, представляющий сущность с идентификатором типа <typeparamref name="T"/>
+/// Интерфейс, представляющий сущность с идентификатором типа <typeparamref name="TId"/>
 /// </summary>
-public interface IBaseEntity<T>
+public interface IBaseEntity<TId>
 {
     /// <summary>
     /// Идентификатор сущности
     /// </summary>
-    T Id { get; init; }
+    TId Id { get; init; }
 }

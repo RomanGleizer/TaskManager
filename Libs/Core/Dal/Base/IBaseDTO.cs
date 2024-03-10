@@ -1,12 +1,12 @@
 ﻿namespace Core.Dal.Base;
 
 /// <summary>
-/// Интерфейс базового объекта передачи данных с идентификатором типа <typeparamref name="T"/>
+/// Интерфейс базового объекта передачи данных с идентификатором типа <typeparamref name="TId"/>
 /// </summary>
-public interface IBaseDTO<T>
+public interface IBaseDTO<TId>
 {
     /// <summary>
     /// Получает или задает идентификатор объекта
     /// </summary>
-    T Id { get; init; }
+    TId Id { get; init; }
 }

@@ -1,7 +1,7 @@
 ﻿using Api.Controllers.Task.Requests;
 using Api.Controllers.Task.Responses;
 using Logic.DTO;
-using Logic.Interfaces;
+using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;

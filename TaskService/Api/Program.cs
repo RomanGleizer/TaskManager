@@ -5,7 +5,7 @@ using Dal.Interfaces;
 using Dal.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Logic.MapperLogic;
-using Logic.Interfaces;
+using Core.Dal.Base;
 using Logic.Services;
 using Logic.DTO;
 using ConnectionLib.ConnectionServices.Interfaces;

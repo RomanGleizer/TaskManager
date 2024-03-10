@@ -1,6 +1,6 @@
 ﻿using Dal.Interfaces;
 using Logic.DTO;
-using Logic.Interfaces;
+using Core.Dal.Base;
 using AutoMapper;
 using Dal.Entities;
 using Core.Exceptions;
@@ -31,29 +31,21 @@ public class TaskService : IDtoService<TaskDTO, int>
         _projectConnectionService = projectConnectionService;
     }
 
-    /// <summary>
-    /// Получить все объекты DTO задач
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<IList<TaskDTO>> GetAllDtosAsync()
     {
         var allTaskDals = await _unitOfWork.Tasks.GetAllAsync();
         return _mapper.Map<IList<TaskDal>, IList<TaskDTO>>(allTaskDals);
     }
 
-    /// <summary>
-    /// Получить объект DTO задачи по идентификатору асинхронно
-    /// </summary>
-    /// <param name="taskId">Идентификатор задачи</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> GetDtoByIdAsync(int taskId)
     {
         var taskDal = await GetExistingTaskAsync(taskId);
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
-    /// <summary>
-    /// Создать объект DTO задачи асинхронно
-    /// </summary>
-    /// <param name="taskDTO">DTO задачи для создания</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)
     {
         var taskDal = _mapper.Map<TaskDal>(taskDTO);
@@ -75,10 +67,7 @@ public class TaskService : IDtoService<TaskDTO, int>
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
-    /// <summary>
-    /// Удалить объект DTO задачи асинхронно по идентификатору
-    /// </summary>
-    /// <param name="taskId">Идентификатор задачи</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> DeleteDtoAsync(int taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
@@ -87,23 +76,22 @@ public class TaskService : IDtoService<TaskDTO, int>
         return _mapper.Map<TaskDTO>(existingTaskDal);
     }
 
-    /// <summary>
-    /// Обновить объект DTO задачи асинхронно
-    /// </summary>
-    /// <param name="taskDTO">DTO задачи для обновления</param>
-    /// <param name="taskId">Идентификатор задачи</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, int taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
 
-        existingTaskDal.Name = taskDTO.Name;
-        existingTaskDal.Description = taskDTO.Description;
-        existingTaskDal.ExecutionStatus = taskDTO.ExecutionStatus;
-        existingTaskDal.CreatedDate = taskDTO.CreatedDate;
-        existingTaskDal.LastUpdateDate = taskDTO.LastUpdateDate;
-        existingTaskDal.PerformerIds = taskDTO.PerformerIds;
-        existingTaskDal.CommentIds = taskDTO.CommentIds;
-        existingTaskDal.ProjectId = taskDTO.ProjectId;
+        existingTaskDal = existingTaskDal with
+        {
+            Name = taskDTO.Name,
+            Description = taskDTO.Description,
+            ExecutionStatus = taskDTO.ExecutionStatus,
+            CreatedDate = taskDTO.CreatedDate,
+            LastUpdateDate = taskDTO.LastUpdateDate,
+            PerformerIds = taskDTO.PerformerIds,
+            CommentIds = taskDTO.CommentIds,
+            ProjectId = taskDTO.ProjectId
+        };
 
         foreach (var commentId in taskDTO.CommentIds)
         {
@@ -111,10 +99,6 @@ public class TaskService : IDtoService<TaskDTO, int>
             if (comment != null)
                 existingTaskDal.Comments.Add(comment);
         }
-
-        //var project = await _unitOfWork.Projects.GetByIdAsync(taskDTO.ProjectId);
-        //if (project != null)
-        //    existingTaskDal.Project = project;
 
         await _unitOfWork.Tasks.UpdateAsync(existingTaskDal);
         return _mapper.Map<TaskDTO>(existingTaskDal);
@@ -127,8 +111,6 @@ public class TaskService : IDtoService<TaskDTO, int>
     private async Task<TaskDal> GetExistingTaskAsync(int taskId)
     {
         var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
-        if (existingTaskDal == null)
-            throw new ValidationException("Task was not found in database", string.Empty);
-        return existingTaskDal;
+        return existingTaskDal == null ? throw new ValidationException("Task was not found in database", string.Empty) : existingTaskDal;
     }
 }

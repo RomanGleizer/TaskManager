@@ -1,6 +1,7 @@
 ﻿using Dal.EF;
 using Dal.Entities;
 using Dal.Interfaces;
+using Core.Dal.Base;
 
 namespace Dal.Repositories;
 

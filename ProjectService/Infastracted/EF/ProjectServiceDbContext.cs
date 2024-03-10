@@ -14,16 +14,6 @@ public class ProjectServiceDbContext : DbContext
     public DbSet<Project> Projects { get; set; }
 
     /// <summary>
-    /// Получает или задает набор данных для доступа к таблице членов
-    /// </summary>
-    public DbSet<Member> Members { get; set; }
-
-    /// <summary>
-    /// Получает или задает набор данных для доступа к таблице ролей
-    /// </summary>
-    public DbSet<Role> Roles { get; set; }
-
-    /// <summary>
     /// Инициализирует новый экземпляр контекста базы данных проекта
     /// </summary>
     /// <param name="options">Параметры конфигурации контекста базы данных</param>

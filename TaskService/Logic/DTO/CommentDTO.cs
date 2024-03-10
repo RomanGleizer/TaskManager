@@ -5,7 +5,7 @@ namespace Logic.DTO;
 /// <summary>
 /// DTO объект комментария
 /// </summary>
-public class CommentDTO : IBaseDTO<int>
+public record CommentDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Идентификатор комментария

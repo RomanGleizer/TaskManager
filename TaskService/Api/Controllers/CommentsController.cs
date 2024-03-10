@@ -1,5 +1,5 @@
 ﻿using Logic.DTO;
-using Logic.Interfaces;
+using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
 using Api.Controllers.Comment.Requests;
 using Api.Controllers.Comment.Responses;

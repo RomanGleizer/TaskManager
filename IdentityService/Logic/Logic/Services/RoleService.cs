@@ -28,7 +28,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IDtoService<R
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDto?> GetDtoByIdAsync(int id)
+    public async Task<RoleDto> GetDtoByIdAsync(int id)
     {
         var existingRole = await _unitOfWork.Roles.GetByIdAsync(id);
         return existingRole == null
@@ -45,7 +45,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IDtoService<R
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDto?> DeleteDtoAsync(int id)
+    public async Task<RoleDto> DeleteDtoAsync(int id)
     {
         var existingRoleDto = await GetDtoByIdAsync(id);
         var existingRoleDal = _mapper.Map<RoleDal>(existingRoleDto);
@@ -55,7 +55,7 @@ public class RoleService(IUnitOfWork unitOfWork, IMapper mapper) : IDtoService<R
     }
 
     /// <inheritdoc/>
-    public async Task<RoleDto?> UpdateDtoAsync(RoleDto dto, int id)
+    public async Task<RoleDto> UpdateDtoAsync(RoleDto dto, int id)
     {
         var existingRoleDal = await _unitOfWork.Roles.GetByIdAsync(id);
 

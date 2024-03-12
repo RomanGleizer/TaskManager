@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Core.Exceptions;
 using Dal.Entities;
+using Dal.Interfaces;
 using Logic.Dto.User;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Services;
 
@@ -14,64 +14,75 @@ namespace Logic.Services;
 /// <remarks>
 /// Конструктор класса UserService
 /// </remarks>
-/// <param name="unitOfWork">Единица работы, предоставляющая доступ к операциям над данными</param>
+/// <param name="userRepository">Репозиторий для пользователей</param>
 /// <param name="mapper">Объект для отображения объектов между различными типами, используя AutoMapper</param>
-public class UserService(IMapper mapper, UserManager<UserDal> userManager)
-    : IUserService<UserDto, Guid>
+public class UserService(IMapper mapper, IUserRepository userRepository) : IUserService
 {
     private readonly IMapper _mapper = mapper;
-    private readonly UserManager<UserDal> _userManager = userManager;
+    private readonly IUserRepository _userRepository = userRepository;
 
     /// <inheritdoc/>
     public async Task<IList<UserDto>> GetAllUsersAsync()
     {
-        var userDals = await _userManager.Users.ToListAsync();
+        var userDals = await _userRepository.GetAllAsync();
         return _mapper.Map<IList<UserDto>>(userDals);
     }
 
     /// <inheritdoc/>
     public async Task<UserDto> GetUserByIdAsync(Guid id)
     {
-        var existingUserDal = await _userManager.FindByIdAsync(id.ToString());
+        var existingUserDal = await _userRepository.GetByIdAsync(id)
+            ?? throw new ValidationException("User was not found in database", string.Empty);
 
-        return existingUserDal != null
-            ? _mapper.Map<UserDto>(existingUserDal)
-            : throw new ValidationException("User was not found in database", string.Empty);
+        return _mapper.Map<UserDto>(existingUserDal);
     }
 
     /// <inheritdoc/>
-    public async Task<IdentityResult> CreateUserAsync(UserDto dto)
+    public async Task<IdentityResult> CreateUserAsync(CreateUserDto dto, string password)
     {
         var userDal = _mapper.Map<UserDal>(dto);
-        return await _userManager.CreateAsync(userDal, dto.Password);
+        var createdEntity = await _userRepository.CreateAsync(userDal, password)
+            ?? throw new Exception("An error occurred while creating the user to the database");
+
+        return createdEntity;
     }
 
     /// <inheritdoc/>
     public async Task<IdentityResult> DeleteUserAsync(Guid id)
     {
-        var existingUserDto = await GetUserByIdAsync(id);
-        var existingUserDal = _mapper.Map<UserDal>(existingUserDto);
+        var existingUser = await _userRepository.GetByIdAsync(id)
+                    ?? throw new Exception("User was not found in database");
 
-        return await _userManager.DeleteAsync(existingUserDal);
+        var deletedUser = await _userRepository.DeleteAsync(existingUser)
+            ?? throw new Exception("An error occurred while deleting the user to the database");
+
+        return deletedUser;
     }
 
     /// <inheritdoc/>
-    public async Task<IdentityResult> UpdateUserAsync(UserDto dto, Guid id)
+    public async Task<IdentityResult> UpdateUserAsync(Guid id, UpdateUserDto dto)
     {
-        var existingUserDal = await _userManager.FindByIdAsync(id.ToString()) 
-            ?? throw new ValidationException("User was not found in database", string.Empty);
+        var existingUser = await _userRepository.GetByIdAsync(id)
+            ?? throw new Exception("User was not found in database");
 
-        _mapper.Map(dto, existingUserDal);
-        return await _userManager.UpdateAsync(existingUserDal);
+        _mapper.Map(dto, existingUser);
+
+        var updatedUser = await _userRepository.UpdateAsync(existingUser)
+            ?? throw new Exception("An error occurred while updating the user to the database");
+
+        return updatedUser;
     }
 
     /// <inheritdoc/>
     public async Task<IdentityResult> AddNewProject(int projectId, Guid memberId)
     {
-        var existingUserDal = await _userManager.FindByIdAsync(memberId.ToString()) 
+        var existingUserDal = await _userRepository.GetByIdAsync(memberId) 
             ?? throw new ValidationException("User was not found in database", string.Empty);
 
         existingUserDal.ProjectIds.Add(projectId);
-        return await _userManager.UpdateAsync(existingUserDal);
+        var updatedUser = await _userRepository.UpdateAsync(existingUserDal)
+            ?? throw new Exception("An error occurred while updating the user's projects to the database");
+
+        return updatedUser;
     }
 }

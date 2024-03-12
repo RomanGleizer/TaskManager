@@ -11,10 +11,10 @@ namespace Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userService) : ControllerBase
+public class UsersController(IMapper mapper, IUserService userService) : ControllerBase
 {
     private readonly IMapper _mapper = mapper;
-    private readonly IUserService<UserDto, Guid> _userService = userService;
+    private readonly IUserService _userService = userService;
 
     /// <summary>
     /// Получает всех пользователей из базы данных
@@ -53,14 +53,14 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateUser([FromBody] UserDto dto)
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _userService.CreateUserAsync(dto);
+        var result = await _userService.CreateUserAsync(dto, dto.Password);
         if (result != null && result.Succeeded)
-            return CreatedAtAction(nameof(GetUserById), new { userId = dto.Id }, dto);
+            return CreatedAtAction(nameof(GetUserById), result);
 
         return BadRequest();
     }
@@ -92,12 +92,12 @@ public class UsersController(IMapper mapper, IUserService<UserDto, Guid> userSer
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateUser([FromRoute] Guid userId, [FromBody] UserDto dto)
+    public async Task<IActionResult> UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _userService.UpdateUserAsync(dto, userId);
+        var result = await _userService.UpdateUserAsync(userId, dto);
         if (result != null && result.Succeeded)
             return Ok();
 

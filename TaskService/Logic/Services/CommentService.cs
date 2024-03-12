@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using Core.Dal.Base;
+using Core.Exceptions;
 using Dal.Entities;
 using Dal.Interfaces;
 using Logic.DTO;
-using Core.Dal.Base;
-using Core.Exceptions;
 
 namespace Logic.Services;
 

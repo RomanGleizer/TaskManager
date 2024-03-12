@@ -1,5 +1,8 @@
 using AutoMapper;
+using ConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal.Base;
+using Core.HttpLogic;
 using Dal.Ef;
 using Dal.Entities;
 using Dal.Interfaces;
@@ -9,9 +12,6 @@ using Logic.Interfaces;
 using Logic.Mapper;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
-using Core.HttpLogic;
-using ConnectionLib.ConnectionServices.Interfaces;
-using ConnectionLib.ConnectionServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");

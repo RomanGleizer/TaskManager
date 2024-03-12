@@ -76,7 +76,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     /// <inheritdoc/>
     public async Task<IdentityResult> AddNewProject(int projectId, Guid memberId)
     {
-        var existingUserDal = await _userRepository.GetByIdAsync(memberId) 
+        var existingUserDal = await _userRepository.GetByIdAsync(memberId)
             ?? throw new ValidationException("User was not found in database", string.Empty);
 
         existingUserDal.ProjectIds.Add(projectId);

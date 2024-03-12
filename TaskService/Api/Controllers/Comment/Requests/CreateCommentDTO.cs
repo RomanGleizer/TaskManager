@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Api.Controllers.Comment.Requests;
+﻿namespace Api.Controllers.Comment.Requests;
 
 /// <summary>
 /// Модель запроса для создания комментария

@@ -1,8 +1,8 @@
-﻿using Core.HttpLogic.Services;
+﻿using ConnectionLib.ConnectionServices.DtoModels.TaskById;
+using ConnectionLib.ConnectionServices.Interfaces;
+using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using ConnectionLib.ConnectionServices.DtoModels.TaskById;
-using ConnectionLib.ConnectionServices.Interfaces;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -19,19 +19,24 @@ public class TaskConnectionService(IServiceProvider serviceProvider) : ITaskConn
     private readonly string _baseUrl = "https://localhost:7101/api/Tasks";
 
     /// <inheritdoc/>
-    public async Task<ExistingTaskApiResponse> GetExistingTaskAsync(ExistingTaskApiRequest request)
+    public async Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request)
     {
         var requestData = new HttpRequestData
         {
             Method = HttpMethod.Get,
-            Uri = new Uri($"{_baseUrl}/{request.TaskId}")
+            Uri = new Uri($"{_baseUrl}/projects/{request.ProjectId}")
         };
 
         var connectionData = new HttpConnectionData();
-        var response = await _httpRequestService.SendRequestAsync<ExistingTaskApiResponse>(requestData, connectionData).ConfigureAwait(false);
+        var response = await _httpRequestService.SendRequestAsync<IList<int>>(requestData, connectionData).ConfigureAwait(false);
 
         if (response.IsSuccessStatusCode)
-            return new ExistingTaskApiResponse { IsExists = true };
+        {
+            return new ExistingTaskInProjectResponse
+            {
+                TaskIds = response.Body
+            };
+        }
         else
             throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
     }

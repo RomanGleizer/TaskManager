@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
-using ConnectionLib.ConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Exceptions;
 using Domain.Entities;
@@ -38,11 +37,11 @@ public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUs
         var mappedProject = _mapper.Map<Project>(model);
         var createdProject = await _repository.AddProjectAsync(mappedProject);
 
-        // Самый первый участник - создатель проекта
+        // Самый первый участник - создатель проекта (в дальнейшем здесь можно будет изменить логику на проверку роли)
         var projectCreatorId = createdProject.MemberIds.FirstOrDefault();
 
         // При создании проекта он появляется в списке проектов создателя
-        await _userConnectionService.AddNewProjectAsync(new AddMemberInProjectApiRequest
+        await _userConnectionService.AddProjectToListOfUserProjects(new AddProjectToListOfUserProjectsRequest
         {
             ProjectId = createdProject.Id,
             MemberId = projectCreatorId

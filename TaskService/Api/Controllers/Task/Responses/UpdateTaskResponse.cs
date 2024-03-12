@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Api.Controllers.Task.Responses;
+﻿namespace Api.Controllers.Task.Responses;
 
 /// <summary>
 /// Представляет модель ответа для обновления задачи

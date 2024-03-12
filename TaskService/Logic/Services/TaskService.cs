@@ -1,12 +1,12 @@
-﻿using Dal.Interfaces;
-using Logic.DTO;
-using Core.Dal.Base;
-using AutoMapper;
-using Dal.Entities;
-using Core.Exceptions;
-using ConnectionLib.ConnectionServices.Interfaces;
+﻿using AutoMapper;
 using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
+using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal.Base;
+using Core.Exceptions;
+using Dal.Entities;
+using Dal.Interfaces;
+using Logic.DTO;
 
 namespace Logic.Services;
 
@@ -23,7 +23,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly IProjectConnectionService _projectConnectionService = projectConnectionService;
-     
+
     /// <inheritdoc/>
     public async Task<IList<TaskDTO>> GetAllDtosAsync()
     {

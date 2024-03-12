@@ -12,5 +12,5 @@ public interface ITaskConnectionService
     /// </summary>
     /// <param name="request">Запрос на получение информации о задаче</param>
     /// <returns>Задача, представляющая операцию получения информации о задаче</returns>
-    Task<ExistingTaskApiResponse> GetExistingTaskAsync(ExistingTaskApiRequest request);
+    Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request);
 }

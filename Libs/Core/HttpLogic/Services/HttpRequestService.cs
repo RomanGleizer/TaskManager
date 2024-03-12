@@ -134,14 +134,14 @@ internal class HttpRequestService : IHttpRequestService
         var response = await client.SendAsync(httpRequestMessage);
         var responseBody = await response.Content.ReadAsStringAsync();
 
-        TResponse deserializedResponse = default;
+        TResponse? deserializedResponse = default;
         try
         {
-            deserializedResponse = JsonConvert.DeserializeObject<TResponse>(responseBody);
+            deserializedResponse = JsonConvert.DeserializeObject<TResponse?>(responseBody);
         }
         catch (JsonException ex)
         {
-            Console.WriteLine($"Error deserializing response: {ex.Message}");
+            throw new JsonException(ex.Message);
         }
 
         return new HttpResponse<TResponse>

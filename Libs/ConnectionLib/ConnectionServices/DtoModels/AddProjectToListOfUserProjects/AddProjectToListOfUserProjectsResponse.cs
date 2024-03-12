@@ -2,7 +2,7 @@
 
 namespace ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
 
-public record AddMemberInProjectApiResponse
+public record AddProjectToListOfUserProjectsResponse
 {
     /// <summary>
     /// Получает или устанавливает идентификатор проекта

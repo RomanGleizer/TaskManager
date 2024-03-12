@@ -15,7 +15,7 @@ public class UserConnectionService(IServiceProvider serviceProvider) : IUserConn
     private readonly string _baseUrl = "https://localhost:7265/api/Users";
 
     /// <inheritdoc/>
-    public async Task<AddMemberInProjectApiResponse> AddNewProjectAsync(AddMemberInProjectApiRequest request)
+    public async Task<AddProjectToListOfUserProjectsResponse> AddProjectToListOfUserProjects(AddProjectToListOfUserProjectsRequest request)
     {
         var addMemberInProjectData = new HttpRequestData
         {
@@ -24,7 +24,7 @@ public class UserConnectionService(IServiceProvider serviceProvider) : IUserConn
         };
 
         var connectionData = new HttpConnectionData();
-        var addMemberResponse = await _httpRequestService.SendRequestAsync<AddMemberInProjectApiResponse>(addMemberInProjectData, connectionData);
+        var addMemberResponse = await _httpRequestService.SendRequestAsync<AddProjectToListOfUserProjectsResponse>(addMemberInProjectData, connectionData);
 
         if (addMemberResponse.IsSuccessStatusCode)
             return addMemberResponse.Body;

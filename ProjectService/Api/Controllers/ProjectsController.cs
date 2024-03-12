@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
-using ConnectionLib.ConnectionServices.DtoModels.TaskById;
-using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
-using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
 
 namespace Api.Controllers;
 
@@ -37,7 +36,7 @@ public class ProjectsController(IProjectService projectService, ITaskConnectionS
     /// <param name="model">Модель создания проекта</param>
     /// <returns>Данные о созданном проекте</returns>
     [HttpPost]
-    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProjectViewModel>(200)]
     public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectViewModel model)
     {
         var createdProjectViewModel = await _projectService.Create(model);
@@ -51,7 +50,7 @@ public class ProjectsController(IProjectService projectService, ITaskConnectionS
     /// <param name="model">Модель обновления проекта</param>
     /// <returns>Данные о обновленном проекте</returns>
     [HttpPut("{projectId}")]
-    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProjectViewModel>(200)]
     public async Task<IActionResult> UpdateProjectAsync([FromRoute] int projectId, [FromBody] UpdateProjectViewModel model)
     {
         var updatedProjectViewModel = await _projectService.Update(projectId, model);
@@ -64,7 +63,7 @@ public class ProjectsController(IProjectService projectService, ITaskConnectionS
     /// <param name="projectId">Идентификатор проекта для удаления</param>
     /// <returns>Данные об удаленном проекте</returns>
     [HttpDelete("{projectId}")]
-    [ProducesResponseType<ProjectViewModel>(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProjectViewModel>(200)]
     public async Task<IActionResult> DeleteProjectAsync([FromRoute] int projectId)
     {
         var deletedProjectViewModel = await _projectService.Delete(projectId);
@@ -74,28 +73,27 @@ public class ProjectsController(IProjectService projectService, ITaskConnectionS
     /// <summary>
     /// Получает задачу проекта по её идентификатору
     /// </summary>
+    /// /// <param name="taskId">Идентификатор проекта</param>
     /// <param name="taskId">Идентификатор задачи</param>
     /// <returns>Ответ с информацией о задаче</returns>
-    [HttpGet("tasks/{taskId}")]
-    [ProducesResponseType(typeof(ExistingTaskApiResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetExistingTask([FromRoute] int taskId)
+    [HttpGet("{projectId}/tasks/{taskId}")]
+    [ProducesResponseType<ExistingTaskInProjectResponse>(200)]
+    public async Task<IActionResult> GetExistingTask([FromRoute] int projectId, [FromRoute] int taskId)
     {
-        try
+        var existingTask = await _taskConnectionService.GetExistingTaskAsync(new ExistingTaskInProjectRequest
         {
-            var existingTask = await _taskConnectionService.GetExistingTaskAsync(new ExistingTaskApiRequest { TaskId = taskId });
-            if (existingTask != null && existingTask.IsExists)
-                return Ok(existingTask);
-            else
-                return NotFound("The task was not found in database");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
+            ProjectId = projectId,
+            TaskId = taskId
+        });
+
+        if (existingTask.TaskIds.Contains(taskId))
+            return Ok(new { Contains = true });
+        else
+            return NotFound("The task was not found in database");
     }
 
     [HttpPost("{projectId}/tasks/{taskId}")]
-    [ProducesResponseType(typeof(AddTaskInProjectApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType<AddTaskInProjectApiResponse>(200)]
     public async Task<IActionResult> AddTaskInProject([FromRoute] int projectId, [FromRoute] int taskId)
     {
         await _projectService.AddNewTaskInProject(projectId, taskId);

@@ -1,8 +1,8 @@
-﻿using Logic.DTO;
-using Core.Dal.Base;
-using Microsoft.AspNetCore.Mvc;
-using Api.Controllers.Comment.Requests;
+﻿using Api.Controllers.Comment.Requests;
 using Api.Controllers.Comment.Responses;
+using Core.Dal.Base;
+using Logic.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 

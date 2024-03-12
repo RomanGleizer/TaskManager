@@ -1,6 +1,4 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
-
-namespace Services.ViewModels.ProjectViewModels;
+﻿namespace Services.ViewModels.ProjectViewModels;
 
 /// <summary>
 /// Представление модели создания проекта

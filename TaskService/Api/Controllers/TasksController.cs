@@ -1,7 +1,7 @@
 ﻿using Api.Controllers.Task.Requests;
 using Api.Controllers.Task.Responses;
-using Logic.DTO;
 using Core.Dal.Base;
+using Logic.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -130,5 +130,21 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             PerformerIds = updatedTaskDal.PerformerIds,
             CommentIds = updatedTaskDal.CommentIds
         });
+    }
+
+    /// <summary>
+    /// Получает список всех задач из определнного проекта
+    /// </summary>
+    /// <param name="taskId">Идентификатор задачи</param>
+    [HttpGet("projects/{projectId}")]
+    public async Task<IActionResult> GetAllTasksFromCertainProject([FromRoute] int projectId)
+    {
+        var result = await _taskService.GetAllDtosAsync();
+        var tasks = result
+            .Where(t => t.ProjectId == projectId)
+            .Select(t => t.Id)
+            .ToList();
+
+        return Ok(tasks);
     }
 }

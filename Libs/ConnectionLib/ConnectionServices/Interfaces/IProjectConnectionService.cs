@@ -1,6 +1,5 @@
 ﻿using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
-using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
 
 namespace ConnectionLib.ConnectionServices.Interfaces;
 

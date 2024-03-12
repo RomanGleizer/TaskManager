@@ -1,6 +1,6 @@
-﻿using Dal.Entities;
+﻿using Core.Dal.Base;
 using Dal.EF;
-using Core.Dal.Base;
+using Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dal.Repositories;

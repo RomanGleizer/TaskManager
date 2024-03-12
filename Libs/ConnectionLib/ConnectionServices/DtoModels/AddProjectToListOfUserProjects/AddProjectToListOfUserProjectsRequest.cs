@@ -3,7 +3,7 @@
 /// <summary>
 /// Запрос на добавление участника в проект
 /// </summary>
-public record AddMemberInProjectApiRequest
+public record AddProjectToListOfUserProjectsRequest
 {
     /// <summary>
     /// Идентификатор проекта

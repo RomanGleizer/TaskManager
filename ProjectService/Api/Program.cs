@@ -1,14 +1,14 @@
 using AutoMapper;
+using ConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices.Interfaces;
+using Core.HttpLogic;
 using Domain.Interfaces;
 using Infastracted.Data;
 using Infastracted.EF;
+using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Mappers;
 using Services.Services;
-using Microsoft.EntityFrameworkCore;
-using Core.HttpLogic;
-using ConnectionLib.ConnectionServices;
-using ConnectionLib.ConnectionServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");

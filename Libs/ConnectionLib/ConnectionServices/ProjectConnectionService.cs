@@ -1,9 +1,9 @@
-﻿using Core.HttpLogic.Services;
+﻿using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
+using ConnectionLib.ConnectionServices.Interfaces;
+using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
-using ConnectionLib.ConnectionServices.Interfaces;
-using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
 
 namespace ConnectionLib.ConnectionServices;
 

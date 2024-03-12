@@ -5,7 +5,6 @@ using Dal.Entities;
 using Dal.Interfaces;
 using Dal.Repositories;
 using Logic.Dto.Role;
-using Logic.Dto.User;
 using Logic.Interfaces;
 using Logic.Mapper;
 using Logic.Services;
@@ -24,7 +23,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 
-builder.Services.AddTransient<IUserService<UserDto, Guid>, UserService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddTransient<IDtoService<RoleDto, int>, RoleService>();
 builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();

@@ -1,17 +1,10 @@
-﻿using Core.Dal.Base;
-using Microsoft.AspNetCore.Identity;
-
-namespace Dal.Entities;
+﻿namespace Logic.Dto.User;
 
 /// <summary>
-/// Представляет сущность пользователя в базе данных
+/// Представляет объект передачи данных для обновления пользователя
 /// </summary>
-public class UserDal : IdentityUser, IBaseEntity<Guid>
+public record UpdateUserDto
 {
-    /// <summary>
-    /// Получает или устанавливает идентификатор пользователя
-    /// </summary>
-    public required new Guid Id { get; init; }
 
     /// <summary>
     /// Получает или устанавливает имя пользователя
@@ -26,12 +19,12 @@ public class UserDal : IdentityUser, IBaseEntity<Guid>
     /// <summary>
     /// Получает или устанавливает электронную почту пользователя
     /// </summary>
-    public required new string Email { get; init; }
+    public required string Email { get; init; }
 
     /// <summary>
     /// Получает или устанавливает номер телефона пользователя
     /// </summary>
-    public required new string PhoneNumber { get; init; }
+    public required string PhoneNumber { get; init; }
 
     /// <summary>
     /// Получает или устанавливает дату рождения пользователя
@@ -39,18 +32,23 @@ public class UserDal : IdentityUser, IBaseEntity<Guid>
     public required DateTime BirthDay { get; init; }
 
     /// <summary>
-    /// Получает или устанавливает идентификатор роли пользователя
+    /// Получает или устанавливает пароль для пользователя
+    /// </summary>
+    public required string Password { get; init; }
+
+    /// <summary>
+    /// Устанавливает идентификатор роли пользователя
     /// </summary>
     public required int RoleId { get; init; }
 
     /// <summary>
-    /// Получает или устанавливает список идентификаторов проектов, в которых состоит пользователь
+    /// Устанавливает список идентификаторов проектов, связанных с пользователем
     /// </summary>
     public required IList<int> ProjectIds { get; init; }
 
     /// <summary>
     /// Возвращает или устанавливает имя пользователя, которое используется для аутентификации и идентификации пользователя
-    /// Для объекта UserDal возвращает значение свойства Email
+    /// Для объекта UserDto возвращает значение свойства Email
     /// </summary>
-    public override string UserName => Email;
+    public string UserName => Email;
 }

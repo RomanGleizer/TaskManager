@@ -1,55 +1,50 @@
-﻿using Core.Dal.Base;
+﻿using Logic.Dto.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logic.Interfaces;
 
 /// <summary>
-/// Интерфейс сервиса для работы с сущностями пользователей
+/// Представляет интерфейс сервиса пользователей.
 /// </summary>
-/// <typeparam name="TEntity">Тип сущности, представляющей пользовательские данные</typeparam>
-/// <typeparam name="TId">Тип идентификатора пользователя</typeparam>
-public interface IUserService<TEntity, TId>
-    where TEntity : IBaseDTO<TId>
+public interface IUserService
 {
     /// <summary>
-    /// Получает список пользователей по идентификатору
+    /// Получает все модели представления пользователей асинхронно
     /// </summary>
-    /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит список пользователей</returns>
-    Task<IList<TEntity>> GetAllUsersAsync();
+    /// <returns>Список всех моделей представления пользователей</returns>
+    Task<IList<UserDto>> GetAllUsersAsync();
 
     /// <summary>
-    /// Получает всех пользователей по идентификатору
+    /// Получает модель представления пользователя по указанному идентификатору асинхронно
     /// </summary>
     /// <param name="id">Идентификатор пользователя</param>
-    /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит объект пользователя</returns>
-    Task<TEntity> GetUserByIdAsync(TId id);
+    /// <returns>Модель представления пользователя с указанным идентификатором</returns>
+    Task<UserDto> GetUserByIdAsync(Guid id);
 
     /// <summary>
     /// Создает нового пользователя
     /// </summary>
-    /// <param name="dto">Данные пользователя для создания</param>
-    /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции создания пользователя</returns>
-    Task<IdentityResult> CreateUserAsync(TEntity dto);
+    /// <param name="user">Модель представления нового пользователя</param>
+    /// <returns>Модель представления созданного пользователя</returns>
+    Task<IdentityResult> CreateUserAsync(CreateUserDto user, string password);
 
     /// <summary>
-    /// Удаляет пользователя по идентификатору
+    /// Удаляет пользователя по указанному идентификатору
     /// </summary>
-    /// <param name="id">Идентификатор пользователя для удаления</param>
-    /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции удаления пользователя</returns>
-    Task<IdentityResult> DeleteUserAsync(TId id);
+    /// <param name="id">Идентификатор пользователя</param>
+    Task<IdentityResult> DeleteUserAsync(Guid id);
 
     /// <summary>
-    /// Обновляет данные пользователя
+    /// Обновляет информацию о пользователе
     /// </summary>
-    /// <param name="dto">Новые данные пользователя</param>
-    /// <param name="id">Идентификатор пользователя для обновления</param>
-    /// <returns>Задача, представляющая асинхронную операцию. Результат задачи содержит результат операции обновления данных пользователя</returns>
-    Task<IdentityResult> UpdateUserAsync(TEntity dto, TId id);
+    /// <param name="user">Модель представления пользователя с обновленной информацией</param>
+    Task<IdentityResult> UpdateUserAsync(Guid id, UpdateUserDto user);
 
     /// <summary>
-    /// Вступление в проект
+    /// Добавляет новый проект у пользователя
     /// </summary>
-    /// <param name="projectId">Идентификатор проекта, в который вступает пользователь</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="memberId">Идентификатор пользователя</param>
+    /// <returns></returns>
     Task<IdentityResult> AddNewProject(int projectId, Guid memberId);
 }

@@ -27,6 +27,7 @@ builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddTransient<IDtoService<RoleDto, int>, RoleService>();
 builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Exceptions;
+using Core.RPC;
 using Dal.Entities;
 using Dal.Interfaces;
 using Logic.Dto.User;
@@ -25,6 +26,9 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     public async Task<IList<UserDto>> GetAllUsersAsync()
     {
         var userDals = await _userRepository.GetAllAsync();
+
+        var publisher = new RPCPublisher("IdentityServiceQueue", "Hello, Identity Service");
+
         return _mapper.Map<IList<UserDto>>(userDals);
     }
 

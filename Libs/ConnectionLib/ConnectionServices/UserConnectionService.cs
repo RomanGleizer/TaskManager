@@ -5,6 +5,8 @@ using Core.HttpLogic.Services.Interfaces;
 using Core.RPC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -15,12 +17,14 @@ public class UserConnectionService : IUserConnectionService
 {
     private readonly IConfiguration _configuration;
     private readonly IHttpRequestService _httpRequestService;
+    private readonly ILogger<UserConnectionService> _logger;
     private readonly RPSConsumer _rpcConsumer;
     private readonly string _baseUrl = "https://localhost:7265/api/Users";
 
-    public UserConnectionService(IConfiguration configuration, IServiceProvider serviceProvider)
+    public UserConnectionService(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UserConnectionService> logger)
     {
         _configuration = configuration;
+        _logger = logger;
 
         if (_configuration.GetSection("ConnectionType").Value == "http")
         {
@@ -28,7 +32,7 @@ public class UserConnectionService : IUserConnectionService
         }
         else if (_configuration.GetSection("ConnectionType").Value == "rpc")
         {
-            _rpcConsumer = new RPSConsumer();
+            // _rpcConsumer = new RPSConsumer();
         }
         else
         {
@@ -67,35 +71,16 @@ public class UserConnectionService : IUserConnectionService
         if (addMemberResponse.IsSuccessStatusCode)
             return addMemberResponse.Body;
 
+        _logger.LogError("Не удалось добавить участника в проект. Код состояния: {StatusCode}", addMemberResponse.StatusCode);
         throw new HttpRequestException("Не удалось добавить участника в проект. Код состояния: " + addMemberResponse.StatusCode);
     }
 
     private async Task<AddProjectToListOfUserProjectsResponse> AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request)
     {
-        string message = $"JoinInProject {request.MemberId} {request.ProjectId}";
-        string response = await _rpcConsumer.CallAsync(message);
-
-        /// Ожидаем, что ответ имеет формат "MemberId ProjectId"
-        var parts = response.Split(' ');
-        if (parts.Length != 2)
-        {
-            throw new InvalidOperationException("Некорректный формат ответа от RPC.");
-        }
-
-        if (!Guid.TryParse(parts[0], out var memberId))
-        {
-            throw new InvalidOperationException("Невозможно распознать MemberId в ответе от RPC.");
-        }
-
-        if (!int.TryParse(parts[1], out var projectId))
-        {
-            throw new InvalidOperationException("Невозможно распознать ProjectId в ответе от RPC.");
-        }
-
         return new AddProjectToListOfUserProjectsResponse
         {
-            MemberId = memberId,
-            ProjectId = projectId
+            ProjectId = default,
+            MemberId = default
         };
     }
 }

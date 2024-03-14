@@ -91,7 +91,7 @@ public class UsersController(IUserService userService) : ControllerBase
     /// <returns>Результат действия, указывающий на успешность операции</returns>
     [HttpPost("{memberId}/projects/{projectId}")]
     [ProducesResponseType<IdentityResult>(200)]
-    public async Task<IActionResult> JoinInProject([FromRoute] int projectId, [FromRoute] Guid memberId)
+    public async Task<IActionResult> AddProjectToListOfUserProjects([FromRoute] int projectId, [FromRoute] Guid memberId)
     {
         var result = await _userService.AddNewProject(projectId, memberId);
         return Ok(result);

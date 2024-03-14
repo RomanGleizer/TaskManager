@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Libs\ConnectionLib\ConnectionLib.csproj" />
-    <ProjectReference Include="..\..\Libs\Core\Core.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

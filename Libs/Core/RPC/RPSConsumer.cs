@@ -1,46 +1,32 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Collections.Concurrent;
 using System.Text;
 
 namespace Core.RPC;
 
-/// <summary>
-/// RPSConsumer - класс, ответственный за асинхронное потребление удаленных вызовов процедур (RPC). 
-/// Он устанавливает соединение с сервером RabbitMQ и создает очередь для приема запросов RPC. 
-/// Также предоставляет метод для выполнения RPC-вызовов и асинхронного получения ответов.
-/// </summary>
-public class RPSConsumer : IDisposable
+public class RPSConsumer : BackgroundService
 {
-    private const string QueueName = "rpc_queue";
-
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly string _queueName;
-    private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> callbackMapper = new();
 
-    /// <summary>
-    /// Конструктор класса RPSConsumer. Инициализирует соединение и канал с сервером RabbitMQ, 
-    /// объявляет очередь для приема запросов RPC и настраивает обработчик для асинхронной обработки входящих сообщений.
-    /// </summary>
     public RPSConsumer()
     {
         var factory = new ConnectionFactory { HostName = "localhost" };
 
+        _queueName = "IdentityServiceQueue";
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
-        _queueName = _channel.QueueDeclare().QueueName;
+        _channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
         var consumer = new EventingBasicConsumer(model: _channel);
         consumer.Received += (model, ea) =>
         {
-            if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out var tcs))
-                return;
+            var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+            _channel.BasicAck(ea.DeliveryTag, false);
 
-            var body = ea.Body.ToArray();
-            var response = Encoding.UTF8.GetString(body);
-
-            tcs.TrySetResult(response);
+            Console.WriteLine(content);
         };
 
         _channel.BasicConsume(
@@ -49,35 +35,30 @@ public class RPSConsumer : IDisposable
             autoAck: true);
     }
 
-    /// <summary>
-    /// Выполняет асинхронный RPC-вызов с указанным сообщением. Возвращает задачу, представляющую ответ от сервера RPC.
-    /// </summary>
-    /// <param name="message">Сообщение, которое будет отправлено в рамках вызова RPC.</param>
-    /// <param name="cancellationToken">(Опционально) CancellationToken, который можно использовать для отмены вызова RPC.</param>
-    /// <returns>Задача Task<string>, представляющая ответ от сервера RPC.</returns>
-    public Task<string> CallAsync(string message, CancellationToken cancellationToken = default)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var props = _channel.CreateBasicProperties();
-        var correlationId = Guid.NewGuid().ToString();
-        props.CorrelationId = correlationId;
-        props.ReplyTo = _queueName;
+        stoppingToken.ThrowIfCancellationRequested();
 
-        var messageBytes = Encoding.UTF8.GetBytes(message);
-        var tcs = new TaskCompletionSource<string>();
-        callbackMapper.TryAdd(correlationId, tcs);
+        var consumer = new EventingBasicConsumer(model: _channel);
+        consumer.Received += (model, ea) =>
+        {
+            var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+            _channel.BasicAck(ea.DeliveryTag, false);
+        };
 
-        _channel.BasicPublish(
-            exchange: string.Empty,
-            routingKey: QueueName,
-            basicProperties: props,
-            body: messageBytes);
+        _channel.BasicConsume(
+            consumer: consumer,
+            queue: _queueName,
+            autoAck: true);
 
-        cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out _));
-        return tcs.Task;
+        return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
+        _channel.Close();
         _connection.Close();
+
+        base.Dispose();
     }
 }

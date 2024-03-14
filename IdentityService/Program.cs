@@ -3,6 +3,7 @@ using ConnectionLib.ConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal.Base;
 using Core.HttpLogic;
+using Core.RPC;
 using Dal.Ef;
 using Dal.Entities;
 using Dal.Interfaces;
@@ -32,6 +33,8 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
 
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
+
+builder.Services.AddHostedService<RPSConsumer>();
 
 builder.Services
     .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection))

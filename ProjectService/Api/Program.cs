@@ -2,6 +2,7 @@ using AutoMapper;
 using ConnectionLib.ConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic;
+using Core.RPC;
 using Domain.Interfaces;
 using Infastracted.Data;
 using Infastracted.EF;
@@ -28,6 +29,8 @@ builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
 builder.Services.AddTransient<IUserConnectionService, UserConnectionService>();
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
+
+builder.Services.AddSingleton<RPSConsumer>();
 
 builder.Services.AddHttpRequestService();
 

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Dal\**" />
+    <Compile Remove="Logic\**" />
+    <Content Remove="Dal\**" />
+    <Content Remove="Logic\**" />
+    <EmbeddedResource Remove="Dal\**" />
+    <EmbeddedResource Remove="Logic\**" />
+    <None Remove="Dal\**" />
+    <None Remove="Logic\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Libs\ConnectionLib\ConnectionLib.csproj" />
+    <ProjectReference Include="..\Libs\Core\Core.csproj" />
+    <ProjectReference Include="Logic\Logic\Logic.csproj" />
+  </ItemGroup>
+
+</Project>

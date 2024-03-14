@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Api.Controllers.Task.Responses;
+﻿namespace Api.Controllers.Task.Responses;
 
 /// <summary>
 /// Представляет модель ответа для обновления задачи
@@ -36,7 +33,7 @@ public class UpdateTaskResponse
     /// <summary>
     /// Получает или инициализирует список идентификаторов исполнителей, связанных с задачей
     /// </summary>
-    public required IList<string> PerformerIds { get; init; }
+    public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
     /// Получает или инициализирует список идентификаторов комментариев, связанных с задачей

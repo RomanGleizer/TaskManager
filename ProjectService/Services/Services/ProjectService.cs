@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Exceptions;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -10,72 +12,56 @@ namespace Services.Services;
 /// <summary>
 /// Сервис для управления проектами
 /// </summary>
-public class ProjectService : IProjectService
+public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUserConnectionService userConnectionService) : IProjectService
 {
-    private readonly IProjectRepository _repository;
-    private readonly IMemberRepository _memberRepository;
-    private readonly IMapper _mapper;
+    private readonly IProjectRepository _repository = storeProject;
+    private readonly IMapper _mapper = mapper;
+    private readonly IUserConnectionService _userConnectionService = userConnectionService;
 
-    public ProjectService(IProjectRepository storeProject, IMapper mapper, IMemberRepository memberRepository)
-    {
-        _repository = storeProject;
-        _mapper = mapper;
-        _memberRepository = memberRepository;
-    }
-
-    /// <summary>
-    /// Получает информацию о проекте по его идентификатору
-    /// </summary>
-    /// <param name="id">Идентификатор проекта</param>
-    /// <returns>Модель представления проекта или null, если проект не найден</returns>
-    public async Task<ProjectViewModel?> GetById(int id)
+    private async Task<Project> GetExistingProject(int id)
     {
         var existingProject = await _repository.GetProjectByIdAsync(id);
-        if (existingProject == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
+        return existingProject ?? throw new ValidationException("Project was not found in database", string.Empty);
+    }
 
+    /// <inheritdoc/>
+    public async Task<ProjectViewModel> GetById(int id)
+    {
+        var existingProject = await GetExistingProject(id);
         return _mapper.Map<ProjectViewModel>(existingProject);
     }
 
-    /// <summary>
-    /// Создает новый проект
-    /// </summary>
-    /// <param name="model">Модель создания проекта</param>
-    /// <returns>Модель представления созданного проекта или null, если операция не удалась</returns>
-    public async Task<ProjectViewModel?> Create(CreateProjectViewModel model)
+    /// <inheritdoc/>
+    public async Task<ProjectViewModel> Create(CreateProjectViewModel model)
     {
         var mappedProject = _mapper.Map<Project>(model);
         var createdProject = await _repository.AddProjectAsync(mappedProject);
+
+        // Самый первый участник - создатель проекта (в дальнейшем здесь можно будет изменить логику на проверку роли)
+        var projectCreatorId = createdProject.MemberIds.FirstOrDefault();
+
+        // При создании проекта он появляется в списке проектов создателя
+        await _userConnectionService.AddProjectToListOfUserProjects(new AddProjectToListOfUserProjectsRequest
+        {
+            ProjectId = createdProject.Id,
+            MemberId = projectCreatorId
+        });
+
         return _mapper.Map<ProjectViewModel>(createdProject);
     }
 
-    /// <summary>
-    /// Удаляет проект по его идентификатору
-    /// </summary>
-    /// <param name="id">Идентификатор проекта для удаления</param>
-    /// <returns>Модель представления удаленного проекта или null, если операция не удалась</returns>
-    public async Task<ProjectViewModel?> Delete(int id)
+    /// <inheritdoc/>
+    public async Task<ProjectViewModel> Delete(int id)
     {
-        var existingProject = await _repository.GetProjectByIdAsync(id);
-        if (existingProject == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
-
+        var existingProject = await GetExistingProject(id);
         var removedProject = await _repository.DeleteProjectAsync(existingProject);
         return _mapper.Map<ProjectViewModel>(removedProject);
     }
 
-    /// <summary>
-    /// Обновляет информацию о проекте
-    /// </summary>
-    /// <param name="id">Идентификатор проекта для обновления</param>
-    /// <param name="model">Модель обновления проекта</param>
-    /// <returns>Модель представления обновленного проекта или null, если операция не удалась</returns>
-    public async Task<ProjectViewModel?> Update(int id, UpdateProjectViewModel model)
+    /// <inheritdoc/>
+    public async Task<ProjectViewModel> Update(int id, UpdateProjectViewModel model)
     {
-        var existingProject = await _repository.GetProjectByIdAsync(id);
-        if (existingProject == null)
-            throw new ValidationException("Project was not found in database", string.Empty);
-
+        var existingProject = await GetExistingProject(id);
         existingProject = existingProject with
         {
             Name = model.Name,
@@ -83,20 +69,18 @@ public class ProjectService : IProjectService
             LastUpdatedDate = model.LastUpdatedDate,
             MemberIds = model.MemberIds
         };
-
-        var updatedMembers = new List<Member>();
-        foreach (var memberId in model.MemberIds)
-        {
-            var member = await _memberRepository.GetMemberByIdAsync(memberId);
-            updatedMembers.Add(member);
-        }
-
-        existingProject = existingProject with
-        {
-            Members = updatedMembers
-        };
-
         var updatedProject = await _repository.UpdateProjectAsync(existingProject);
         return _mapper.Map<ProjectViewModel>(updatedProject);
+    }
+
+    /// <inheritdoc/>
+    public async Task AddNewTaskInProject(int projectId, int taskId)
+    {
+        var existingProject = await GetExistingProject(projectId);
+        if (!existingProject.TaskIds.Contains(taskId))
+        {
+            existingProject.TaskIds.Add(taskId);
+            await _repository.SaveChangesAsync();
+        }
     }
 }

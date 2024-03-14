@@ -1,66 +1,69 @@
-﻿using Dal.Interfaces;
-using Logic.DTO;
-using Logic.Interfaces;
-using AutoMapper;
-using Dal.Entities;
+﻿using AutoMapper;
+using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
+using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal.Base;
 using Core.Exceptions;
+using Dal.Entities;
+using Dal.Interfaces;
+using Logic.DTO;
 
 namespace Logic.Services;
 
 /// <summary>
 /// Сервис для работы с задачами
 /// </summary>
-public class TaskService : IDtoService<TaskDTO, int>
+/// <remarks>
+/// Конструктор сервиса задач
+/// </remarks>
+/// <param name="unitOfWork">Единица работы с данными</param>
+/// <param name="mapper">Маппер для преобразования между объектами</param>
+public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnectionService projectConnectionService) : IDtoService<TaskDTO, int>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
+    private readonly IProjectConnectionService _projectConnectionService = projectConnectionService;
 
-    /// <summary>
-    /// Конструктор сервиса задач
-    /// </summary>
-    /// <param name="unitOfWork">Единица работы с данными</param>
-    /// <param name="mapper">Маппер для преобразования между объектами</param>
-    public TaskService(IUnitOfWork unitOfWork, IMapper mapper)
-    {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-    }
-
-    /// <summary>
-    /// Получить все объекты DTO задач
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<IList<TaskDTO>> GetAllDtosAsync()
     {
         var allTaskDals = await _unitOfWork.Tasks.GetAllAsync();
         return _mapper.Map<IList<TaskDal>, IList<TaskDTO>>(allTaskDals);
     }
 
-    /// <summary>
-    /// Получить объект DTO задачи по идентификатору асинхронно
-    /// </summary>
-    /// <param name="taskId">Идентификатор задачи</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> GetDtoByIdAsync(int taskId)
     {
         var taskDal = await GetExistingTaskAsync(taskId);
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
-    /// <summary>
-    /// Создать объект DTO задачи асинхронно
-    /// </summary>
-    /// <param name="taskDTO">DTO задачи для создания</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)
     {
         var taskDal = _mapper.Map<TaskDal>(taskDTO);
-
         await _unitOfWork.Tasks.CreateAsync(taskDal);
+
+        /// Получаем проект по его Id из микросервиса ProjectService
+        var project = await _projectConnectionService.GetProjectByIdAsync(new ExistingProjectApiRequest
+        {
+            ProjectId = taskDal.ProjectId
+        });
+
+        /// Добавляем задачу в спискок задач проекта
+        if (project != null)
+        {
+            await _projectConnectionService.AddTaskInProjectAsync(new AddTaskInProjectApiRequest
+            {
+                ProjectId = project.Id,
+                TaskId = taskDal.Id
+            });
+        }
+
         return _mapper.Map<TaskDTO>(taskDal);
     }
 
-    /// <summary>
-    /// Удалить объект DTO задачи асинхронно по идентификатору
-    /// </summary>
-    /// <param name="taskId">Идентификатор задачи</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> DeleteDtoAsync(int taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
@@ -69,23 +72,22 @@ public class TaskService : IDtoService<TaskDTO, int>
         return _mapper.Map<TaskDTO>(existingTaskDal);
     }
 
-    /// <summary>
-    /// Обновить объект DTO задачи асинхронно
-    /// </summary>
-    /// <param name="taskDTO">DTO задачи для обновления</param>
-    /// <param name="taskId">Идентификатор задачи</param>
+    /// <inheritdoc/>
     public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, int taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
 
-        existingTaskDal.Name = taskDTO.Name;
-        existingTaskDal.Description = taskDTO.Description;
-        existingTaskDal.ExecutionStatus = taskDTO.ExecutionStatus;
-        existingTaskDal.CreatedDate = taskDTO.CreatedDate;
-        existingTaskDal.LastUpdateDate = taskDTO.LastUpdateDate;
-        existingTaskDal.PerformerIds = taskDTO.PerformerIds;
-        existingTaskDal.CommentIds = taskDTO.CommentIds;
-        existingTaskDal.ProjectId = taskDTO.ProjectId;
+        existingTaskDal = existingTaskDal with
+        {
+            Name = taskDTO.Name,
+            Description = taskDTO.Description,
+            ExecutionStatus = taskDTO.ExecutionStatus,
+            CreatedDate = taskDTO.CreatedDate,
+            LastUpdateDate = taskDTO.LastUpdateDate,
+            PerformerIds = taskDTO.PerformerIds,
+            CommentIds = taskDTO.CommentIds,
+            ProjectId = taskDTO.ProjectId
+        };
 
         foreach (var commentId in taskDTO.CommentIds)
         {
@@ -93,10 +95,6 @@ public class TaskService : IDtoService<TaskDTO, int>
             if (comment != null)
                 existingTaskDal.Comments.Add(comment);
         }
-
-        var project = await _unitOfWork.Projects.GetByIdAsync(taskDTO.ProjectId);
-        if (project != null)
-            existingTaskDal.Project = project;
 
         await _unitOfWork.Tasks.UpdateAsync(existingTaskDal);
         return _mapper.Map<TaskDTO>(existingTaskDal);
@@ -109,8 +107,6 @@ public class TaskService : IDtoService<TaskDTO, int>
     private async Task<TaskDal> GetExistingTaskAsync(int taskId)
     {
         var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
-        if (existingTaskDal == null)
-            throw new ValidationException("Task was not found in database", string.Empty);
-        return existingTaskDal;
+        return existingTaskDal ?? throw new ValidationException("Task was not found in database", string.Empty);
     }
 }

@@ -1,6 +1,6 @@
-﻿using Dal.Interfaces;
-using Dal.Entities;
+﻿using Core.Dal.Base;
 using Dal.EF;
+using Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dal.Repositories;
@@ -20,46 +20,49 @@ public class TaskRepository : IRepository<TaskDal, int>
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// Возвращает все сущности ProjectTask из базы данных
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<IList<TaskDal>> GetAllAsync()
     {
         return await _dbContext.Tasks.ToListAsync();
     }
 
-    /// <summary>
-    /// Асинхронно возвращает сущность ProjectTask с заданным идентификатором из базы данных
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<TaskDal?> GetByIdAsync(int id)
     {
         return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    /// <summary>
-    /// Асинхронно создает новую сущность ProjectTask в базе данных
-    /// </summary>
-    public async Task CreateAsync(TaskDal item)
+    /// <inheritdoc/>
+    public async Task<TaskDal?> CreateAsync(TaskDal item)
     {
-        await _dbContext.Tasks.AddAsync(item);
-        await _dbContext.SaveChangesAsync();
+        var createdEntity = await _dbContext.Tasks.AddAsync(item);
+        await SaveChangesAsync();
+
+        return createdEntity.Entity;
     }
 
-    /// <summary>
-    /// Асинхронно удаляет сущность ProjectTask с заданным идентификатором из базы данных
-    /// </summary>
-    public async Task DeleteAsync(TaskDal item)
+    /// <inheritdoc/>
+    public async Task<TaskDal?> DeleteAsync(TaskDal item)
     {
-        _dbContext.Tasks.Remove(item);
-        await _dbContext.SaveChangesAsync();
+        var removedEntity = _dbContext.Tasks.Remove(item);
+        await SaveChangesAsync();
+
+        return removedEntity.Entity;
     }
 
-    /// <summary>
-    /// Обновляет существующую сущность ProjectTask в базе данных
-    /// </summary>
-    public async Task UpdateAsync(TaskDal item)
+    /// <inheritdoc/>
+    public async Task<TaskDal?> UpdateAsync(TaskDal item)
     {
-        _dbContext.Entry(item).State = EntityState.Modified;
+        var entriedEntity = _dbContext.Entry(item);
+        entriedEntity.State = EntityState.Modified;
+        await SaveChangesAsync();
+
+        return entriedEntity.Entity;
+    }
+
+    /// <inheritdoc/>
+    public async Task SaveChangesAsync()
+    {
         await _dbContext.SaveChangesAsync();
     }
 }

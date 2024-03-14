@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Api.Controllers.Comment.Requests;
+﻿namespace Api.Controllers.Comment.Requests;
 
 /// <summary>
 /// Модель запроса для создания комментария
@@ -25,7 +23,7 @@ public record CreateCommentDTO
     /// <summary>
     /// Получает или устанавливает идентификатор автора комментария
     /// </summary>
-    public required string AuthorId { get; init; }
+    public required Guid AuthorId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор задачи, к которой относится комментарий

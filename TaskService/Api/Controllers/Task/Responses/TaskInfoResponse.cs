@@ -38,7 +38,7 @@ public class TaskInfoResponse
     /// <summary>
     /// Получает или инициализирует перечисление идентификаторов исполнителей, связанных с задачей
     /// </summary>
-    public required IList<string> PerformerIds { get; init; }
+    public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
     /// Получает или инициализирует список идентификаторов комментариев, связанных с задачей

@@ -23,7 +23,7 @@ public class DeleteCommentResponse
     /// <summary>
     /// Получает или устанавливает идентификатор автора удаленного комментария
     /// </summary>
-    public required string AuthorId { get; init; }
+    public required Guid AuthorId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор задачи, к которой относится удаленный комментарий

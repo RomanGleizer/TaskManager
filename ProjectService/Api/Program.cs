@@ -1,11 +1,14 @@
 using AutoMapper;
+using ConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices.Interfaces;
+using Core.HttpLogic;
 using Domain.Interfaces;
 using Infastracted.Data;
 using Infastracted.EF;
+using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Mappers;
 using Services.Services;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -20,12 +23,13 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
 builder.Services.AddTransient<IProjectService, ProjectService>();
-builder.Services.AddTransient<IMemberRepository, MemberRepository>();
-builder.Services.AddTransient<IMemberService, MemberService>();
-builder.Services.AddTransient<IRoleRepository, RoleRepository>();
-builder.Services.AddTransient<IRoleService, RoleService>();
+
+builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
+builder.Services.AddTransient<IUserConnectionService, UserConnectionService>();
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
+
+builder.Services.AddHttpRequestService();
 
 builder.Services.AddDbContext<ProjectServiceDbContext>(options => options.UseSqlServer(connection));
 

@@ -5,55 +5,50 @@ namespace Logic.DTO;
 /// <summary>
 /// DTO объект задачи
 /// </summary>
-public class TaskDTO : IBaseDTO<int>
+public record TaskDTO : IBaseDTO<int>
 {
     /// <summary>
     /// Идентификатор задачи
     /// </summary>
-    public int Id { get; set; }
+    public required int Id { get; init; }
 
     /// <summary>
     /// Название задачи
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Описание задачи
     /// </summary>
-    public string Description { get; set; }
+    public required string Description { get; init; }
 
     /// <summary>
     /// Текущий статус выполнения
     /// </summary>
-    public ExecutionStatus ExecutionStatus { get; set; }
+    public required ExecutionStatus ExecutionStatus { get; init; }
 
     /// <summary>
     /// Дата создания задачи
     /// </summary>
-    public DateTime CreatedDate { get; set; }
+    public required DateTime CreatedDate { get; init; }
 
     /// <summary>
     /// Дата последнего внесенного изменения
     /// </summary>
-    public DateTime LastUpdateDate { get; set; }
-
-    /// <summary>
-    /// Идентификатор постановщика задачи
-    /// </summary>
-    public string StageDirectorId { get; set; }
+    public required DateTime LastUpdateDate { get; init; }
 
     /// <summary>
     /// Идентификаторы исполнителей задачи
     /// </summary>
-    public IList<string> PerformerIds { get; set; }
+    public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
     /// Идентификаторы комментариев
     /// </summary>
-    public IList<int> CommentIds { get; set; }
+    public required IList<int> CommentIds { get; init; }
 
     /// <summary>
     /// Идентификатор проекта, к которому относится задача
     /// </summary>
-    public int ProjectId { get; set; }
+    public required int ProjectId { get; init; }
 }

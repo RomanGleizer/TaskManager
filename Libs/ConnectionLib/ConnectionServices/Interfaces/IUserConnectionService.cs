@@ -1,4 +1,4 @@
-﻿using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+﻿using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 
 namespace ConnectionLib.ConnectionServices.Interfaces;
 

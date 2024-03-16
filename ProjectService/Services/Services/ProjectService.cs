@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Exceptions;
 using Domain.Entities;

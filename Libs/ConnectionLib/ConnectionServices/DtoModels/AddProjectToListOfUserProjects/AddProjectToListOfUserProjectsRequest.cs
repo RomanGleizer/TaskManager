@@ -1,4 +1,4 @@
-﻿namespace ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+﻿namespace ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 
 /// <summary>
 /// Запрос на добавление участника в проект

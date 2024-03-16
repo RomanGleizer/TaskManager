@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+namespace ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 
 public record AddProjectToListOfUserProjectsResponse
 {

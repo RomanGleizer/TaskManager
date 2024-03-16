@@ -1,4 +1,5 @@
-﻿using ConnectionLib.ConnectionServices.DtoModels.AddMemberInProject;
+﻿using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
+using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
@@ -6,7 +7,6 @@ using Core.RPC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -16,15 +16,21 @@ namespace ConnectionLib.ConnectionServices;
 public class UserConnectionService : IUserConnectionService
 {
     private readonly IConfiguration _configuration;
-    private readonly IHttpRequestService _httpRequestService;
     private readonly ILogger<UserConnectionService> _logger;
-    private readonly RPSConsumer _rpcConsumer;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IHttpRequestService? _httpRequestService;
+    private readonly RabbitMQBackgroundUserConnectionService? _rpcConsumer;
     private readonly string _baseUrl = "https://localhost:7265/api/Users";
 
-    public UserConnectionService(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UserConnectionService> logger)
+    public UserConnectionService(
+        IConfiguration configuration,
+        IServiceProvider serviceProvider,
+        ILogger<UserConnectionService> logger,
+        IServiceScopeFactory serviceScopeFactory)
     {
         _configuration = configuration;
         _logger = logger;
+        _serviceScopeFactory = serviceScopeFactory;
 
         if (_configuration.GetSection("ConnectionType").Value == "http")
         {
@@ -32,7 +38,7 @@ public class UserConnectionService : IUserConnectionService
         }
         else if (_configuration.GetSection("ConnectionType").Value == "rpc")
         {
-            // _rpcConsumer = new RPSConsumer();
+            _rpcConsumer = new RabbitMQBackgroundUserConnectionService(_serviceScopeFactory);
         }
         else
         {
@@ -49,11 +55,16 @@ public class UserConnectionService : IUserConnectionService
         }
         else if (_rpcConsumer != null)
         {
-            return await AddProjectWithRPC(request);
+            await AddProjectWithRPC(request);
+            return new AddProjectToListOfUserProjectsResponse
+            {
+                MemberId = default,
+                ProjectId = default
+            };
         }
         else
         {
-            throw new InvalidOperationException("No valid communication method configured.");
+            throw new Exception("Не получилось настроить метод связи");
         }
     }
 
@@ -66,21 +77,27 @@ public class UserConnectionService : IUserConnectionService
         };
 
         var connectionData = new HttpConnectionData();
-        var addMemberResponse = await _httpRequestService.SendRequestAsync<AddProjectToListOfUserProjectsResponse>(addMemberInProjectData, connectionData);
 
-        if (addMemberResponse.IsSuccessStatusCode)
-            return addMemberResponse.Body;
+        if (_httpRequestService != null)
+        {
+            var addMemberResponse = await _httpRequestService.SendRequestAsync<AddProjectToListOfUserProjectsResponse>(addMemberInProjectData, connectionData);
 
-        _logger.LogError("Не удалось добавить участника в проект. Код состояния: {StatusCode}", addMemberResponse.StatusCode);
-        throw new HttpRequestException("Не удалось добавить участника в проект. Код состояния: " + addMemberResponse.StatusCode);
+            if (addMemberResponse.IsSuccessStatusCode)
+                return addMemberResponse.Body;
+
+            _logger.LogError("Не удалось добавить участника в проект. Код состояния: {StatusCode}", addMemberResponse.StatusCode);
+            throw new HttpRequestException("Не удалось добавить участника в проект. Код состояния: " + addMemberResponse.StatusCode);
+        }
+        else
+        {
+            throw new Exception("UserConnectionService имеет значение null");
+        }
     }
 
-    private async Task<AddProjectToListOfUserProjectsResponse> AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request)
+    private async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request)
     {
-        return new AddProjectToListOfUserProjectsResponse
-        {
-            ProjectId = default,
-            MemberId = default
-        };
+        var publisher = new RPCPublisher<AddProjectToListOfUserProjectsRequest>("UserConnectionServiceQueue", request);
+        await publisher.PublishAsync();
+        publisher.Dispose();
     }
 }

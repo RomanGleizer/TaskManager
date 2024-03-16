@@ -1,5 +1,6 @@
 using AutoMapper;
 using ConnectionLib.ConnectionServices;
+using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal.Base;
 using Core.HttpLogic;
@@ -34,7 +35,7 @@ builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionServic
 
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 
-builder.Services.AddHostedService<RPSConsumer>();
+builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
 
 builder.Services
     .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection))

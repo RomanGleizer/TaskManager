@@ -42,7 +42,7 @@ public class UserConnectionService : IUserConnectionService
         }
         else
         {
-            throw new InvalidOperationException("Invalid configuration value for 'ConnectionType'");
+            throw new InvalidOperationException("Недопустимое значение конфигурации для 'ConnectionType'");
         }
     }
 

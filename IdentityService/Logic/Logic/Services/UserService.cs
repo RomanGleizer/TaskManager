@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Core.Exceptions;
-using Core.RPC;
 using Dal.Entities;
 using Dal.Interfaces;
 using Logic.Dto.User;
@@ -33,7 +32,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     public async Task<UserDto> GetUserByIdAsync(Guid id)
     {
         var existingUserDal = await _userRepository.GetByIdAsync(id)
-            ?? throw new ValidationException("User was not found in database", string.Empty);
+            ?? throw new ValidationException("Пользователь не найден в базе данных", string.Empty);
 
         return _mapper.Map<UserDto>(existingUserDal);
     }
@@ -43,7 +42,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     {
         var userDal = _mapper.Map<UserDal>(dto);
         var createdEntity = await _userRepository.CreateAsync(userDal, password)
-            ?? throw new Exception("An error occurred while creating the user to the database");
+            ?? throw new Exception("Произошла ошибка при добавлении пользователя в базу данных");
 
         return createdEntity;
     }
@@ -52,10 +51,10 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     public async Task<IdentityResult> DeleteUserAsync(Guid id)
     {
         var existingUser = await _userRepository.GetByIdAsync(id)
-                    ?? throw new Exception("User was not found in database");
+            ?? throw new Exception("Пользователь не найден в базе данных");
 
         var deletedUser = await _userRepository.DeleteAsync(existingUser)
-            ?? throw new Exception("An error occurred while deleting the user to the database");
+            ?? throw new Exception("Произошла ошибка при удалении пользователя из базы данных");
 
         return deletedUser;
     }
@@ -64,12 +63,12 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     public async Task<IdentityResult> UpdateUserAsync(Guid id, UpdateUserDto dto)
     {
         var existingUser = await _userRepository.GetByIdAsync(id)
-            ?? throw new Exception("User was not found in database");
+            ?? throw new Exception("Пользователь не найден в базе данных");
 
         _mapper.Map(dto, existingUser);
 
         var updatedUser = await _userRepository.UpdateAsync(existingUser)
-            ?? throw new Exception("An error occurred while updating the user to the database");
+            ?? throw new Exception("Произошла ошибка при обновлении пользователя в базе данных");
 
         return updatedUser;
     }
@@ -78,11 +77,11 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
     public async Task<IdentityResult> AddNewProject(int projectId, Guid memberId)
     {
         var existingUserDal = await _userRepository.GetByIdAsync(memberId)
-            ?? throw new ValidationException("User was not found in database", string.Empty);
+            ?? throw new ValidationException("Пользователь не найден в базе данных", string.Empty);
 
         existingUserDal.ProjectIds.Add(projectId);
         var updatedUser = await _userRepository.UpdateAsync(existingUserDal)
-            ?? throw new Exception("An error occurred while updating the user's projects to the database");
+            ?? throw new Exception("Произошла ошибка при обновлении проектов пользователя в базе данных");
 
         return updatedUser;
     }

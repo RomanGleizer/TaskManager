@@ -21,7 +21,7 @@ public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUs
     private async Task<Project> GetExistingProject(int id)
     {
         var existingProject = await _repository.GetProjectByIdAsync(id);
-        return existingProject ?? throw new ValidationException("Project was not found in database", string.Empty);
+        return existingProject ?? throw new ValidationException("Не удалось найти существующий проектв БД", string.Empty);
     }
 
     /// <inheritdoc/>

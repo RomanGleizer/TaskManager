@@ -12,7 +12,6 @@ using Infastracted.Data;
 using Infastracted.EF;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Services.Interfaces;
 using Services.Mappers;
 using Services.Services;

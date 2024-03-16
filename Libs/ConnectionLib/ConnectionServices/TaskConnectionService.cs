@@ -1,6 +1,4 @@
 ﻿using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
-using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
-using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
@@ -47,14 +45,17 @@ public class TaskConnectionService : ITaskConnectionService
         }
         else
         {
-            throw new InvalidOperationException("Invalid configuration value for 'ConnectionType'");
+            throw new InvalidOperationException("Недопустимое значение конфигурации для 'ConnectionType'");
         }
     }
 
     /// <inheritdoc/>
     public async Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request)
     {
-
+        return new ExistingTaskInProjectResponse
+        {
+            TaskIds = default
+        };
     }
 
     private async Task<ExistingTaskInProjectResponse> GetExistingTaskWithHttp(ExistingTaskInProjectRequest request)

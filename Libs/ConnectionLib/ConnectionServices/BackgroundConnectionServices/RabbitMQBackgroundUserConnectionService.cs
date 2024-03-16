@@ -41,7 +41,7 @@ public class RabbitMQBackgroundUserConnectionService : BackgroundService
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
             var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsResponse>(message)
-                ?? throw new Exception("Произошла ошибка при десериализации AddProjectToListOfUserProjectsResponse");
+                ?? throw new Exception("Произошла ошибка при десериализации типа данных AddProjectToListOfUserProjectsResponse");
 
             using var scope = _serviceScopeFactory.CreateScope();
 

@@ -4,7 +4,6 @@ using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal.Base;
 using Core.HttpLogic;
-using Core.RPC;
 using Dal.Ef;
 using Dal.Entities;
 using Dal.Interfaces;

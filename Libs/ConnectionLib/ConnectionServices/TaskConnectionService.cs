@@ -1,8 +1,13 @@
-﻿using ConnectionLib.ConnectionServices.DtoModels.TaskById;
+﻿using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
+using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
+using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -13,13 +18,46 @@ namespace ConnectionLib.ConnectionServices;
 /// Инициализирует новый экземпляр класса TaskConnectionService с указанным провайдером сервисов
 /// </remarks>
 /// <param name="serviceProvider">Провайдер сервисов</param>
-public class TaskConnectionService(IServiceProvider serviceProvider) : ITaskConnectionService
+public class TaskConnectionService : ITaskConnectionService
 {
-    private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<UserConnectionService> _logger;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly RabbitMQBackgroundTaskConnectionService? _rpcConsumer;
+    private readonly IHttpRequestService _httpRequestService;
     private readonly string _baseUrl = "https://localhost:7101/api/Tasks";
+
+    public TaskConnectionService(
+        IConfiguration configuration,
+        IServiceProvider serviceProvider,
+        ILogger<UserConnectionService> logger,
+        IServiceScopeFactory serviceScopeFactory)
+    {
+        _configuration = configuration;
+        _logger = logger;
+        _serviceScopeFactory = serviceScopeFactory;
+
+        if (_configuration.GetSection("ConnectionType").Value == "http")
+        {
+            _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+        }
+        else if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        {
+            _rpcConsumer = new RabbitMQBackgroundTaskConnectionService(_serviceScopeFactory);
+        }
+        else
+        {
+            throw new InvalidOperationException("Invalid configuration value for 'ConnectionType'");
+        }
+    }
 
     /// <inheritdoc/>
     public async Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request)
+    {
+
+    }
+
+    private async Task<ExistingTaskInProjectResponse> GetExistingTaskWithHttp(ExistingTaskInProjectRequest request)
     {
         var requestData = new HttpRequestData
         {
@@ -32,12 +70,17 @@ public class TaskConnectionService(IServiceProvider serviceProvider) : ITaskConn
 
         if (response.IsSuccessStatusCode)
         {
-            return new ExistingTaskInProjectResponse
-            {
-                TaskIds = response.Body
-            };
+            return new ExistingTaskInProjectResponse { TaskIds = response.Body };
         }
         else
-            throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+        {
+            _logger.LogError("Не удалось найти задачу. Код состояния: {StatusCode}", response.StatusCode);
+            throw new HttpRequestException($"Запрос завершился неудачно с кодом состояния {response.StatusCode}");
+        }
+    }
+
+    private async Task GetExistingTaskWithRpc()
+    {
+
     }
 }

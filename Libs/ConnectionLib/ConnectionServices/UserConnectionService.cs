@@ -55,11 +55,11 @@ public class UserConnectionService : IUserConnectionService
         }
         else if (_rpcConsumer != null)
         {
-            await AddProjectWithRPC(request);
+            await AddProjectWithRPC(request, "UserConnectionServiceQueue");
             return new AddProjectToListOfUserProjectsResponse
             {
-                MemberId = default,
-                ProjectId = default
+                MemberId = request.MemberId,
+                ProjectId = request.ProjectId
             };
         }
         else
@@ -94,9 +94,9 @@ public class UserConnectionService : IUserConnectionService
         }
     }
 
-    private async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request)
+    private async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request, string queueName)
     {
-        var publisher = new RPCPublisher<AddProjectToListOfUserProjectsRequest>("UserConnectionServiceQueue", request);
+        var publisher = new RPCPublisher<AddProjectToListOfUserProjectsRequest>(queueName, request);
         await publisher.PublishAsync();
         publisher.Dispose();
     }

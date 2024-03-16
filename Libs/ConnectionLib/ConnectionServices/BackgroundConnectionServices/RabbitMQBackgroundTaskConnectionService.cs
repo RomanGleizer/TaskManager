@@ -1,31 +1,26 @@
-﻿using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
-using Logic.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 
-public class RabbitMQBackgroundUserConnectionService : BackgroundService
+public class RabbitMQBackgroundTaskConnectionService : BackgroundService
 {
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly string _queueName;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public RabbitMQBackgroundUserConnectionService(IServiceScopeFactory serviceScopeFactory)
+    public RabbitMQBackgroundTaskConnectionService(IServiceScopeFactory serviceScopeFactory)
     {
         var factory = new ConnectionFactory { HostName = "localhost" };
 
-        _queueName = "UserConnectionServiceQueue";
+        _queueName = "TaskConnectionServiceQueue";
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
         _serviceScopeFactory = serviceScopeFactory;
-
-        _channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -33,6 +28,7 @@ public class RabbitMQBackgroundUserConnectionService : BackgroundService
         stoppingToken.ThrowIfCancellationRequested();
 
         var consumer = new EventingBasicConsumer(model: _channel);
+
         consumer.Received += (model, ea) =>
         {
             var content = Encoding.UTF8.GetString(ea.Body.ToArray());
@@ -40,15 +36,7 @@ public class RabbitMQBackgroundUserConnectionService : BackgroundService
 
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsResponse>(message)
-                ?? throw new Exception("Произошла ошибка при десериализации AddProjectToListOfUserProjectsResponse");
-
-            using var scope = _serviceScopeFactory.CreateScope();
-
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>()
-                ?? throw new Exception("Произошла ошибка при получении UserService");
-
-            var result = userService.AddNewProject(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.MemberId).Result;
+            // Логика добавления задачи
         };
 
         _channel.BasicConsume(

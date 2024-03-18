@@ -1,4 +1,5 @@
-﻿using Dal.Ef;
+﻿using Core.Dal.Base;
+using Dal.Ef;
 using Dal.Entities;
 using Dal.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dal.Repositories;
 
-public class UserRepository(IdentityServiceDbContext context, UserManager<UserDal> userManager) : IUserRepository
+public class UserRepository(IdentityServiceDbContext context, UserManager<UserDal> userManager) : IUserRepository<UserDal>
 {
     private readonly IdentityServiceDbContext _context = context;
     private readonly UserManager<UserDal> _userManager = userManager;

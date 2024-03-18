@@ -6,7 +6,7 @@ namespace Dal.Entities;
 /// <summary>
 /// Представляет сущность пользователя в базе данных
 /// </summary>
-public class UserDal : IdentityUser, IBaseEntity<Guid>
+public class UserDal : IdentityUser, IBaseEntity<Guid>, IProjectsContainer
 {
     /// <summary>
     /// Получает или устанавливает идентификатор пользователя

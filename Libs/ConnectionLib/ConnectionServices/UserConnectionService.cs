@@ -19,22 +19,21 @@ public class UserConnectionService<TService> : IUserConnectionService
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<UserConnectionService<TService>> _logger;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IServiceProvider _serviceProvider;
     private readonly string _baseUrl;
 
     private readonly IHttpRequestService? _httpRequestService;
-    private readonly RabbitMQBackgroundUserConnectionService<TService>? _rpcConsumer;
+    private readonly RabbitMQBackgroundUserConnectionService? _rpcConsumer;
 
     public UserConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<UserConnectionService<TService>> logger,
-        IServiceScopeFactory serviceScopeFactory)
+        ILogger<UserConnectionService<TService>> logger)
     {
         _baseUrl = "https://localhost:7265/api/Users";
         _configuration = configuration;
         _logger = logger;
-        _serviceScopeFactory = serviceScopeFactory;
+        _serviceProvider = serviceProvider;
 
         if (_configuration.GetSection("ConnectionType").Value == "http")
         {
@@ -42,7 +41,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else if (_configuration.GetSection("ConnectionType").Value == "rpc")
         {
-            _rpcConsumer = new RabbitMQBackgroundUserConnectionService<TService>(_serviceScopeFactory);
+            _rpcConsumer = new RabbitMQBackgroundUserConnectionService(_serviceProvider);
         }
         else
         {

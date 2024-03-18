@@ -2,6 +2,7 @@ using AutoMapper;
 using ConnectionLib.ConnectionServices;
 using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal;
 using Core.Dal.Base;
 using Core.HttpLogic;
 using Dal.Ef;
@@ -28,13 +29,15 @@ builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddTransient<IDtoService<RoleDto, int>, RoleService>();
 builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 
 builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
 
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 
-builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService<UserService>>();
+builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
+
+builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
 
 builder.Services
     .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection))

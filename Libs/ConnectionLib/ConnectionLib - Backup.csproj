@@ -7,16 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libs\Core\Core.csproj" />
-    <ProjectReference Include="..\..\Dal\Dal.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <Reference Include="Logic">
+      <HintPath>..\..\IdentityService\Logic\obj\Debug\net8.0\Logic.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -41,7 +41,7 @@ public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUs
         var projectCreatorId = createdProject.MemberIds.FirstOrDefault();
 
         // При создании проекта он появляется в списке проектов создателя
-        await _userConnectionService.AddProjectToListOfUserProjects(new AddProjectToListOfUserProjectsRequest
+        await _userConnectionService.AddProjectIdToListOfUserProjectIds(new AddProjectToListOfUserProjectsRequest
         {
             ProjectId = createdProject.Id,
             MemberId = projectCreatorId

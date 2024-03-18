@@ -2,14 +2,16 @@ using AutoMapper;
 using ConnectionLib.ConnectionServices;
 using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal;
+using Core.Dal.Base;
 using Core.HttpLogic;
 using Dal.Ef;
 using Dal.Entities;
-using Dal.Interfaces;
 using Dal.Repositories;
 using Domain.Interfaces;
 using Infastracted.Data;
 using Infastracted.EF;
+using Logic.Interfaces;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
@@ -17,7 +19,10 @@ using Services.Mappers;
 using Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+var identityDbConnection = builder.Configuration.GetConnectionString("IdentityDbConnection");
+
 var mapperProfile = new MapperConfiguration(config => config.AddProfile(new MapperProfile()));
 
 builder.Services.AddControllers();
@@ -35,14 +40,14 @@ builder.Services.AddTransient<IUserConnectionService, UserConnectionService<User
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
 
-builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService<UserService>>();
+builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
 
 builder.Services.AddHttpRequestService();
 
 builder.Services.AddDbContext<ProjectServiceDbContext>(options => options.UseSqlServer(connection));
 
 builder.Services
-    .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection")))
+    .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(identityDbConnection))
     .AddIdentity<UserDal, RoleDal>(options =>
     {
         options.Password.RequiredLength = 8;
@@ -55,8 +60,9 @@ builder.Services
     })
     .AddEntityFrameworkStores<IdentityServiceDbContext>();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
 
 var app = builder.Build();
 

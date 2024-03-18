@@ -6,52 +6,37 @@ using System.Text;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 
-public class RabbitMQBackgroundTaskConnectionService : BackgroundService
+public class RabbitMQBackgroundTaskConnectionService(IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
-    private readonly IConnection _connection;
-    private readonly IModel _channel;
-    private readonly string _queueName;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
+    private readonly string _queueName = "TaskConnectionServiceQueue";
 
-    public RabbitMQBackgroundTaskConnectionService(IServiceScopeFactory serviceScopeFactory)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        using var scope = _serviceScopeFactory.CreateScope();
+
         var factory = new ConnectionFactory { HostName = "localhost" };
+        var connection = factory.CreateConnection();
+        var channel = connection.CreateModel();
 
-        _queueName = "TaskConnectionServiceQueue";
-        _connection = factory.CreateConnection();
-        _channel = _connection.CreateModel();
-        _serviceScopeFactory = serviceScopeFactory;
-    }
+        channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        stoppingToken.ThrowIfCancellationRequested();
-
-        var consumer = new EventingBasicConsumer(model: _channel);
-
+        var consumer = new EventingBasicConsumer(model: channel);
         consumer.Received += (model, ea) =>
         {
             var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-            _channel.BasicAck(ea.DeliveryTag, false);
+            channel.BasicAck(ea.DeliveryTag, false);
 
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            // Логика добавления задачи
+            // што-та
         };
 
-        _channel.BasicConsume(
+        channel.BasicConsume(
             consumer: consumer,
             queue: _queueName,
             autoAck: true);
 
-        return Task.CompletedTask;
-    }
-
-    public override void Dispose()
-    {
-        _channel.Close();
-        _connection.Close();
-
-        base.Dispose();
+        await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 }

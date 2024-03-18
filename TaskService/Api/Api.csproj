@@ -13,16 +13,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libs\ConnectionLib\ConnectionLib.csproj" />
     <ProjectReference Include="..\..\Libs\Core\Core.csproj" />
-    <ProjectReference Include="..\Dal\Dal.csproj" />
-    <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Dal">
-      <HintPath>..\Dal\bin\Debug\net8.0\Dal.dll</HintPath>
+      <HintPath>..\Dal\obj\Debug\net8.0\Dal.dll</HintPath>
     </Reference>
     <Reference Include="Logic">
-      <HintPath>..\Logic\bin\Debug\net8.0\Logic.dll</HintPath>
+      <HintPath>..\Logic\obj\Debug\net8.0\Logic.dll</HintPath>
     </Reference>
   </ItemGroup>
 

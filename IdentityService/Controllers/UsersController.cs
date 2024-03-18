@@ -1,4 +1,5 @@
-﻿using Logic.Dto.User;
+﻿using Core.Dal.Base;
+using Logic.Dto.User;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,10 @@ namespace Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IUserService userService) : ControllerBase
+public class UsersController(IUserService userService, IAddProjectIdToProjectIdList addProjectId) : ControllerBase
 {
     private readonly IUserService _userService = userService;
+    private readonly IAddProjectIdToProjectIdList _addProjectIdToProjectIdList = addProjectId;
 
     /// <summary>
     /// Получает всех пользователей из базы данных
@@ -93,7 +95,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [ProducesResponseType<IdentityResult>(200)]
     public async Task<IActionResult> AddProjectToListOfUserProjects([FromRoute] int projectId, [FromRoute] Guid memberId)
     {
-        var result = await _userService.AddNewProject(projectId, memberId);
+        var result = await _addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(projectId, memberId);
         return Ok(result);
     }
 }

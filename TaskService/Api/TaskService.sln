@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "..\Logic\Logic.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\..\Libs\Core\Core.csproj", "{C945A37F-6885-4BC9-B3B1-78FFA4F2BFD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectionLib", "..\..\Libs\ConnectionLib\ConnectionLib.csproj", "{AF3021CA-56DB-433B-804C-B5E76018B7F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectionLib", "..\..\Libs\ConnectionLib\ConnectionLib.csproj", "{2E4BFE1D-B195-4901-A6ED-0B6399722349}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{C945A37F-6885-4BC9-B3B1-78FFA4F2BFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C945A37F-6885-4BC9-B3B1-78FFA4F2BFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C945A37F-6885-4BC9-B3B1-78FFA4F2BFD8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF3021CA-56DB-433B-804C-B5E76018B7F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF3021CA-56DB-433B-804C-B5E76018B7F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF3021CA-56DB-433B-804C-B5E76018B7F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF3021CA-56DB-433B-804C-B5E76018B7F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E4BFE1D-B195-4901-A6ED-0B6399722349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E4BFE1D-B195-4901-A6ED-0B6399722349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E4BFE1D-B195-4901-A6ED-0B6399722349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E4BFE1D-B195-4901-A6ED-0B6399722349}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

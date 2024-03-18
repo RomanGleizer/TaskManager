@@ -39,12 +39,4 @@ public interface IUserService
     /// </summary>
     /// <param name="user">Модель представления пользователя с обновленной информацией</param>
     Task<IdentityResult> UpdateUserAsync(Guid id, UpdateUserDto user);
-
-    /// <summary>
-    /// Добавляет новый проект у пользователя
-    /// </summary>
-    /// <param name="projectId">Идентификатор проекта</param>
-    /// <param name="memberId">Идентификатор пользователя</param>
-    /// <returns></returns>
-    Task<IdentityResult> AddNewProject(int projectId, Guid memberId);
 }

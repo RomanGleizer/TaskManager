@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Core.Exceptions;
 using Dal.Entities;
-using Dal.Interfaces;
+using Core.Dal.Base;
 using Logic.Dto.User;
-using Logic.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Logic.Interfaces;
 
 namespace Logic.Services;
 
@@ -16,10 +16,10 @@ namespace Logic.Services;
 /// </remarks>
 /// <param name="userRepository">Репозиторий для пользователей</param>
 /// <param name="mapper">Объект для отображения объектов между различными типами, используя AutoMapper</param>
-public class UserService(IMapper mapper, IUserRepository userRepository) : IUserService
+public class UserService(IMapper mapper, IUserRepository<UserDal> userRepository) : IUserService
 {
     private readonly IMapper _mapper = mapper;
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IUserRepository<UserDal> _userRepository = userRepository;
 
     /// <inheritdoc/>
     public async Task<IList<UserDto>> GetAllUsersAsync()
@@ -69,19 +69,6 @@ public class UserService(IMapper mapper, IUserRepository userRepository) : IUser
 
         var updatedUser = await _userRepository.UpdateAsync(existingUser)
             ?? throw new Exception("Произошла ошибка при обновлении пользователя в базе данных");
-
-        return updatedUser;
-    }
-
-    /// <inheritdoc/>
-    public async Task<IdentityResult> AddNewProject(int projectId, Guid memberId)
-    {
-        var existingUserDal = await _userRepository.GetByIdAsync(memberId)
-            ?? throw new ValidationException("Пользователь не найден в базе данных", string.Empty);
-
-        existingUserDal.ProjectIds.Add(projectId);
-        var updatedUser = await _userRepository.UpdateAsync(existingUserDal)
-            ?? throw new Exception("Произошла ошибка при обновлении проектов пользователя в базе данных");
 
         return updatedUser;
     }

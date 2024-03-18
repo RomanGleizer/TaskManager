@@ -3,7 +3,7 @@
 /// <summary>
 /// Представляет запрос на добавление задачи в проект
 /// </summary>
-public record AddTaskInProjectApiRequest
+public record AddTaskIdInProjectTaskIdsRequest
 {
     /// <summary>
     /// Получает или устанавливает идентификатор проекта, в который необходимо добавить задачу

@@ -45,20 +45,19 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
         await _unitOfWork.Tasks.CreateAsync(taskDal);
 
         /// Получаем проект по его Id из микросервиса ProjectService
-        var project = await _projectConnectionService.GetProjectByIdAsync(new ExistingProjectApiRequest
-        {
-            ProjectId = taskDal.ProjectId
-        });
+        var project = await _projectConnectionService.GetProjectByIdAsync(
+            new ExistingProjectApiRequest
+        { 
+            ProjectId = taskDal.ProjectId 
+        })
+        ?? throw new ValidationException("Проект не найден в БД", string.Empty);
 
         /// Добавляем задачу в спискок задач проекта
-        if (project != null)
+        await _projectConnectionService.AddTaskIdInProjectTaskIdsAsync(new AddTaskIdInProjectTaskIdsRequest
         {
-            await _projectConnectionService.AddTaskInProjectAsync(new AddTaskInProjectApiRequest
-            {
-                ProjectId = project.Id,
-                TaskId = taskDal.Id
-            });
-        }
+            ProjectId = project.Id,
+            TaskId = taskDal.Id
+        });
 
         return _mapper.Map<TaskDTO>(taskDal);
     }
@@ -107,6 +106,6 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     private async Task<TaskDal> GetExistingTaskAsync(int taskId)
     {
         var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
-        return existingTaskDal ?? throw new ValidationException("Task was not found in database", string.Empty);
+        return existingTaskDal ?? throw new ValidationException("Задача не найдена в бд", string.Empty);
     }
 }

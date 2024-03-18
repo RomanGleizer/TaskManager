@@ -1,6 +1,6 @@
 ﻿namespace Core.Dal.Base;
 
-public interface IProjectsContainer
+public interface IProjectIdsContainer
 {
     IList<int> ProjectIds { get; }
 }

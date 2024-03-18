@@ -19,6 +19,12 @@
     <Reference Include="Dal">
       <HintPath>..\Dal\obj\Debug\net8.0\Dal.dll</HintPath>
     </Reference>
+    <Reference Include="Domain">
+      <HintPath>..\..\ProjectService\Domain\obj\Debug\net8.0\Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="Infastracted">
+      <HintPath>..\..\ProjectService\Infastracted\obj\Debug\net8.0\Infastracted.dll</HintPath>
+    </Reference>
     <Reference Include="Logic">
       <HintPath>..\Logic\obj\Debug\net8.0\Logic.dll</HintPath>
     </Reference>

@@ -93,7 +93,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else
         {
-            throw new Exception("UserConnectionService имеет значение null");
+            throw new Exception($"{typeof(UserConnectionService<TService>)} имеет значение null");
         }
     }
 

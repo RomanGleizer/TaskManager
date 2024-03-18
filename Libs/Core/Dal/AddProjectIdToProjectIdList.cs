@@ -14,7 +14,7 @@ public class AddProjectIdToProjectIdList<TDal>(IUserRepository<TDal> userReposit
         var existingUserDal = await _userRepository.GetByIdAsync(memberId)
             ?? throw new ValidationException("Пользователь не найден в базе данных", string.Empty);
 
-        if (existingUserDal is IProjectsContainer container)
+        if (existingUserDal is IProjectIdsContainer container)
             container.ProjectIds.Add(projectId);
 
         var updatedUser = await _userRepository.UpdateAsync(existingUserDal)

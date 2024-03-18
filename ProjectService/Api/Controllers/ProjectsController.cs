@@ -1,6 +1,7 @@
 ﻿using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
@@ -12,10 +13,14 @@ namespace Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class ProjectsController(IProjectService projectService, ITaskConnectionService taskConnectionService) : ControllerBase
+public class ProjectsController(
+    IProjectService projectService, 
+    ITaskConnectionService taskConnectionService,
+    IAddTaskIdToProjectIdList addProjectIdToProjectIdList) : ControllerBase
 {
     private readonly IProjectService _projectService = projectService;
     private readonly ITaskConnectionService _taskConnectionService = taskConnectionService;
+    private readonly IAddTaskIdToProjectIdList _addTaskIdToProjectIdList = addProjectIdToProjectIdList;
 
     /// <summary>
     /// Получает проект по его идентификатору
@@ -93,10 +98,9 @@ public class ProjectsController(IProjectService projectService, ITaskConnectionS
     }
 
     [HttpPost("{projectId}/tasks/{taskId}")]
-    [ProducesResponseType<AddTaskInProjectApiResponse>(200)]
     public async Task<IActionResult> AddTaskInProject([FromRoute] int projectId, [FromRoute] int taskId)
     {
-        await _projectService.AddNewTaskInProject(projectId, taskId);
+        await _addTaskIdToProjectIdList.AddNewTaskIdInProjectIdList(projectId, taskId);
         return Ok();
     }
 }

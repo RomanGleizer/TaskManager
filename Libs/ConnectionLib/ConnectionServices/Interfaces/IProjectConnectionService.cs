@@ -20,5 +20,5 @@ public interface IProjectConnectionService
     /// </summary>
     /// <param name="request">Запрос на добавление задачи в проект</param>
     /// <returns>Задача, представляющая операцию добавления задачи в проект</returns>
-    Task<AddTaskInProjectApiResponse> AddTaskInProjectAsync(AddTaskInProjectApiRequest request);
+    Task<AddTaskIdInProjectTaskIdsResponse> AddTaskIdInProjectTaskIdsAsync(AddTaskIdInProjectTaskIdsRequest request);
 }

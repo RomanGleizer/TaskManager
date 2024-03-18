@@ -12,7 +12,10 @@ namespace Services.Services;
 /// <summary>
 /// Сервис для управления проектами
 /// </summary>
-public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUserConnectionService userConnectionService) : IProjectService
+public class ProjectService(
+    IProjectRepository storeProject, 
+    IMapper mapper, 
+    IUserConnectionService userConnectionService) : IProjectService
 {
     private readonly IProjectRepository _repository = storeProject;
     private readonly IMapper _mapper = mapper;
@@ -71,16 +74,5 @@ public class ProjectService(IProjectRepository storeProject, IMapper mapper, IUs
         };
         var updatedProject = await _repository.UpdateProjectAsync(existingProject);
         return _mapper.Map<ProjectViewModel>(updatedProject);
-    }
-
-    /// <inheritdoc/>
-    public async Task AddNewTaskInProject(int projectId, int taskId)
-    {
-        var existingProject = await GetExistingProject(projectId);
-        if (!existingProject.TaskIds.Contains(taskId))
-        {
-            existingProject.TaskIds.Add(taskId);
-            await _repository.SaveChangesAsync();
-        }
     }
 }

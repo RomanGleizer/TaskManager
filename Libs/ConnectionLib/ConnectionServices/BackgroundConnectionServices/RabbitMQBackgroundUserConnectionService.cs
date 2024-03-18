@@ -36,8 +36,8 @@ public class RabbitMQBackgroundUserConnectionService(IServiceProvider servicePro
 
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsResponse>(message)
-                ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsResponse)}");
+            var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
+                ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsRequest)}");
 
             var result = await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.MemberId);
         };

@@ -5,7 +5,7 @@ namespace ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 /// <summary>
 /// Представляет ответ API на запрос добавления задачи в проект
 /// </summary>
-public record AddTaskInProjectApiResponse
+public record AddTaskIdInProjectTaskIdsResponse
 {
     /// <summary>
     /// Получает или устанавливает идентификатор проекта

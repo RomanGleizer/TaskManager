@@ -5,7 +5,7 @@ namespace Domain.Entities;
 /// <summary>
 /// Представляет информацию о проекте
 /// </summary>
-public record Project : IBaseEntity<int>
+public record Project : IBaseEntity<int>, ITaskIdsContainer
 {
     /// <summary>
     /// Получает или задает идентификатор проекта

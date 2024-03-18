@@ -8,6 +8,7 @@ using Core.HttpLogic;
 using Dal.Ef;
 using Dal.Entities;
 using Dal.Repositories;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infastracted.Data;
 using Infastracted.EF;
@@ -63,6 +64,8 @@ builder.Services
 builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
+
+builder.Services.AddTransient<IAddTaskIdToProjectIdList, AddTaskIdToProjectIdList<Project>>();
 
 var app = builder.Build();
 

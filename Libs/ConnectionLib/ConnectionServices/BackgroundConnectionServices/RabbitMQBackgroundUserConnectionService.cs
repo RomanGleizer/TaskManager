@@ -1,5 +1,5 @@
 ﻿using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
-using Logic.Services;
+using Logic.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
@@ -9,7 +9,8 @@ using System.Text;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 
-public class RabbitMQBackgroundUserConnectionService : BackgroundService
+public class RabbitMQBackgroundUserConnectionService<TService> : BackgroundService
+    where TService : IUserService
 {
     private readonly IConnection _connection;
     private readonly IModel _channel;
@@ -45,7 +46,7 @@ public class RabbitMQBackgroundUserConnectionService : BackgroundService
 
             using var scope = _serviceScopeFactory.CreateScope();
 
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>()
+            var userService = scope.ServiceProvider.GetRequiredService<TService>()
                 ?? throw new Exception("Произошла ошибка при получении UserService");
 
             var result = userService.AddNewProject(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.MemberId).Result;

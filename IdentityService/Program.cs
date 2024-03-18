@@ -34,7 +34,7 @@ builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionServic
 
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
 
-builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
+builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService<UserService>>();
 
 builder.Services
     .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection))

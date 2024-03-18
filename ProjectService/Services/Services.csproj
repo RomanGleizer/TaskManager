@@ -12,13 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Libs\ConnectionLib\ConnectionLib.csproj" />
+    <ProjectReference Include="..\..\Libs\Core\Core.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Core">
-      <HintPath>..\..\Core\bin\Debug\net8.0\Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

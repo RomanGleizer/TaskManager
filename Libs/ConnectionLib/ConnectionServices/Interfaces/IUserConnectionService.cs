@@ -12,5 +12,5 @@ public interface IUserConnectionService
     /// </summary>
     /// <param name="request">Запрос на добавление участника в проект</param>
     /// <returns>Задача, представляющая операцию добавления участника в проект</returns>
-    Task<AddProjectToListOfUserProjectsResponse> AddProjectToListOfUserProjects(AddProjectToListOfUserProjectsRequest request);
+    Task<AddProjectToListOfUserProjectsResponse> AddProjectIdToListOfUserProjectIds(AddProjectToListOfUserProjectsRequest request);
 }

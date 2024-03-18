@@ -4,6 +4,7 @@ using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Core.RPC;
+using Logic.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,21 +14,24 @@ namespace ConnectionLib.ConnectionServices;
 /// <summary>
 /// Сервис для управления соединением пользователей
 /// </summary>
-public class UserConnectionService : IUserConnectionService
+public class UserConnectionService<TService> : IUserConnectionService
+    where TService : IUserService
 {
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserConnectionService> _logger;
+    private readonly ILogger<UserConnectionService<TService>> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly string _baseUrl;
+
     private readonly IHttpRequestService? _httpRequestService;
-    private readonly RabbitMQBackgroundUserConnectionService? _rpcConsumer;
-    private readonly string _baseUrl = "https://localhost:7265/api/Users";
+    private readonly RabbitMQBackgroundUserConnectionService<TService>? _rpcConsumer;
 
     public UserConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<UserConnectionService> logger,
+        ILogger<UserConnectionService<TService>> logger,
         IServiceScopeFactory serviceScopeFactory)
     {
+        _baseUrl = "https://localhost:7265/api/Users";
         _configuration = configuration;
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
@@ -38,7 +42,7 @@ public class UserConnectionService : IUserConnectionService
         }
         else if (_configuration.GetSection("ConnectionType").Value == "rpc")
         {
-            _rpcConsumer = new RabbitMQBackgroundUserConnectionService(_serviceScopeFactory);
+            _rpcConsumer = new RabbitMQBackgroundUserConnectionService<TService>(_serviceScopeFactory);
         }
         else
         {
@@ -47,7 +51,7 @@ public class UserConnectionService : IUserConnectionService
     }
 
     /// <inheritdoc/>
-    public async Task<AddProjectToListOfUserProjectsResponse> AddProjectToListOfUserProjects(AddProjectToListOfUserProjectsRequest request)
+    public async Task<AddProjectToListOfUserProjectsResponse> AddProjectIdToListOfUserProjectIds(AddProjectToListOfUserProjectsRequest request)
     {
         if (_httpRequestService != null)
         {

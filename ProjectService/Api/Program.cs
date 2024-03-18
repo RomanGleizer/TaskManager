@@ -31,11 +31,11 @@ builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
 builder.Services.AddTransient<IProjectService, ProjectService>();
 
 builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
-builder.Services.AddTransient<IUserConnectionService, UserConnectionService>();
+builder.Services.AddTransient<IUserConnectionService, UserConnectionService<UserService>>();
 
 builder.Services.AddSingleton(mapperProfile.CreateMapper());
 
-builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
+builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService<UserService>>();
 
 builder.Services.AddHttpRequestService();
 

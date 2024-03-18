@@ -3,6 +3,7 @@ using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
+using Logic.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,18 +20,20 @@ namespace ConnectionLib.ConnectionServices;
 public class TaskConnectionService : ITaskConnectionService
 {
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserConnectionService> _logger;
+    private readonly ILogger<UserConnectionService<UserService>> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly string _baseUrl;
+
     private readonly RabbitMQBackgroundTaskConnectionService? _rpcConsumer;
-    private readonly IHttpRequestService _httpRequestService;
-    private readonly string _baseUrl = "https://localhost:7101/api/Tasks";
+    private readonly IHttpRequestService? _httpRequestService;
 
     public TaskConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<UserConnectionService> logger,
+        ILogger<UserConnectionService<UserService>> logger,
         IServiceScopeFactory serviceScopeFactory)
     {
+        _baseUrl = "https://localhost:7101/api/Tasks";
         _configuration = configuration;
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;

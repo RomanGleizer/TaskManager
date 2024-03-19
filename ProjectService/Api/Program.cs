@@ -8,7 +8,6 @@ using Core.HttpLogic;
 using Dal.Ef;
 using Dal.Entities;
 using Dal.Repositories;
-using Domain.Entities;
 using Domain.Interfaces;
 using Infastracted.Data;
 using Infastracted.EF;
@@ -21,34 +20,28 @@ using Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Конфигурация подключений
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 var identityDbConnection = builder.Configuration.GetConnectionString("IdentityDbConnection");
 
+// Конфигурация AutoMapper
 var mapperProfile = new MapperConfiguration(config => config.AddProfile(new MapperProfile()));
+var mapper = mapperProfile.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
+// Добавление сервисов
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.EnableAnnotations();
-});
-
-builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
-builder.Services.AddTransient<IProjectService, ProjectService>();
-
-builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
-builder.Services.AddTransient<IUserConnectionService, UserConnectionService<UserService>>();
-
-builder.Services.AddSingleton(mapperProfile.CreateMapper());
-
+builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
 builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
-
 builder.Services.AddHttpRequestService();
 
+// Добавление контекстов базы данных
 builder.Services.AddDbContext<ProjectServiceDbContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(identityDbConnection));
 
+// Конфигурация Identity
 builder.Services
-    .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(identityDbConnection))
     .AddIdentity<UserDal, RoleDal>(options =>
     {
         options.Password.RequiredLength = 8;
@@ -61,14 +54,23 @@ builder.Services
     })
     .AddEntityFrameworkStores<IdentityServiceDbContext>();
 
+// Добавление репозиториев и сервисов
+builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
+builder.Services.AddTransient<IProjectService, ProjectService>();
 builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
 
-builder.Services.AddTransient<IAddTaskIdToProjectIdList, AddTaskIdToProjectIdList<Project>>();
+// Добавление соединений
+builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
+builder.Services.AddTransient<IUserConnectionService, UserConnectionService<UserService>>();
+
+// Добавление сервиса для добавления задачи в проект
+builder.Services.AddTransient<IAddTaskIdToProjectIdList, AddTaskIdToProjectIdList>();
 
 var app = builder.Build();
 
+// Middleware для разработки
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

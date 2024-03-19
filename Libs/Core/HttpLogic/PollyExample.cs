@@ -6,6 +6,7 @@ public class PollyExample
 {
     public static async Task<string> ActionAsync()
     {
+#pragma warning disable CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
         var res = await Policy
             .Handle<Exception>()
             .WaitAndRetryForeverAsync(
@@ -18,6 +19,7 @@ public class PollyExample
             {
                 return "hello world";
             });
+#pragma warning restore CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
 
         return res;
     }

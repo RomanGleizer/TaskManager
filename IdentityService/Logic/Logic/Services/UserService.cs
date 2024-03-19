@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using Core.Dal.Base;
 using Core.Exceptions;
 using Dal.Entities;
-using Core.Dal.Base;
 using Logic.Dto.User;
-using Microsoft.AspNetCore.Identity;
 using Logic.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logic.Services;
 

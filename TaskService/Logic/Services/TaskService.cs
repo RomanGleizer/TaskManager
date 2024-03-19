@@ -47,9 +47,9 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
         /// Получаем проект по его Id из микросервиса ProjectService
         var project = await _projectConnectionService.GetProjectByIdAsync(
             new ExistingProjectApiRequest
-        { 
-            ProjectId = taskDal.ProjectId 
-        })
+            {
+                ProjectId = taskDal.ProjectId
+            })
         ?? throw new ValidationException("Проект не найден в БД", string.Empty);
 
         /// Добавляем задачу в спискок задач проекта

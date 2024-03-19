@@ -1,7 +1,6 @@
 ﻿using Core.Dal.Base;
 using Dal.Ef;
 using Dal.Entities;
-using Dal.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

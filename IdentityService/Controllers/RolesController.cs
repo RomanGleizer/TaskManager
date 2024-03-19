@@ -8,23 +8,17 @@ namespace Api.Controllers;
 /// <summary>
 /// Контроллер для управления ролями.
 /// </summary>
+/// <remarks>
+/// Инициализирует новый экземпляр контроллера ролей
+/// </remarks>
+/// <param name="roleService">Сервис ролей</param>
+/// <param name="mapper">Маппер</param>
 [Route("api/[controller]")]
 [ApiController]
-public class RolesController : ControllerBase
+public class RolesController(RoleService roleService, IMapper mapper) : ControllerBase
 {
-    private readonly RoleService _roleService;
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр контроллера ролей
-    /// </summary>
-    /// <param name="roleService">Сервис ролей</param>
-    /// <param name="mapper">Маппер</param>
-    public RolesController(RoleService roleService, IMapper mapper)
-    {
-        _roleService = roleService;
-        _mapper = mapper;
-    }
+    private readonly RoleService _roleService = roleService;
+    private readonly IMapper _mapper = mapper;
 
     /// <summary>
     /// Получает все роли

@@ -1,5 +1,4 @@
 ﻿using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
-using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
 using ConnectionLib.ConnectionServices.Interfaces;
@@ -30,7 +29,7 @@ public class ProjectConnectionService : IProjectConnectionService
     private readonly string _baseUrl;
 
     public ProjectConnectionService(
-        IConfiguration configuration, 
+        IConfiguration configuration,
         IServiceProvider serviceProvider,
         ILogger<ProjectConnectionService> logger)
     {
@@ -61,7 +60,9 @@ public class ProjectConnectionService : IProjectConnectionService
 
         var connectionData = new HttpConnectionData();
 
+#pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
         var projectIdResponse = await _httpRequestService.SendRequestAsync<ExistingProjectApiResponse>(getIdRequestData, connectionData);
+#pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
 
         if (projectIdResponse.IsSuccessStatusCode)
             return projectIdResponse.Body;
@@ -76,7 +77,7 @@ public class ProjectConnectionService : IProjectConnectionService
         //{
         //    return await AddTaskIdInProjectTaskIdsWithHttp(request);
         //}
-        
+
         if (_rpcConsumer != null)
         {
             await AddTaskIdInProjectTaskIdsWithRPC(request, "ProjectConnectionServiceQueue");

@@ -13,8 +13,8 @@ namespace Services.Services;
 /// Сервис для управления проектами
 /// </summary>
 public class ProjectService(
-    IProjectRepository storeProject, 
-    IMapper mapper, 
+    IProjectRepository storeProject,
+    IMapper mapper,
     IUserConnectionService userConnectionService) : IProjectService
 {
     private readonly IProjectRepository _repository = storeProject;

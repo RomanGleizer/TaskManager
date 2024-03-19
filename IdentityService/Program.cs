@@ -16,29 +16,39 @@ using Logic.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
 
+// Получение строки подключения к базе данных
+var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Конфигурация AutoMapper
+var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
+var mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+// Добавление сервисов
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Репозиторий для работы с Unit of Work
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 
+// Сервисы для работы с пользователями и ролями
 builder.Services.AddTransient<IUserService, UserService>();
-
 builder.Services.AddTransient<IDtoService<RoleDto, int>, RoleService>();
 builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
 builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 
+// Сервис проектного подключения
 builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
 
-builder.Services.AddSingleton(mappingConfig.CreateMapper());
-
+// Сервис для добавления идентификатора проекта в список идентификаторов проекта пользователя
 builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
 
+// Фоновый сервис для подключения к пользовательским службам через RabbitMQ
 builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
 
+// Конфигурация Identity и добавление сервиса HTTP-запросов
 builder.Services
     .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection))
     .AddIdentity<UserDal, RoleDal>(options =>
@@ -52,11 +62,11 @@ builder.Services
         options.SignIn.RequireConfirmedAccount = false;
     })
     .AddEntityFrameworkStores<IdentityServiceDbContext>();
-
 builder.Services.AddHttpRequestService();
 
 var app = builder.Build();
 
+// Middleware для разработки
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -66,5 +76,4 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

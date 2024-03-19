@@ -53,12 +53,16 @@ public class TaskConnectionService : ITaskConnectionService
     }
 
     /// <inheritdoc/>
+#pragma warning disable CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
     public async Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request)
+#pragma warning restore CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
     {
+#pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
         return new ExistingTaskInProjectResponse
         {
             TaskIds = default
         };
+#pragma warning restore CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
     }
 
     private async Task<ExistingTaskInProjectResponse> GetExistingTaskWithHttp(ExistingTaskInProjectRequest request)
@@ -70,7 +74,9 @@ public class TaskConnectionService : ITaskConnectionService
         };
 
         var connectionData = new HttpConnectionData();
+#pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
         var response = await _httpRequestService.SendRequestAsync<IList<int>>(requestData, connectionData).ConfigureAwait(false);
+#pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
 
         if (response.IsSuccessStatusCode)
         {
@@ -83,7 +89,9 @@ public class TaskConnectionService : ITaskConnectionService
         }
     }
 
+#pragma warning disable CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
     private async Task GetExistingTaskWithRpc()
+#pragma warning restore CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
     {
 
     }

@@ -1,11 +1,11 @@
-﻿using Core.Dal.Base;
+﻿using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using Core.Dal.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
-using System.Text;
 using Newtonsoft.Json;
-using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionService;
 

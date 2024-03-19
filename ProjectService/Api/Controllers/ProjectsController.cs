@@ -1,5 +1,4 @@
-﻿using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
-using ConnectionLib.ConnectionServices.DtoModels.TaskById;
+﻿using ConnectionLib.ConnectionServices.DtoModels.TaskById;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ProjectsController(
-    IProjectService projectService, 
+    IProjectService projectService,
     ITaskConnectionService taskConnectionService,
     IAddTaskIdToProjectIdList addProjectIdToProjectIdList) : ControllerBase
 {

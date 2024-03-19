@@ -45,17 +45,23 @@ public record HttpRequestData
     /// <summary>
     /// Тип метода
     /// </summary>
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public HttpMethod Method { get; set; }
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
     /// <summary>
     /// Адрес запроса
     /// </summary>\
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public Uri Uri { set; get; }
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
     /// <summary>
     /// Тело метода
     /// </summary>
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public object Body { get; set; }
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
     /// <summary>
     /// content-type, указываемый при запросе
@@ -84,12 +90,16 @@ public record BaseHttpResponse
     /// <summary>
     /// Заголовки, передаваемые в ответе
     /// </summary>
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public HttpResponseHeaders Headers { get; set; }
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
     /// <summary>
     /// Заголовки контента
     /// </summary>
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public HttpContentHeaders ContentHeaders { get; init; }
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
     /// <summary>
     /// Является ли статус код успешным
@@ -110,7 +120,9 @@ public record HttpResponse<TResponse> : BaseHttpResponse
     /// <summary>
     /// Тело ответа
     /// </summary>
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public TResponse Body { get; set; }
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 }
 
 internal class HttpRequestService : IHttpRequestService
@@ -144,6 +156,7 @@ internal class HttpRequestService : IHttpRequestService
             throw new JsonException(ex.Message);
         }
 
+#pragma warning disable CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
         return new HttpResponse<TResponse>
         {
             StatusCode = response.StatusCode,
@@ -151,6 +164,7 @@ internal class HttpRequestService : IHttpRequestService
             ContentHeaders = response.Content.Headers,
             Body = deserializedResponse
         };
+#pragma warning restore CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
     }
 
     private static HttpContent PrepairContent(object body, ContentType contentType)

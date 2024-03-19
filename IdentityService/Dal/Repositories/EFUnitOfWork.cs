@@ -8,19 +8,14 @@ namespace Dal.Repositories;
 /// <summary>
 /// Представляет реализацию интерфейса IUnitOfWork на основе Entity Framework
 /// </summary>
-public class EFUnitOfWork : IUnitOfWork
+/// <remarks>
+/// Инициализирует новый экземпляр класса EFUnitOfWork с указанным контекстом базы данных
+/// </remarks>
+/// <param name="context">Контекст базы данных Entity Framework</param>
+public class EFUnitOfWork(IdentityServiceDbContext context) : IUnitOfWork
 {
-    private readonly IdentityServiceDbContext _context;
+    private readonly IdentityServiceDbContext _context = context;
     private IRepository<RoleDal, int>? _roleRepository;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса EFUnitOfWork с указанным контекстом базы данных
-    /// </summary>
-    /// <param name="context">Контекст базы данных Entity Framework</param>
-    public EFUnitOfWork(IdentityServiceDbContext context)
-    {
-        _context = context;
-    }
 
     /// <summary>
     /// Получает репозиторий для работы с ролями

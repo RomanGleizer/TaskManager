@@ -15,11 +15,11 @@ namespace Api.Controllers;
 public class ProjectsController(
     IProjectService projectService,
     ITaskConnectionService taskConnectionService,
-    IAddTaskIdToProjectIdList addProjectIdToProjectIdList) : ControllerBase
+    IAddTaskIdToProjectTaskIdList addProjectIdToProjectIdList) : ControllerBase
 {
     private readonly IProjectService _projectService = projectService;
     private readonly ITaskConnectionService _taskConnectionService = taskConnectionService;
-    private readonly IAddTaskIdToProjectIdList _addTaskIdToProjectIdList = addProjectIdToProjectIdList;
+    private readonly IAddTaskIdToProjectTaskIdList _addTaskIdToProjectIdList = addProjectIdToProjectIdList;
 
     /// <summary>
     /// Получает проект по его идентификатору

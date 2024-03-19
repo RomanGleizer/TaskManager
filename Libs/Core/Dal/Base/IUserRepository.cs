@@ -2,6 +2,10 @@
 
 namespace Core.Dal.Base;
 
+/// <summary>
+/// Репозиторий пользователей
+/// </summary>
+/// <typeparam name="TDal"></typeparam>
 public interface IUserRepository<TDal>
     where TDal : IBaseEntity<Guid>
 {

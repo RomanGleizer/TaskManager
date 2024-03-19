@@ -23,7 +23,7 @@ public class UserConnectionService<TService> : IUserConnectionService
     private readonly string _baseUrl;
 
     private readonly IHttpRequestService? _httpRequestService;
-    private readonly RabbitMQBackgroundUserConnectionService? _rpcConsumer;
+    private readonly RabbitMQBackgroundAddProjectService? _rpcConsumer;
 
     public UserConnectionService(
         IConfiguration configuration,
@@ -41,7 +41,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else if (_configuration.GetSection("ConnectionType").Value == "rpc")
         {
-            _rpcConsumer = new RabbitMQBackgroundUserConnectionService(_serviceProvider);
+            _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceProvider);
         }
         else
         {

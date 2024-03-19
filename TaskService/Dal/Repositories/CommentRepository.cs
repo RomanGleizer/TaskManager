@@ -8,18 +8,13 @@ namespace Dal.Repositories;
 /// <summary>
 /// Репозиторий для работы с комментариями
 /// </summary>
-public class CommentRepository : IRepository<CommentDal, int>
+/// <remarks>
+/// Конструктор репозитория комментариев
+/// </remarks>
+/// <param name="dbContext">Контекст базы данных</param>
+public class CommentRepository(TaskManagerDbContext dbContext) : IRepository<CommentDal, int>
 {
-    private readonly TaskManagerDbContext _dbContext;
-
-    /// <summary>
-    /// Конструктор репозитория комментариев
-    /// </summary>
-    /// <param name="dbContext">Контекст базы данных</param>
-    public CommentRepository(TaskManagerDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly TaskManagerDbContext _dbContext = dbContext;
 
     /// <inheritdoc/>
     public async Task<IList<CommentDal>> GetAllAsync()

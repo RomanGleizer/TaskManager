@@ -1,7 +1,9 @@
-﻿using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
+﻿using ConnectionLib.ConnectionServices.BackgroundConnectionService;
+using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
 using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
 using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal.Base;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Core.RPC;
@@ -18,30 +20,38 @@ namespace ConnectionLib.ConnectionServices;
 /// Инициализирует новый экземпляр класса ProjectConnectionService с указанным провайдером сервисов
 /// </remarks>
 /// <param name="serviceProvider">Провайдер сервисов</param>
-public class ProjectConnectionService : IProjectConnectionService
+public class ProjectConnectionService<TModel> : IProjectConnectionService
+    where TModel : IBaseEntity<int>
 {
     private readonly IConfiguration _configuration;
-    private readonly ILogger<ProjectConnectionService> _logger;
+    private readonly ILogger<ProjectConnectionService<TModel>> _logger;
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IHttpRequestService? _httpRequestService;
-    private readonly RabbitMQBackgroundUserConnectionService? _rpcConsumer;
+    private readonly RabbitMQBackgroundAddTaskService? _addTaskRpcConsumer;
+    private readonly RabbitMQBackgroundGetProjectService<TModel>? _getProjectRpcConsumer;
+
     private readonly string _baseUrl;
 
     public ProjectConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<ProjectConnectionService> logger)
+        ILogger<ProjectConnectionService<TModel>> logger)
     {
-        _baseUrl = "https://localhost:7047/api/Projects";
         _configuration = configuration;
         _serviceProvider = serviceProvider;
         _logger = logger;
-        _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
 
-        if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        _baseUrl = _configuration["BaseUrl"] ?? "https://localhost:7047/api/Projects";
+
+        if (_configuration.GetSection("ConnectionType").Value == "http")
         {
-            _rpcConsumer = new RabbitMQBackgroundUserConnectionService(_serviceProvider);
+            _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+        }
+        else if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        {
+            _addTaskRpcConsumer = new RabbitMQBackgroundAddTaskService(_serviceProvider);
+            _getProjectRpcConsumer = new RabbitMQBackgroundGetProjectService<TModel>(_serviceProvider);
         }
         else
         {
@@ -50,7 +60,58 @@ public class ProjectConnectionService : IProjectConnectionService
     }
 
     /// <inheritdoc/>
-    public async Task<ExistingProjectApiResponse> GetProjectByIdAsync(ExistingProjectApiRequest request)
+    public async Task<IsProjectExistsResponse> GetProjectByIdAsync(IsProjectExistsRequest request)
+    {
+        if (_httpRequestService != null)
+            return await GetProjectByIdWithHttp(request);
+
+        if (_getProjectRpcConsumer != null)
+        {
+            var isMessagePublished = await GetProjectByIdWithRpc(request, "GetProjectQueue");
+
+            if (isMessagePublished)
+            {
+                return new IsProjectExistsResponse
+                {
+                    Id = request.ProjectId,
+                    Name = default,
+                    CreationDate = default,
+                    TaskIds = []
+                };
+            }
+            else
+                throw new Exception("Сообщение не было доставлено");
+        }
+
+        throw new Exception("Не получилось настроить метод связи");
+    }
+
+    /// <inheritdoc/>
+    public async Task<AddTaskIdInProjectTaskIdsResponse> AddTaskIdInProjectTaskIdsAsync(AddTaskIdInProjectTaskIdsRequest request)
+    {
+        if (_httpRequestService != null)
+            return await AddTaskIdInProjectTaskIdsWithHttp(request);
+
+        if (_addTaskRpcConsumer != null)
+        {
+            var isMessagePublished = await AddTaskIdInProjectTaskIdsWithRPC(request, "AddTaskQueue");
+
+            if (isMessagePublished)
+            {
+                return new AddTaskIdInProjectTaskIdsResponse
+                {
+                    ProjectId = request.ProjectId,
+                    TaskIds = []
+                };
+            }
+            else
+                throw new Exception("Сообщение не было доставлено");
+        }
+
+        throw new Exception("Не получилось настроить метод связи");
+    }
+
+    private async Task<IsProjectExistsResponse> GetProjectByIdWithHttp(IsProjectExistsRequest request)
     {
         var getIdRequestData = new HttpRequestData
         {
@@ -60,9 +121,7 @@ public class ProjectConnectionService : IProjectConnectionService
 
         var connectionData = new HttpConnectionData();
 
-#pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
-        var projectIdResponse = await _httpRequestService.SendRequestAsync<ExistingProjectApiResponse>(getIdRequestData, connectionData);
-#pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
+        var projectIdResponse = await _httpRequestService.SendRequestAsync<IsProjectExistsResponse>(getIdRequestData, connectionData);
 
         if (projectIdResponse.IsSuccessStatusCode)
             return projectIdResponse.Body;
@@ -70,30 +129,16 @@ public class ProjectConnectionService : IProjectConnectionService
         throw new HttpRequestException("Проект не найден в базе данных. Код состояния: " + projectIdResponse.StatusCode);
     }
 
-    /// <inheritdoc/>
-    public async Task<AddTaskIdInProjectTaskIdsResponse> AddTaskIdInProjectTaskIdsAsync(AddTaskIdInProjectTaskIdsRequest request)
+    private async Task<bool> GetProjectByIdWithRpc(IsProjectExistsRequest request, string queueName)
     {
-        //if (_httpRequestService != null)
-        //{
-        //    return await AddTaskIdInProjectTaskIdsWithHttp(request);
-        //}
+        var publisher = new RPCPublisher<IsProjectExistsRequest>(queueName, request);
+        var result = await publisher.PublishAsync();
+        publisher.Dispose();
 
-        if (_rpcConsumer != null)
-        {
-            await AddTaskIdInProjectTaskIdsWithRPC(request, "ProjectConnectionServiceQueue");
-            return new AddTaskIdInProjectTaskIdsResponse
-            {
-                ProjectId = request.ProjectId,
-                TaskIds = []
-            };
-        }
-        else
-        {
-            throw new Exception("Не получилось настроить метод связи");
-        }
+        return result;
     }
 
-    public async Task<AddTaskIdInProjectTaskIdsResponse> AddTaskIdInProjectTaskIdsWithHttp(AddTaskIdInProjectTaskIdsRequest request)
+    private async Task<AddTaskIdInProjectTaskIdsResponse> AddTaskIdInProjectTaskIdsWithHttp(AddTaskIdInProjectTaskIdsRequest request)
     {
         var addTaskInProjectData = new HttpRequestData
         {
@@ -102,27 +147,21 @@ public class ProjectConnectionService : IProjectConnectionService
         };
 
         var connectionData = new HttpConnectionData();
+        var addTaskResponse = await _httpRequestService.SendRequestAsync<AddTaskIdInProjectTaskIdsResponse>(addTaskInProjectData, connectionData);
 
-        if (_httpRequestService != null)
-        {
-            var addTaskResponse = await _httpRequestService.SendRequestAsync<AddTaskIdInProjectTaskIdsResponse>(addTaskInProjectData, connectionData);
+        if (addTaskResponse.IsSuccessStatusCode)
+            return addTaskResponse.Body;
 
-            if (addTaskResponse.IsSuccessStatusCode)
-                return addTaskResponse.Body;
-
-            _logger.LogError($"Не удалось добавить задачу в проект. Код состояния: {addTaskResponse.StatusCode}");
-            throw new HttpRequestException($"Не удалось добавить участника в проект. Код состояния: {addTaskResponse.StatusCode}");
-        }
-        else
-        {
-            throw new Exception($"{typeof(ProjectConnectionService)} имеет значение null");
-        }
+        _logger.LogError($"Не удалось добавить задачу в проект. Код состояния: {addTaskResponse.StatusCode}");
+        throw new HttpRequestException($"Не удалось добавить участника в проект. Код состояния: {addTaskResponse.StatusCode}");
     }
 
-    private async Task AddTaskIdInProjectTaskIdsWithRPC(AddTaskIdInProjectTaskIdsRequest request, string queueName)
+    private async Task<bool> AddTaskIdInProjectTaskIdsWithRPC(AddTaskIdInProjectTaskIdsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<AddTaskIdInProjectTaskIdsRequest>(queueName, request);
-        await publisher.PublishAsync();
+        var result = await publisher.PublishAsync();
         publisher.Dispose();
+
+        return result;
     }
 }

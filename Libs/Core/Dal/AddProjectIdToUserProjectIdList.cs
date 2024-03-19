@@ -4,7 +4,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Core.Dal;
 
-public class AddProjectIdToProjectIdList<TDal>(IUserRepository<TDal> userRepository) : IAddProjectIdToProjectIdList
+/// <summary>
+/// Реализация контракта IAddProjectIdToProjectIdList
+/// </summary>
+/// <typeparam name="TDal">Тип сущности</typeparam>
+/// <param name="userRepository">репозиторий пользователей</param>
+public class AddProjectIdToUserProjectIdList<TDal>(IUserRepository<TDal> userRepository) : IAddProjectIdToUserProjectIdList
     where TDal : IBaseEntity<Guid>
 {
     private readonly IUserRepository<TDal> _userRepository = userRepository;

@@ -1,7 +1,5 @@
 ﻿using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 using Core.Dal.Base;
-using Dal.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
@@ -11,21 +9,29 @@ using System.Text;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 
-public class RabbitMQBackgroundUserConnectionService(IServiceProvider serviceProvider) : BackgroundService
+/// <summary>
+/// Фоновый сервис для управления подключениями пользователей через RabbitMQ
+/// </summary>
+/// <remarks>
+/// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundAddProjectService"/>
+/// </remarks>
+/// <param name="serviceProvider">Поставщик служб</param>
+public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvider) : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _queueName = "UserConnectionServiceQueue";
 
+    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = _serviceProvider.CreateScope();
 
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserDal>>();
-        var addProjectIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddProjectIdToProjectIdList>();
+        var addProjectIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddProjectIdToUserProjectIdList>();
         var factory = new ConnectionFactory { HostName = "localhost" };
         var connection = factory.CreateConnection();
         var channel = connection.CreateModel();
 
+        // Объявление очереди
         channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
         var consumer = new EventingBasicConsumer(model: channel);
@@ -39,9 +45,11 @@ public class RabbitMQBackgroundUserConnectionService(IServiceProvider servicePro
             var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
                 ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsRequest)}");
 
+            // Добавление идентификатора проекта в список проектов пользователя
             var result = await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.MemberId);
         };
 
+        // Потребление сообщений из очереди
         channel.BasicConsume(
             consumer: consumer,
             queue: _queueName,

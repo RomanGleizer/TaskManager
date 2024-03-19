@@ -13,7 +13,7 @@ public interface IProjectConnectionService
     /// </summary>
     /// <param name="request">Запрос на получение информации о проекте</param>
     /// <returns>Задача, представляющая операцию получения информации о проекте</returns>
-    Task<ExistingProjectApiResponse> GetProjectByIdAsync(ExistingProjectApiRequest request);
+    Task<IsProjectExistsResponse> GetProjectByIdAsync(IsProjectExistsRequest request);
 
     /// <summary>
     /// Асинхронно добавляет новую задачу в проект

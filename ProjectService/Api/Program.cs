@@ -8,7 +8,7 @@ using Core.HttpLogic;
 using Dal.Ef;
 using Dal.Entities;
 using Dal.Repositories;
-using Domain.Interfaces;
+using Domain.Entities;
 using Infastracted.Data;
 using Infastracted.EF;
 using Logic.Interfaces;
@@ -33,7 +33,7 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
-builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
+builder.Services.AddHostedService<RabbitMQBackgroundAddProjectService>();
 builder.Services.AddHttpRequestService();
 
 // ƒобавление контекстов базы данных
@@ -55,18 +55,19 @@ builder.Services
     .AddEntityFrameworkStores<IdentityServiceDbContext>();
 
 // ƒобавление репозиториев и сервисов
-builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
+builder.Services.AddTransient<IProjectRepository<Project, int>, ProjectRepository>();
 builder.Services.AddTransient<IProjectService, ProjectService>();
 builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
+builder.Services.AddTransient<IAddProjectIdToUserProjectIdList, AddProjectIdToUserProjectIdList<UserDal>>();
 
 // ƒобавление соединений
 builder.Services.AddTransient<ITaskConnectionService, TaskConnectionService>();
 builder.Services.AddTransient<IUserConnectionService, UserConnectionService<UserService>>();
 
 // ƒобавление сервиса дл€ добавлени€ задачи в проект
-builder.Services.AddTransient<IAddTaskIdToProjectIdList, AddTaskIdToProjectIdList>();
+builder.Services.AddTransient<IAddTaskIdToProjectTaskIdList, AddTaskIdToProjectTaskIdList<Project>>();
+builder.Services.AddTransient<IGetProjectById<Project>, GetProjectById<Project>>();
 
 var app = builder.Build();
 

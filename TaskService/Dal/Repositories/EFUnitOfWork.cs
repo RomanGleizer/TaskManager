@@ -8,19 +8,14 @@ namespace Dal.Repositories;
 /// <summary>
 /// Реализация интерфейса IUnitOfWork для работы с базой данных с использованием EF
 /// </summary>
-public class EFUnitOfWork : IUnitOfWork
+/// <remarks>
+/// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных
+/// </remarks>
+public class EFUnitOfWork(TaskManagerDbContext dbContext) : IUnitOfWork
 {
-    private readonly TaskManagerDbContext _dbContext;
+    private readonly TaskManagerDbContext _dbContext = dbContext;
     private IRepository<TaskDal, int>? _taskRepository;
     private IRepository<CommentDal, int>? _commentRepository;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса EFUnitOfWork с заданным контекстом базы данных
-    /// </summary>
-    public EFUnitOfWork(TaskManagerDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     /// <summary>
     /// Получает репозиторий для работы с сущностями TaskDal
@@ -42,8 +37,7 @@ public class EFUnitOfWork : IUnitOfWork
     {
         get
         {
-            if (_commentRepository == null)
-                _commentRepository = new CommentRepository(_dbContext);
+            _commentRepository ??= new CommentRepository(_dbContext);
             return _commentRepository;
         }
     }

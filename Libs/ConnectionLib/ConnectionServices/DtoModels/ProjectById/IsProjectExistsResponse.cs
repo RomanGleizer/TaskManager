@@ -5,7 +5,7 @@ namespace ConnectionLib.ConnectionServices.DtoModels.ProjectById;
 /// <summary>
 /// Представляет ответ API с информацией о существующем проекте
 /// </summary>
-public record ExistingProjectApiResponse
+public record IsProjectExistsResponse
 {
     /// <summary>
     /// Получает или устанавливает идентификатор проекта

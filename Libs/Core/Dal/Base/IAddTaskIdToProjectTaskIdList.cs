@@ -3,7 +3,7 @@
 /// <summary>
 /// Интерфейс добавления идентификатора задачи в список идентификаторов задач проекта
 /// </summary>
-public interface IAddTaskIdToProjectIdList
+public interface IAddTaskIdToProjectTaskIdList
 {
     /// <summary>
     /// Добавляет новую задачу в проект

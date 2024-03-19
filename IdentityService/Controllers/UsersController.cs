@@ -11,10 +11,10 @@ namespace Api.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IUserService userService, IAddProjectIdToProjectIdList addProjectId) : ControllerBase
+public class UsersController(IUserService userService, IAddProjectIdToUserProjectIdList addProjectId) : ControllerBase
 {
     private readonly IUserService _userService = userService;
-    private readonly IAddProjectIdToProjectIdList _addProjectIdToProjectIdList = addProjectId;
+    private readonly IAddProjectIdToUserProjectIdList _addProjectIdToProjectIdList = addProjectId;
 
     /// <summary>
     /// Получает всех пользователей из базы данных

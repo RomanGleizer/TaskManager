@@ -3,7 +3,7 @@
 /// <summary>
 /// Представляет запрос API для получения информации о существующем проекте
 /// </summary>
-public record ExistingProjectApiRequest
+public record IsProjectExistsRequest
 {
     /// <summary>
     /// Получает или устанавливает идентификатор существующего проекта

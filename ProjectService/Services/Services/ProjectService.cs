@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using ConnectionLib.ConnectionServices.DtoModels.AddProjectToListOfUserProjects;
 using ConnectionLib.ConnectionServices.Interfaces;
+using Core.Dal.Base;
 using Core.Exceptions;
 using Domain.Entities;
-using Domain.Interfaces;
 using Services.Interfaces;
 using Services.ViewModels.ProjectViewModels;
 
@@ -13,11 +13,11 @@ namespace Services.Services;
 /// Сервис для управления проектами
 /// </summary>
 public class ProjectService(
-    IProjectRepository storeProject,
+    IProjectRepository<Project, int> storeProject,
     IMapper mapper,
     IUserConnectionService userConnectionService) : IProjectService
 {
-    private readonly IProjectRepository _repository = storeProject;
+    private readonly IProjectRepository<Project, int> _repository = storeProject;
     private readonly IMapper _mapper = mapper;
     private readonly IUserConnectionService _userConnectionService = userConnectionService;
 

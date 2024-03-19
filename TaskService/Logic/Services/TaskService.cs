@@ -46,7 +46,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
 
         /// Получаем проект по его Id из микросервиса ProjectService
         var project = await _projectConnectionService.GetProjectByIdAsync(
-            new ExistingProjectApiRequest
+            new IsProjectExistsRequest
             {
                 ProjectId = taskDal.ProjectId
             })

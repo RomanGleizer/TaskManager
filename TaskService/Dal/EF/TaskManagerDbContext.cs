@@ -6,7 +6,11 @@ namespace Dal.EF;
 /// <summary>
 /// Представляет контекст базы данных для хранения сущностей
 /// </summary>
-public class TaskManagerDbContext : DbContext
+/// <remarks>
+/// Инициализирует новый экземпляр класса TaskManagerDbContext с указанными параметрами
+/// </remarks>
+/// <param name="options">Опции для этого контекста</param>
+public class TaskManagerDbContext(DbContextOptions<TaskManagerDbContext> options) : DbContext(options)
 {
     /// <summary>
     /// Задачи в базе данных
@@ -17,10 +21,4 @@ public class TaskManagerDbContext : DbContext
     /// Комментарии к задачам
     /// </summary>
     public DbSet<CommentDal> Comments { get; set; }
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса TaskManagerDbContext с указанными параметрами
-    /// </summary>
-    /// <param name="options">Опции для этого контекста</param>
-    public TaskManagerDbContext(DbContextOptions<TaskManagerDbContext> options) : base(options) { }
 }

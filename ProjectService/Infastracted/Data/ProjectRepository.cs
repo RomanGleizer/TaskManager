@@ -1,5 +1,5 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Core.Dal.Base;
+using Domain.Entities;
 using Infastracted.EF;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +8,7 @@ namespace Infastracted.Data;
 /// <summary>
 /// Реализация интерфейса репозитория для работы с данными проектов
 /// </summary>
-public class ProjectRepository(ProjectServiceDbContext dbContext) : IProjectRepository
+public class ProjectRepository(ProjectServiceDbContext dbContext) : IProjectRepository<Project, int>
 {
     private readonly ProjectServiceDbContext _dbContext = dbContext;
 

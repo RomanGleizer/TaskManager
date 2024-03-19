@@ -9,7 +9,7 @@ using Dal.EF;
 using Dal.Entities;
 using Dal.Interfaces;
 using Dal.Repositories;
-using Domain.Interfaces;
+using Domain.Entities;
 using Infastracted.Data;
 using Infastracted.EF;
 using Logic.DTO;
@@ -41,10 +41,10 @@ builder.Services.AddTransient<IDtoService<TaskDTO, int>, TaskService>();
 builder.Services.AddTransient<IDtoService<CommentDTO, int>, CommentService>();
 
 // Сервис фонового проектного подключения через RabbitMQ
-builder.Services.AddHostedService<RabbitMQBackgroundProjectConnectionService>();
+builder.Services.AddHostedService<RabbitMQBackgroundAddTaskService>();
 
 // Сервисы проектного подключения
-builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
+builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService<Project>>();
 builder.Services.AddHttpRequestService();
 
 // Контексты базы данных
@@ -52,8 +52,9 @@ builder.Services.AddDbContext<TaskManagerDbContext>(options => options.UseSqlSer
 builder.Services.AddDbContext<ProjectServiceDbContext>(options => options.UseSqlServer(projectConnection));
 
 // Репозиторий и сервис для работы с проектами
-builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
-builder.Services.AddTransient<IAddTaskIdToProjectIdList, AddTaskIdToProjectIdList>();
+builder.Services.AddTransient<IProjectRepository<Project, int>, ProjectRepository>();
+builder.Services.AddTransient<IAddTaskIdToProjectTaskIdList, AddTaskIdToProjectTaskIdList<Project>>();
+builder.Services.AddTransient<IGetProjectById<Project>, GetProjectById<Project>>();
 
 var app = builder.Build();
 

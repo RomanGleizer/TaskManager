@@ -27,4 +27,10 @@
     <ProjectReference Include="Logic\Logic\Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Domain">
+      <HintPath>..\ProjectService\Domain\obj\Debug\net8.0\Domain.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

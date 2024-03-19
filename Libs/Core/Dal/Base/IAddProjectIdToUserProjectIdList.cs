@@ -2,7 +2,10 @@
 
 namespace Core.Dal.Base;
 
-public interface IAddProjectIdToProjectIdList
+/// <summary>
+/// Добавляет идентификатора проекта в список идентификаторов проектов пользователя
+/// </summary>
+public interface IAddProjectIdToUserProjectIdList
 {
     /// <summary>
     /// Добавляет новый проект у пользователя

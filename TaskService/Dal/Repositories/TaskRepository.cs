@@ -8,17 +8,12 @@ namespace Dal.Repositories;
 /// <summary>
 /// Репозиторий для работы с сущностями ProjectTask
 /// </summary>
-public class TaskRepository : IRepository<TaskDal, int>
+/// <remarks>
+/// Инициализирует новый экземпляр класса TaskRepository с заданным контекстом базы данных
+/// </remarks>
+public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDal, int>
 {
-    private readonly TaskManagerDbContext _dbContext;
-
-    /// <summary>
-    /// Инициализирует новый экземпляр класса TaskRepository с заданным контекстом базы данных
-    /// </summary>
-    public TaskRepository(TaskManagerDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly TaskManagerDbContext _dbContext = dbContext;
 
     /// <inheritdoc/>
     public async Task<IList<TaskDal>> GetAllAsync()

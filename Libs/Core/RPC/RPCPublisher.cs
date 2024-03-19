@@ -38,7 +38,7 @@ public class RPCPublisher<T> : IDisposable
     /// Публикует сообщение в очередь сообщений
     /// </summary>
     /// <returns>True, если сообщение успешно опубликовано; в противном случае false</returns>
-    public async Task PublishAsync()
+    public async Task<bool> PublishAsync()
     {
         try
         {
@@ -62,6 +62,8 @@ public class RPCPublisher<T> : IDisposable
                 routingKey: _queueName,
                 basicProperties: properties,
                 body: body));
+
+            return true;
         }
         catch (Exception ex)
         {

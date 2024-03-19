@@ -9,6 +9,7 @@ using Dal.Ef;
 using Dal.Entities;
 using Dal.Interfaces;
 using Dal.Repositories;
+using Domain.Entities;
 using Logic.Dto.Role;
 using Logic.Interfaces;
 using Logic.Mapper;
@@ -40,13 +41,13 @@ builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
 builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 
 // Сервис проектного подключения
-builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService>();
+builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService<Project>>();
 
 // Сервис для добавления идентификатора проекта в список идентификаторов проекта пользователя
-builder.Services.AddTransient<IAddProjectIdToProjectIdList, AddProjectIdToProjectIdList<UserDal>>();
+builder.Services.AddTransient<IAddProjectIdToUserProjectIdList, AddProjectIdToUserProjectIdList<UserDal>>();
 
 // Фоновый сервис для подключения к пользовательским службам через RabbitMQ
-builder.Services.AddHostedService<RabbitMQBackgroundUserConnectionService>();
+builder.Services.AddHostedService<RabbitMQBackgroundAddProjectService>();
 
 // Конфигурация Identity и добавление сервиса HTTP-запросов
 builder.Services

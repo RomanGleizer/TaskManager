@@ -9,20 +9,29 @@ using System.Text;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionService;
 
-public class RabbitMQBackgroundProjectConnectionService(IServiceProvider serviceProvider) : BackgroundService
+/// <summary>
+/// Фоновый сервис для прослушивания RabbitMQ и добавления новых задач в списки проектов
+/// </summary>
+/// <remarks>
+/// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundAddTaskService"/>
+/// </remarks>
+/// <param name="serviceProvider">Поставщик служб</param>
+public class RabbitMQBackgroundAddTaskService(IServiceProvider serviceProvider) : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly string _queueName = "ProjectConnectionServiceQueue";
+    private readonly string _queueName = "AddTaskQueue";
 
+    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = _serviceProvider.CreateScope();
 
-        var addTaskIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddTaskIdToProjectIdList>();
+        var addTaskIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddTaskIdToProjectTaskIdList>();
         var factory = new ConnectionFactory { HostName = "localhost" };
         var connection = factory.CreateConnection();
         var channel = connection.CreateModel();
 
+        // Объявление очереди
         channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
         var consumer = new EventingBasicConsumer(model: channel);
@@ -36,9 +45,11 @@ public class RabbitMQBackgroundProjectConnectionService(IServiceProvider service
             var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddTaskIdInProjectTaskIdsRequest>(message)
                 ?? throw new Exception($"Ошибка при десериализации {typeof(AddTaskIdInProjectTaskIdsRequest)}");
 
+            // Добавление нового идентификатора задачи в список идентификаторов проекта
             await addTaskIdToProjectIdList.AddNewTaskIdInProjectIdList(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.TaskId);
         };
 
+        // Потребление сообщений из очереди
         channel.BasicConsume(
             consumer: consumer,
             queue: _queueName,

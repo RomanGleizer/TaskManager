@@ -2,6 +2,7 @@
 using Core.Dal.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -17,21 +18,21 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundGetProjectService{TModel}"/>
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
-public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider serviceProvider) : BackgroundService
+public class RabbitMQBackgroundGetProjectService<TModel>(IServiceScopeFactory serviceProvider, ObjectPool<IConnection> connectionPool) : BackgroundService
     where TModel : IBaseEntity<int>
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceScopeFactory _serviceProvider = serviceProvider;
     private readonly string _queueName = "GetProjectQueue";
+    private readonly ObjectPool<IConnection> _connectionPool = connectionPool;
 
-    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = _serviceProvider.CreateScope();
 
         var getProjectById = scope.ServiceProvider.GetRequiredService<IGetProjectById<TModel>>();
-        var factory = new ConnectionFactory { HostName = "localhost" };
-        var connection = factory.CreateConnection();
-        var channel = connection.CreateModel();
+
+        using var connection = _connectionPool.Get();
+        using var channel = connection.CreateModel();
 
         // Объявление очереди
         channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
@@ -44,11 +45,11 @@ public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider servic
 
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            var getProjectDesirializedData = JsonConvert.DeserializeObject<IsProjectExistsRequest>(message)
+            var getProjectDeserializedData = JsonConvert.DeserializeObject<IsProjectExistsRequest>(message)
                 ?? throw new Exception($"Ошибка при десериализации {typeof(IsProjectExistsRequest)}");
 
             // Получение информации о проекте по его идентификатору
-            await getProjectById.GetById(getProjectDesirializedData.ProjectId);
+            await getProjectById.GetById(getProjectDeserializedData.ProjectId);
         };
 
         // Потребление сообщений из очереди
@@ -57,6 +58,7 @@ public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider servic
             queue: _queueName,
             autoAck: true);
 
-        await Task.Delay(Timeout.Infinite, stoppingToken);
+        await Task.CompletedTask;
+        _connectionPool.Return(connection);
     }
 }

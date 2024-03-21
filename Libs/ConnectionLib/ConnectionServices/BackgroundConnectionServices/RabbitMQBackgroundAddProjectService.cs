@@ -2,6 +2,7 @@
 using Core.Dal.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -16,19 +17,18 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundAddProjectService"/>
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
-public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvider) : BackgroundService
+public class RabbitMQBackgroundAddProjectService(IServiceScopeFactory serviceScopeFactory, ObjectPool<IConnection> connectionPool) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
     private readonly string _queueName = "UserConnectionServiceQueue";
+    private readonly ObjectPool<IConnection> _connectionPool = connectionPool;
 
-    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = _serviceScopeFactory.CreateScope();
 
         var addProjectIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddProjectIdToUserProjectIdList>();
-        var factory = new ConnectionFactory { HostName = "localhost" };
-        var connection = factory.CreateConnection();
+        var connection = _connectionPool.Get();
         var channel = connection.CreateModel();
 
         // Объявление очереди
@@ -42,11 +42,11 @@ public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvide
 
             var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
+            var addNewTaskDeserializedData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
                 ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsRequest)}");
 
             // Добавление идентификатора проекта в список проектов пользователя
-            var result = await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.MemberId);
+            var result = await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDeserializedData.ProjectId, addNewTaskDeserializedData.MemberId);
         };
 
         // Потребление сообщений из очереди
@@ -55,6 +55,7 @@ public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvide
             queue: _queueName,
             autoAck: true);
 
-        await Task.Delay(Timeout.Infinite, stoppingToken);
+        await Task.CompletedTask;
+        _connectionPool.Return(connection);
     }
 }

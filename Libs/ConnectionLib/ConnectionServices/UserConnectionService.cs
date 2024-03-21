@@ -8,6 +8,9 @@ using Logic.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
+using RabbitMQ.Client;
+using System;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -19,29 +22,33 @@ public class UserConnectionService<TService> : IUserConnectionService
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<UserConnectionService<TService>> _logger;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IServiceProvider _serviceProvider;
-    private readonly string _baseUrl;
 
+    private readonly string? _baseUrl;
     private readonly IHttpRequestService? _httpRequestService;
     private readonly RabbitMQBackgroundAddProjectService? _rpcConsumer;
 
     public UserConnectionService(
         IConfiguration configuration,
-        IServiceProvider serviceProvider,
-        ILogger<UserConnectionService<TService>> logger)
+        ILogger<UserConnectionService<TService>> logger,
+        IServiceScopeFactory serviceScopeFactory,
+        IServiceProvider provider,
+        ObjectPool<IConnection> connectionPool)
     {
-        _baseUrl = "https://localhost:7265/api/Users";
         _configuration = configuration;
         _logger = logger;
-        _serviceProvider = serviceProvider;
+        _serviceScopeFactory = serviceScopeFactory;
+        _serviceProvider = provider;
+        _baseUrl = _configuration.GetSection("BaseUserServiceUrl").Value;
 
         if (_configuration.GetSection("ConnectionType").Value == "http")
         {
-            _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+            _httpRequestService = _serviceProvider.GetRequiredService<IHttpRequestService>();
         }
-        else if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        else if (_configuration.GetSection("ConnectionType").Value == "rabbitmq")
         {
-            _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceProvider);
+            _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceScopeFactory, connectionPool);
         }
         else
         {
@@ -58,7 +65,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else if (_rpcConsumer != null)
         {
-            await AddProjectWithRPC(request, "UserConnectionServiceQueue");
+            await UserConnectionService<TService>.AddProjectWithRPC(request, "UserConnectionServiceQueue");
             return new AddProjectToListOfUserProjectsResponse
             {
                 MemberId = request.MemberId,
@@ -97,7 +104,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
     }
 
-    private async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request, string queueName)
+    private static async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<AddProjectToListOfUserProjectsRequest>(queueName, request);
         await publisher.PublishAsync();

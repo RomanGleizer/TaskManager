@@ -10,6 +10,8 @@ using Core.RPC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
+using RabbitMQ.Client;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -25,33 +27,36 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<ProjectConnectionService<TModel>> _logger;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IHttpRequestService? _httpRequestService;
     private readonly RabbitMQBackgroundAddTaskService? _addTaskRpcConsumer;
     private readonly RabbitMQBackgroundGetProjectService<TModel>? _getProjectRpcConsumer;
-
-    private readonly string _baseUrl;
+    private readonly string? _baseUrl;
 
     public ProjectConnectionService(
         IConfiguration configuration,
+        ILogger<ProjectConnectionService<TModel>> logger,
+        IServiceScopeFactory serviceScopeFactory,
         IServiceProvider serviceProvider,
-        ILogger<ProjectConnectionService<TModel>> logger)
+        ObjectPool<IConnection> connectionPool)
     {
         _configuration = configuration;
-        _serviceProvider = serviceProvider;
         _logger = logger;
+        _serviceScopeFactory = serviceScopeFactory;
+        _serviceProvider = serviceProvider;
 
-        _baseUrl = _configuration["BaseUrl"] ?? "https://localhost:7047/api/Projects";
+        _baseUrl = _configuration.GetSection("BaseProjectServiceUrl").Value;
 
         if (_configuration.GetSection("ConnectionType").Value == "http")
         {
-            _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+            _httpRequestService = _serviceProvider.GetRequiredService<IHttpRequestService>();
         }
-        else if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        else if (_configuration.GetSection("ConnectionType").Value == "rabbitmq")
         {
-            _addTaskRpcConsumer = new RabbitMQBackgroundAddTaskService(_serviceProvider);
-            _getProjectRpcConsumer = new RabbitMQBackgroundGetProjectService<TModel>(_serviceProvider);
+            _addTaskRpcConsumer = new RabbitMQBackgroundAddTaskService(_serviceScopeFactory, connectionPool);
+            _getProjectRpcConsumer = new RabbitMQBackgroundGetProjectService<TModel>(_serviceScopeFactory, connectionPool);
         }
         else
         {
@@ -67,7 +72,7 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
 
         if (_getProjectRpcConsumer != null)
         {
-            var isMessagePublished = await GetProjectByIdWithRpc(request, "GetProjectQueue");
+            var isMessagePublished = await ProjectConnectionService<TModel>.GetProjectByIdWithRpc(request, "GetProjectQueue");
 
             if (isMessagePublished)
             {
@@ -129,7 +134,7 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
         throw new HttpRequestException("Проект не найден в базе данных. Код состояния: " + projectIdResponse.StatusCode);
     }
 
-    private async Task<bool> GetProjectByIdWithRpc(IsProjectExistsRequest request, string queueName)
+    private static async Task<bool> GetProjectByIdWithRpc(IsProjectExistsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<IsProjectExistsRequest>(queueName, request);
         var result = await publisher.PublishAsync();

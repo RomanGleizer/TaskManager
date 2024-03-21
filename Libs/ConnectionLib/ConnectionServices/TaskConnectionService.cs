@@ -3,6 +3,7 @@ using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Logic.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -15,13 +16,21 @@ namespace ConnectionLib.ConnectionServices;
 /// Инициализирует новый экземпляр класса TaskConnectionService с указанным провайдером сервисов
 /// </remarks>
 /// <param name="serviceProvider">Провайдер сервисов</param>
-public class TaskConnectionService(
-    IServiceProvider serviceProvider,
-    ILogger<UserConnectionService<UserService>> logger) : ITaskConnectionService
+public class TaskConnectionService : ITaskConnectionService
 {
-    private readonly ILogger<UserConnectionService<UserService>> _logger = logger;
-    private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
-    private readonly string _baseUrl = "https://localhost:7101/api/Tasks";
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<UserConnectionService<UserService>> _logger;
+    private readonly IHttpRequestService _httpRequestService;
+    private readonly string? _baseUrl;
+
+    public TaskConnectionService(IServiceProvider serviceProvider, ILogger<UserConnectionService<UserService>> logger, IConfiguration configuration)
+    {
+        _logger = logger;
+        _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
+        _configuration = configuration;
+
+        _baseUrl = _configuration.GetSection("BaseTaskServiceUrl").Value;
+    }
 
     /// <inheritdoc/>
     public async Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request)

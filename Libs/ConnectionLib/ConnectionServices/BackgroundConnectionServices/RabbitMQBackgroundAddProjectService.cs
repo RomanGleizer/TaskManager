@@ -2,6 +2,7 @@
 using Core.Dal.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -16,45 +17,40 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundAddProjectService"/>
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
-public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvider) : BackgroundService
+public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvider, ObjectPool<IConnection> connectionPool) : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _queueName = "UserConnectionServiceQueue";
+    private readonly ObjectPool<IConnection> _connectionPool = connectionPool;
 
-    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-
-        var addProjectIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddProjectIdToUserProjectIdList>();
-        var factory = new ConnectionFactory { HostName = "localhost" };
-        var connection = factory.CreateConnection();
-        var channel = connection.CreateModel();
-
-        // Объявление очереди
-        channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-
-        var consumer = new EventingBasicConsumer(model: channel);
-        consumer.Received += async (model, ea) =>
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-            channel.BasicAck(ea.DeliveryTag, false);
+            using var connection = _connectionPool.Get();
+            using var channel = connection.CreateModel();
 
-            var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+            channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-            var addNewTaskDesirializeData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
-                ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsRequest)}");
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+                channel.BasicAck(ea.DeliveryTag, false);
 
-            // Добавление идентификатора проекта в список проектов пользователя
-            var result = await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDesirializeData.ProjectId, addNewTaskDesirializeData.MemberId);
-        };
+                var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-        // Потребление сообщений из очереди
-        channel.BasicConsume(
-            consumer: consumer,
-            queue: _queueName,
-            autoAck: true);
+                var addNewTaskDeserializedData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
+                    ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsRequest)}");
 
-        await Task.Delay(Timeout.Infinite, stoppingToken);
+                using var scope = _serviceProvider.CreateScope();
+
+                var addProjectIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddProjectIdToUserProjectIdList>();
+                await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDeserializedData.ProjectId, addNewTaskDeserializedData.MemberId);
+            };
+
+            channel.BasicConsume(consumer: consumer, queue: _queueName, autoAck: true);
+            await Task.Delay(1000, stoppingToken);
+        }
     }
 }

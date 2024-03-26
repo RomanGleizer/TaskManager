@@ -8,6 +8,8 @@ using Logic.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
+using RabbitMQ.Client;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -25,15 +27,19 @@ public class UserConnectionService<TService> : IUserConnectionService
     private readonly IHttpRequestService? _httpRequestService;
     private readonly RabbitMQBackgroundAddProjectService? _rpcConsumer;
 
+    private readonly ObjectPool<IConnection> _connectionPool;
+
     public UserConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<UserConnectionService<TService>> logger)
+        ILogger<UserConnectionService<TService>> logger,
+        ObjectPool<IConnection> connectionPool)
     {
         _baseUrl = "https://localhost:7265/api/Users";
         _configuration = configuration;
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _connectionPool = connectionPool;
 
         if (_configuration.GetSection("ConnectionType").Value == "http")
         {
@@ -41,7 +47,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else if (_configuration.GetSection("ConnectionType").Value == "rpc")
         {
-            _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceProvider);
+            _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceProvider, _connectionPool);
         }
         else
         {

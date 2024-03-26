@@ -10,6 +10,8 @@ using Core.RPC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
+using RabbitMQ.Client;
 
 namespace ConnectionLib.ConnectionServices;
 
@@ -30,28 +32,28 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
     private readonly IHttpRequestService? _httpRequestService;
     private readonly RabbitMQBackgroundAddTaskService? _addTaskRpcConsumer;
     private readonly RabbitMQBackgroundGetProjectService<TModel>? _getProjectRpcConsumer;
-
-    private readonly string _baseUrl;
+    private readonly string? _baseUrl;
 
     public ProjectConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<ProjectConnectionService<TModel>> logger)
+        ILogger<ProjectConnectionService<TModel>> logger,
+        ObjectPool<IConnection> connectionPool)
     {
         _configuration = configuration;
         _serviceProvider = serviceProvider;
         _logger = logger;
 
-        _baseUrl = _configuration["BaseUrl"] ?? "https://localhost:7047/api/Projects";
+        _baseUrl = configuration.GetValue<string>("BaseUrl:Projects");
 
-        if (_configuration.GetSection("ConnectionType").Value == "http")
+        if (_configuration.GetValue<string>("ConnectionType") == "http")
         {
             _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
         }
-        else if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        else if (_configuration.GetValue<string>("ConnectionType") == "rabbitmq")
         {
-            _addTaskRpcConsumer = new RabbitMQBackgroundAddTaskService(_serviceProvider);
-            _getProjectRpcConsumer = new RabbitMQBackgroundGetProjectService<TModel>(_serviceProvider);
+            _addTaskRpcConsumer = new RabbitMQBackgroundAddTaskService(_serviceProvider, connectionPool);
+            _getProjectRpcConsumer = new RabbitMQBackgroundGetProjectService<TModel>(_serviceProvider, connectionPool);
         }
         else
         {
@@ -67,7 +69,7 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
 
         if (_getProjectRpcConsumer != null)
         {
-            var isMessagePublished = await GetProjectByIdWithRpc(request, "GetProjectQueue");
+            var isMessagePublished = await ProjectConnectionService<TModel>.GetProjectByIdWithRpc(request, "GetProjectQueue");
 
             if (isMessagePublished)
             {
@@ -94,7 +96,7 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
 
         if (_addTaskRpcConsumer != null)
         {
-            var isMessagePublished = await AddTaskIdInProjectTaskIdsWithRPC(request, "AddTaskQueue");
+            var isMessagePublished = await ProjectConnectionService<TModel>.AddTaskIdInProjectTaskIdsWithRPC(request, "AddTaskQueue");
 
             if (isMessagePublished)
             {
@@ -121,15 +123,22 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
 
         var connectionData = new HttpConnectionData();
 
-        var projectIdResponse = await _httpRequestService.SendRequestAsync<IsProjectExistsResponse>(getIdRequestData, connectionData);
+        if (_httpRequestService != null)
+        {
+            var projectIdResponse = await _httpRequestService.SendRequestAsync<IsProjectExistsResponse>(getIdRequestData, connectionData);
 
-        if (projectIdResponse.IsSuccessStatusCode)
-            return projectIdResponse.Body;
+            if (projectIdResponse.IsSuccessStatusCode)
+                return projectIdResponse.Body;
 
-        throw new HttpRequestException("Проект не найден в базе данных. Код состояния: " + projectIdResponse.StatusCode);
+            throw new HttpRequestException("Проект не найден в базе данных. Код состояния: " + projectIdResponse.StatusCode);
+        }
+        else
+        {
+            throw new Exception($"{typeof(IHttpRequestService)} имеет значение null");
+        }
     }
 
-    private async Task<bool> GetProjectByIdWithRpc(IsProjectExistsRequest request, string queueName)
+    private static async Task<bool> GetProjectByIdWithRpc(IsProjectExistsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<IsProjectExistsRequest>(queueName, request);
         var result = await publisher.PublishAsync();
@@ -147,16 +156,24 @@ public class ProjectConnectionService<TModel> : IProjectConnectionService
         };
 
         var connectionData = new HttpConnectionData();
-        var addTaskResponse = await _httpRequestService.SendRequestAsync<AddTaskIdInProjectTaskIdsResponse>(addTaskInProjectData, connectionData);
 
-        if (addTaskResponse.IsSuccessStatusCode)
-            return addTaskResponse.Body;
+        if (_httpRequestService != null)
+        {
+            var addTaskResponse = await _httpRequestService.SendRequestAsync<AddTaskIdInProjectTaskIdsResponse>(addTaskInProjectData, connectionData);
 
-        _logger.LogError($"Не удалось добавить задачу в проект. Код состояния: {addTaskResponse.StatusCode}");
-        throw new HttpRequestException($"Не удалось добавить участника в проект. Код состояния: {addTaskResponse.StatusCode}");
+            if (addTaskResponse.IsSuccessStatusCode)
+                return addTaskResponse.Body;
+
+            _logger.LogError($"Не удалось добавить задачу в проект. Код состояния: {addTaskResponse.StatusCode}");
+            throw new HttpRequestException($"Не удалось добавить участника в проект. Код состояния: {addTaskResponse.StatusCode}");
+        }
+        else
+        {
+            throw new Exception($"{typeof(IHttpRequestService)} имеет значение null");
+        }
     }
 
-    private async Task<bool> AddTaskIdInProjectTaskIdsWithRPC(AddTaskIdInProjectTaskIdsRequest request, string queueName)
+    private static async Task<bool> AddTaskIdInProjectTaskIdsWithRPC(AddTaskIdInProjectTaskIdsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<AddTaskIdInProjectTaskIdsRequest>(queueName, request);
         var result = await publisher.PublishAsync();

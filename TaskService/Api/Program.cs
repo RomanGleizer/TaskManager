@@ -1,6 +1,7 @@
 using AutoMapper;
 using ConnectionLib.ConnectionServices;
 using ConnectionLib.ConnectionServices.BackgroundConnectionService;
+using ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal;
 using Core.Dal.Base;
@@ -16,49 +17,47 @@ using Logic.DTO;
 using Logic.MapperLogic;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ObjectPool;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Получение строк подключения
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 var projectConnection = builder.Configuration.GetConnectionString("ProjectConnection");
-
-// Конфигурация AutoMapper
 var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
 var mapper = mappingConfig.CreateMapper();
+var connectionFactory = new ConnectionFactory { HostName = "localhost" };
+var poolPolicy = new RabbitMQConnectionPoolPolicy(connectionFactory);
+var connectionPool = new DefaultObjectPool<IConnection>(poolPolicy);
+
 builder.Services.AddSingleton(mapper);
 
-// Добавление сервисов
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Репозитории и сервисы для сущностей Task и Comment
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 builder.Services.AddTransient<IRepository<TaskDal, int>, TaskRepository>();
 builder.Services.AddTransient<IRepository<CommentDal, int>, CommentRepository>();
 builder.Services.AddTransient<IDtoService<TaskDTO, int>, TaskService>();
 builder.Services.AddTransient<IDtoService<CommentDTO, int>, CommentService>();
 
-// Сервис фонового проектного подключения через RabbitMQ
 builder.Services.AddHostedService<RabbitMQBackgroundAddTaskService>();
 
-// Сервисы проектного подключения
 builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService<Project>>();
 builder.Services.AddHttpRequestService();
 
-// Контексты базы данных
 builder.Services.AddDbContext<TaskManagerDbContext>(options => options.UseSqlServer(connection));
 builder.Services.AddDbContext<ProjectServiceDbContext>(options => options.UseSqlServer(projectConnection));
 
-// Репозиторий и сервис для работы с проектами
 builder.Services.AddTransient<IProjectRepository<Project, int>, ProjectRepository>();
 builder.Services.AddTransient<IAddTaskIdToProjectTaskIdList, AddTaskIdToProjectTaskIdList<Project>>();
 builder.Services.AddTransient<IGetProjectById<Project>, GetProjectById<Project>>();
 
+builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
+
 var app = builder.Build();
 
-// Middleware для разработки
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

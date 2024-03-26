@@ -21,7 +21,6 @@ using Services.Mappers;
 using Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 var identityDbConnection = builder.Configuration.GetConnectionString("IdentityDbConnection");
 var connectionFactory = new ConnectionFactory { HostName = "localhost" };

@@ -3,6 +3,7 @@ using ConnectionLib.ConnectionServices.Interfaces;
 using Core.HttpLogic.Services;
 using Core.HttpLogic.Services.Interfaces;
 using Logic.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -16,12 +17,14 @@ namespace ConnectionLib.ConnectionServices;
 /// </remarks>
 /// <param name="serviceProvider">Провайдер сервисов</param>
 public class TaskConnectionService(
+    IConfiguration configuration,
     IServiceProvider serviceProvider,
     ILogger<UserConnectionService<UserService>> logger) : ITaskConnectionService
 {
     private readonly ILogger<UserConnectionService<UserService>> _logger = logger;
+
     private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
-    private readonly string _baseUrl = "https://localhost:7101/api/Tasks";
+    private readonly string? _baseUrl = configuration.GetValue<string>("BaseUrl:Tasks");
 
     /// <inheritdoc/>
     public async Task<ExistingTaskInProjectResponse> GetExistingTaskAsync(ExistingTaskInProjectRequest request)

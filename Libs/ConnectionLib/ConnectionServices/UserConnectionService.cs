@@ -22,12 +22,11 @@ public class UserConnectionService<TService> : IUserConnectionService
     private readonly IConfiguration _configuration;
     private readonly ILogger<UserConnectionService<TService>> _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly string _baseUrl;
+    private readonly ObjectPool<IConnection> _connectionPool;
 
+    private readonly string? _baseUrl;
     private readonly IHttpRequestService? _httpRequestService;
     private readonly RabbitMQBackgroundAddProjectService? _rpcConsumer;
-
-    private readonly ObjectPool<IConnection> _connectionPool;
 
     public UserConnectionService(
         IConfiguration configuration,
@@ -35,17 +34,18 @@ public class UserConnectionService<TService> : IUserConnectionService
         ILogger<UserConnectionService<TService>> logger,
         ObjectPool<IConnection> connectionPool)
     {
-        _baseUrl = "https://localhost:7265/api/Users";
         _configuration = configuration;
         _logger = logger;
         _serviceProvider = serviceProvider;
         _connectionPool = connectionPool;
 
-        if (_configuration.GetSection("ConnectionType").Value == "http")
+        _baseUrl = configuration.GetValue<string>("BaseUrl:Users");
+
+        if (_configuration.GetValue<string>("ConnectionType") == "http")
         {
             _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
         }
-        else if (_configuration.GetSection("ConnectionType").Value == "rpc")
+        else if (_configuration.GetValue<string>("ConnectionType") == "rabbitmq")
         {
             _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceProvider, _connectionPool);
         }
@@ -64,7 +64,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else if (_rpcConsumer != null)
         {
-            await AddProjectWithRPC(request, "UserConnectionServiceQueue");
+            await UserConnectionService<TService>.AddProjectWithRPC(request, "UserConnectionServiceQueue");
             return new AddProjectToListOfUserProjectsResponse
             {
                 MemberId = request.MemberId,
@@ -99,11 +99,11 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else
         {
-            throw new Exception($"{typeof(UserConnectionService<TService>)} имеет значение null");
+            throw new Exception($"{typeof(IHttpRequestService)} имеет значение null");
         }
     }
 
-    private async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request, string queueName)
+    private static async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<AddProjectToListOfUserProjectsRequest>(queueName, request);
         await publisher.PublishAsync();

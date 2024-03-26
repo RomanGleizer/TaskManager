@@ -2,6 +2,7 @@
 using Core.Dal.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -17,46 +18,41 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundGetProjectService{TModel}"/>
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
-public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider serviceProvider) : BackgroundService
+public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider serviceProvider, ObjectPool<IConnection> connectionPool) : BackgroundService
     where TModel : IBaseEntity<int>
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _queueName = "GetProjectQueue";
+    private readonly ObjectPool<IConnection> _connectionPool = connectionPool;
 
-    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-
-        var getProjectById = scope.ServiceProvider.GetRequiredService<IGetProjectById<TModel>>();
-        var factory = new ConnectionFactory { HostName = "localhost" };
-        var connection = factory.CreateConnection();
-        var channel = connection.CreateModel();
-
-        // Объявление очереди
-        channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-
-        var consumer = new EventingBasicConsumer(model: channel);
-        consumer.Received += async (model, ea) =>
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-            channel.BasicAck(ea.DeliveryTag, false);
+            using var connection = _connectionPool.Get();
+            using var channel = connection.CreateModel();
 
-            var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+            channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-            var getProjectDesirializedData = JsonConvert.DeserializeObject<IsProjectExistsRequest>(message)
-                ?? throw new Exception($"Ошибка при десериализации {typeof(IsProjectExistsRequest)}");
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+                channel.BasicAck(ea.DeliveryTag, false);
 
-            // Получение информации о проекте по его идентификатору
-            await getProjectById.GetById(getProjectDesirializedData.ProjectId);
-        };
+                var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-        // Потребление сообщений из очереди
-        channel.BasicConsume(
-            consumer: consumer,
-            queue: _queueName,
-            autoAck: true);
+                var getProjectDeserializedData = JsonConvert.DeserializeObject<IsProjectExistsRequest>(message)
+                    ?? throw new Exception($"Ошибка при десериализации {typeof(IsProjectExistsRequest)}");
 
-        await Task.Delay(Timeout.Infinite, stoppingToken);
+                using var scope = _serviceProvider.CreateScope();
+
+                var getProjectById = scope.ServiceProvider.GetRequiredService<IGetProjectById<TModel>>();
+                await getProjectById.GetById(getProjectDeserializedData.ProjectId);
+            };
+
+            channel.BasicConsume(consumer: consumer, queue: _queueName, autoAck: true);
+            await Task.Delay(1000, stoppingToken);
+        }
     }
 }

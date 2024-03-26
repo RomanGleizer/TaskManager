@@ -15,41 +15,37 @@ using Logic.Interfaces;
 using Logic.Mapper;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ObjectPool;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Получение строки подключения к базе данных
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-
-// Конфигурация AutoMapper
 var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
 var mapper = mappingConfig.CreateMapper();
+var connectionFactory = new ConnectionFactory { HostName = "localhost" };
+var poolPolicy = new RabbitMQConnectionPoolPolicy(connectionFactory);
+var connectionPool = new DefaultObjectPool<IConnection>(poolPolicy);
+
 builder.Services.AddSingleton(mapper);
 
-// Добавление сервисов
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Репозиторий для работы с Unit of Work
 builder.Services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 
-// Сервисы для работы с пользователями и ролями
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IDtoService<RoleDto, int>, RoleService>();
 builder.Services.AddTransient<IRepository<RoleDal, int>, RoleRepository>();
 builder.Services.AddTransient<IUserRepository<UserDal>, UserRepository>();
 
-// Сервис проектного подключения
 builder.Services.AddTransient<IProjectConnectionService, ProjectConnectionService<Project>>();
 
-// Сервис для добавления идентификатора проекта в список идентификаторов проекта пользователя
 builder.Services.AddTransient<IAddProjectIdToUserProjectIdList, AddProjectIdToUserProjectIdList<UserDal>>();
 
-// Фоновый сервис для подключения к пользовательским службам через RabbitMQ
 builder.Services.AddHostedService<RabbitMQBackgroundAddProjectService>();
 
-// Конфигурация Identity и добавление сервиса HTTP-запросов
 builder.Services
     .AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection))
     .AddIdentity<UserDal, RoleDal>(options =>
@@ -65,9 +61,10 @@ builder.Services
     .AddEntityFrameworkStores<IdentityServiceDbContext>();
 builder.Services.AddHttpRequestService();
 
+builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
+
 var app = builder.Build();
 
-// Middleware для разработки
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

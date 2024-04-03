@@ -3,13 +3,11 @@ using RabbitMQ.Client;
 
 namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 
-public class RabbitMQConnectionPoolPolicy(ConnectionFactory connectionFactory) : IPooledObjectPolicy<IConnection>
+public class RabbitMqConnectionPoolPolicy(ConnectionFactory connectionFactory) : IPooledObjectPolicy<IConnection>
 {
-    private readonly ConnectionFactory _connectionFactory = connectionFactory;
-
     public IConnection Create()
     {
-        return _connectionFactory.CreateConnection();
+        return connectionFactory.CreateConnection();
     }
 
     public bool Return(IConnection connection)

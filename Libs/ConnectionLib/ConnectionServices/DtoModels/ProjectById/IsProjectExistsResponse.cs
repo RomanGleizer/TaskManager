@@ -17,7 +17,7 @@ public record IsProjectExistsResponse
     /// Получает или устанавливает имя проекта
     /// </summary>
     [JsonPropertyName("name")]
-    public required string Name { get; init; }
+    public required string? Name { get; init; }
 
     /// <summary>
     /// Получает или устанавливает дату создания проекта

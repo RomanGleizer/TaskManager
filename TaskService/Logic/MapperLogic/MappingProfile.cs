@@ -14,7 +14,7 @@ public class MappingProfile : Profile
     /// </summary>
     public MappingProfile()
     {
-        CreateMap<TaskDal, TaskDTO>();
-        CreateMap<TaskDTO, TaskDal>();
+        CreateMap<TaskDal, TaskDto>();
+        CreateMap<TaskDto, TaskDal>();
     }
 }

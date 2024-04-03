@@ -15,19 +15,17 @@ namespace Api.Controllers;
 /// <param name="taskService">Сервис для работы с задачами</param>
 [Route("api/[controller]")]
 [ApiController]
-public class TasksController(IDtoService<TaskDTO, Guid> taskService) : ControllerBase
+public class TasksController(IDtoService<TaskDto, Guid> taskService) : ControllerBase
 {
-    private readonly IDtoService<TaskDTO, Guid> _taskService = taskService;
-
     /// <summary>
     /// Получает информацию о задаче по идентификатору
     /// </summary>
     /// <param name="taskId">Идентификатор задачи</param>
-    [HttpGet("{taskId}")]
+    [HttpGet("{taskId:guid}")]
     [ProducesResponseType<TaskInfoResponse>(200)]
     public async Task<IActionResult> GetInfoAsync([FromRoute] Guid taskId)
     {
-        var task = await _taskService.GetDtoByIdAsync(taskId);
+        var task = await taskService.GetDtoByIdAsync(taskId);
         return Ok(new TaskInfoResponse
         {
             Id = task.Id,
@@ -48,7 +46,7 @@ public class TasksController(IDtoService<TaskDTO, Guid> taskService) : Controlle
     [ProducesResponseType<CreateTaskResponse>(200)]
     public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskDTO request)
     {
-        var newTask = await _taskService.CreateDtoAsync(new TaskDTO
+        var newTask = await taskService.CreateDtoAsync(new TaskDto
         {
             Id = request.Id,
             Name = request.Name,
@@ -76,11 +74,11 @@ public class TasksController(IDtoService<TaskDTO, Guid> taskService) : Controlle
     /// Удаляет задачу по идентификатору
     /// </summary>
     /// <param name="taskId">Идентификатор задачи</param>
-    [HttpDelete("{taskId}")]
+    [HttpDelete("{taskId:guid}")]
     [ProducesResponseType<DeleteTaskResponse>(200)]
     public async Task<IActionResult> DeleteTaskAsync([FromRoute] Guid taskId)
     {
-        var deletedTask = await _taskService.DeleteDtoAsync(taskId);
+        var deletedTask = await taskService.DeleteDtoAsync(taskId);
         return Ok(new DeleteTaskResponse
         {
             Name = deletedTask.Name,
@@ -98,11 +96,11 @@ public class TasksController(IDtoService<TaskDTO, Guid> taskService) : Controlle
     /// </summary>
     /// <param name="request">Запрос на обновление информации о задаче</param>
     /// <param name="taskId">Идентификатор задачи</param>
-    [HttpPut("{taskId}")]
+    [HttpPut("{taskId:guid}")]
     [ProducesResponseType<UpdateTaskResponse>(200)]
     public async Task<IActionResult> UpdateTaskAsync([FromRoute] UpdateTaskDTO request, [FromRoute] Guid taskId)
     {
-        var taskDTO = new TaskDTO
+        var taskDTO = new TaskDto
         {
             Id = taskId,
             Name = request.Name,
@@ -114,7 +112,7 @@ public class TasksController(IDtoService<TaskDTO, Guid> taskService) : Controlle
             ProjectId = request.ProjectId
         };
 
-        var updatedTaskDal = await _taskService.UpdateDtoAsync(taskDTO, taskId);
+        var updatedTaskDal = await taskService.UpdateDtoAsync(taskDTO, taskId);
         return Ok(new UpdateTaskResponse
         {
             Name = updatedTaskDal.Name,
@@ -129,11 +127,11 @@ public class TasksController(IDtoService<TaskDTO, Guid> taskService) : Controlle
     /// <summary>
     /// Получает список всех задач из определнного проекта
     /// </summary>
-    /// <param name="taskId">Идентификатор задачи</param>
-    [HttpGet("projects/{projectId}")]
+    /// <param name="projectId">Идентификатор проекта</param>
+    [HttpGet("projects/{projectId:guid}")]
     public async Task<IActionResult> GetAllTasksFromCertainProject([FromRoute] Guid projectId)
     {
-        var result = await _taskService.GetAllDtosAsync();
+        var result = await taskService.GetAllDtosAsync();
         var tasks = result
             .Where(t => t.ProjectId == projectId)
             .Select(t => t.Id)

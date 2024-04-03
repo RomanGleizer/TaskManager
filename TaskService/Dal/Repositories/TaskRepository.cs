@@ -13,24 +13,22 @@ namespace Dal.Repositories;
 /// </remarks>
 public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDal, Guid>
 {
-    private readonly TaskManagerDbContext _dbContext = dbContext;
-
     /// <inheritdoc/>
     public async Task<IList<TaskDal>> GetAllAsync()
     {
-        return await _dbContext.Tasks.ToListAsync();
+        return await dbContext.Tasks.ToListAsync();
     }
 
     /// <inheritdoc/>
     public async Task<TaskDal?> GetByIdAsync(Guid id)
     {
-        return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+        return await dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
     }
 
     /// <inheritdoc/>
     public async Task<TaskDal?> CreateAsync(TaskDal item)
     {
-        var createdEntity = await _dbContext.Tasks.AddAsync(item);
+        var createdEntity = await dbContext.Tasks.AddAsync(item);
         await SaveChangesAsync();
 
         return createdEntity.Entity;
@@ -39,7 +37,7 @@ public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDa
     /// <inheritdoc/>
     public async Task<TaskDal?> DeleteAsync(TaskDal item)
     {
-        var removedEntity = _dbContext.Tasks.Remove(item);
+        var removedEntity = dbContext.Tasks.Remove(item);
         await SaveChangesAsync();
 
         return removedEntity.Entity;
@@ -48,7 +46,7 @@ public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDa
     /// <inheritdoc/>
     public async Task<TaskDal?> UpdateAsync(TaskDal item)
     {
-        var entriedEntity = _dbContext.Entry(item);
+        var entriedEntity = dbContext.Entry(item);
         entriedEntity.State = EntityState.Modified;
         await SaveChangesAsync();
 
@@ -58,6 +56,6 @@ public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDa
     /// <inheritdoc/>
     public async Task SaveChangesAsync()
     {
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
     }
 }

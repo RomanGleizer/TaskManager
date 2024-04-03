@@ -14,20 +14,21 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// Фоновый сервис для управления подключениями пользователей через RabbitMQ
 /// </summary>
 /// <remarks>
-/// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundAddProjectService"/>
+/// Инициализирует новый экземпляр класса <see cref="RabbitMqBackgroundAddProjectService"/>
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
-public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvider, ObjectPool<IConnection> connectionPool) : BackgroundService
+public class RabbitMqBackgroundAddProjectService(
+    IServiceProvider serviceProvider, 
+    ObjectPool<IConnection> connectionPool) 
+    : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _queueName = "UserConnectionServiceQueue";
-    private readonly ObjectPool<IConnection> _connectionPool = connectionPool;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var connection = _connectionPool.Get();
+            using var connection = connectionPool.Get();
             using var channel = connection.CreateModel();
 
             channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
@@ -40,13 +41,17 @@ public class RabbitMQBackgroundAddProjectService(IServiceProvider serviceProvide
 
                 var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                var addNewTaskDeserializedData = JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
+                var addNewTaskDeserializedData = 
+                    JsonConvert.DeserializeObject<AddProjectToListOfUserProjectsRequest>(message)
                     ?? throw new Exception($"Ошибка при десериализации {typeof(AddProjectToListOfUserProjectsRequest)}");
 
-                using var scope = _serviceProvider.CreateScope();
+                using var scope = serviceProvider.CreateScope();
 
                 var addProjectIdToProjectIdList = scope.ServiceProvider.GetRequiredService<IAddProjectIdToUserProjectIdList>();
-                await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(addNewTaskDeserializedData.ProjectId, addNewTaskDeserializedData.MemberId);
+                
+                await addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(
+                    addNewTaskDeserializedData.ProjectId, 
+                    addNewTaskDeserializedData.MemberId);
             };
 
             channel.BasicConsume(consumer: consumer, queue: _queueName, autoAck: true);

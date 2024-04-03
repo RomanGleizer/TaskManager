@@ -12,14 +12,10 @@ namespace Api.Controllers;
 /// Инициализирует новый экземпляр контроллера ролей
 /// </remarks>
 /// <param name="roleService">Сервис ролей</param>
-/// <param name="mapper">Маппер</param>
 [Route("api/[controller]")]
 [ApiController]
-public class RolesController(RoleService roleService, IMapper mapper) : ControllerBase
+public class RolesController(RoleService roleService) : ControllerBase
 {
-    private readonly RoleService _roleService = roleService;
-    private readonly IMapper _mapper = mapper;
-
     /// <summary>
     /// Получает все роли
     /// </summary>
@@ -27,7 +23,7 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
     [ProducesResponseType(typeof(IEnumerable<RoleDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllRoles()
     {
-        var roles = await _roleService.GetAllDtosAsync();
+        var roles = await roleService.GetAllDtosAsync();
         return Ok(roles);
     }
 
@@ -36,13 +32,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
     /// </summary>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRoleById(int id)
     {
-        var role = await _roleService.GetDtoByIdAsync(id);
-        if (role == null)
-            return NotFound("Role not found");
-
+        var role = await roleService.GetDtoByIdAsync(id);
         return Ok(role);
     }
 
@@ -51,10 +43,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateRole(RoleDto roleDto)
     {
-        var createdRole = await _roleService.CreateDtoAsync(roleDto);
+        var createdRole = await roleService.CreateDtoAsync(roleDto);
         return CreatedAtAction(nameof(GetRoleById), new { id = createdRole.Id }, createdRole);
     }
 
@@ -63,14 +54,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
     /// </summary>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateRole(int id, RoleDto roleDto)
     {
-        var updatedRole = await _roleService.UpdateDtoAsync(roleDto, id);
-        if (updatedRole == null)
-            return NotFound("Role not found");
-
+        var updatedRole = await roleService.UpdateDtoAsync(roleDto, id);
         return Ok(updatedRole);
     }
 
@@ -79,13 +65,9 @@ public class RolesController(RoleService roleService, IMapper mapper) : Controll
     /// </summary>
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteRole(int id)
     {
-        var deletedRole = await _roleService.DeleteDtoAsync(id);
-        if (deletedRole == null)
-            return NotFound("Role not found");
-
+        var deletedRole = await roleService.DeleteDtoAsync(id);
         return Ok(deletedRole);
     }
 }

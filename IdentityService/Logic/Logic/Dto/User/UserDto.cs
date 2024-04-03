@@ -50,7 +50,7 @@ public record UserDto : IBaseDTO<Guid>
     /// <summary>
     /// Получает или устанавливает список идентификаторов проектов, связанных с пользователем
     /// </summary>
-    public required IList<int> ProjectIds { get; init; }
+    public required IList<Guid> ProjectIds { get; init; }
 
     /// <summary>
     /// Возвращает или устанавливает имя пользователя, которое используется для аутентификации и идентификации пользователя

@@ -18,30 +18,27 @@ namespace Logic.Services;
 /// <param name="mapper">Объект для отображения объектов между различными типами, используя AutoMapper</param>
 public class UserService(IMapper mapper, IUserRepository<UserDal> userRepository) : IUserService
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IUserRepository<UserDal> _userRepository = userRepository;
-
     /// <inheritdoc/>
     public async Task<IList<UserDto>> GetAllUsersAsync()
     {
-        var userDals = await _userRepository.GetAllAsync();
-        return _mapper.Map<IList<UserDto>>(userDals);
+        var userDals = await userRepository.GetAllAsync();
+        return mapper.Map<IList<UserDto>>(userDals);
     }
 
     /// <inheritdoc/>
     public async Task<UserDto> GetUserByIdAsync(Guid id)
     {
-        var existingUserDal = await _userRepository.GetByIdAsync(id)
+        var existingUserDal = await userRepository.GetByIdAsync(id)
             ?? throw new ValidationException("Пользователь не найден в базе данных", string.Empty);
 
-        return _mapper.Map<UserDto>(existingUserDal);
+        return mapper.Map<UserDto>(existingUserDal);
     }
 
     /// <inheritdoc/>
     public async Task<IdentityResult> CreateUserAsync(CreateUserDto dto, string password)
     {
-        var userDal = _mapper.Map<UserDal>(dto);
-        var createdEntity = await _userRepository.CreateAsync(userDal, password)
+        var userDal = mapper.Map<UserDal>(dto);
+        var createdEntity = await userRepository.CreateAsync(userDal, password)
             ?? throw new Exception("Произошла ошибка при добавлении пользователя в базу данных");
 
         return createdEntity;
@@ -50,10 +47,10 @@ public class UserService(IMapper mapper, IUserRepository<UserDal> userRepository
     /// <inheritdoc/>
     public async Task<IdentityResult> DeleteUserAsync(Guid id)
     {
-        var existingUser = await _userRepository.GetByIdAsync(id)
+        var existingUser = await userRepository.GetByIdAsync(id)
             ?? throw new Exception("Пользователь не найден в базе данных");
 
-        var deletedUser = await _userRepository.DeleteAsync(existingUser)
+        var deletedUser = await userRepository.DeleteAsync(existingUser)
             ?? throw new Exception("Произошла ошибка при удалении пользователя из базы данных");
 
         return deletedUser;
@@ -62,12 +59,12 @@ public class UserService(IMapper mapper, IUserRepository<UserDal> userRepository
     /// <inheritdoc/>
     public async Task<IdentityResult> UpdateUserAsync(Guid id, UpdateUserDto dto)
     {
-        var existingUser = await _userRepository.GetByIdAsync(id)
+        var existingUser = await userRepository.GetByIdAsync(id)
             ?? throw new Exception("Пользователь не найден в базе данных");
 
-        _mapper.Map(dto, existingUser);
+        mapper.Map(dto, existingUser);
 
-        var updatedUser = await _userRepository.UpdateAsync(existingUser)
+        var updatedUser = await userRepository.UpdateAsync(existingUser)
             ?? throw new Exception("Произошла ошибка при обновлении пользователя в базе данных");
 
         return updatedUser;

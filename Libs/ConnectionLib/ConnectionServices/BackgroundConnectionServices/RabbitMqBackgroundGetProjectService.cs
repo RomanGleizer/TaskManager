@@ -15,21 +15,21 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// </summary>
 /// <typeparam name="TModel">Тип модели проекта, реализующий интерфейс <see cref="IBaseEntity{TKey}"/> с ключом типа int</typeparam>
 /// <remarks>
-/// Инициализирует новый экземпляр класса <see cref="RabbitMQBackgroundGetProjectService{TModel}"/>
+/// Инициализирует новый экземпляр класса <see cref="RabbitMqBackgroundGetProjectService{TModel}"/>
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
-public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider serviceProvider, ObjectPool<IConnection> connectionPool) : BackgroundService
+public class RabbitMqBackgroundGetProjectService<TModel>(
+    IServiceProvider serviceProvider, 
+    ObjectPool<IConnection> connectionPool) : BackgroundService
     where TModel : IBaseEntity<Guid>
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _queueName = "GetProjectQueue";
-    private readonly ObjectPool<IConnection> _connectionPool = connectionPool;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var connection = _connectionPool.Get();
+            using var connection = connectionPool.Get();
             using var channel = connection.CreateModel();
 
             channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
@@ -45,7 +45,7 @@ public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider servic
                 var getProjectDeserializedData = JsonConvert.DeserializeObject<IsProjectExistsRequest>(message)
                     ?? throw new Exception($"Ошибка при десериализации {typeof(IsProjectExistsRequest)}");
 
-                using var scope = _serviceProvider.CreateScope();
+                using var scope = serviceProvider.CreateScope();
 
                 var getProjectById = scope.ServiceProvider.GetRequiredService<IGetProjectById<TModel>>();
                 await getProjectById.GetById(getProjectDeserializedData.ProjectId);

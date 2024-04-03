@@ -19,10 +19,8 @@ namespace ConnectionLib.ConnectionServices;
 public class TaskConnectionService(
     IConfiguration configuration,
     IServiceProvider serviceProvider,
-    ILogger<UserConnectionService<UserService>> logger) : ITaskConnectionService
+    ILogger<UserConnectionService> logger) : ITaskConnectionService
 {
-    private readonly ILogger<UserConnectionService<UserService>> _logger = logger;
-
     private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
     private readonly string? _baseUrl = configuration.GetValue<string>("BaseUrl:Tasks");
 
@@ -44,7 +42,7 @@ public class TaskConnectionService(
         }
         else
         {
-            _logger.LogError("Не удалось найти задачу. Код состояния: {StatusCode}", response.StatusCode);
+            logger.LogError("Не удалось найти задачу. Код состояния: {StatusCode}", response.StatusCode);
             throw new HttpRequestException($"Запрос завершился неудачно с кодом состояния {response.StatusCode}");
         }
     }

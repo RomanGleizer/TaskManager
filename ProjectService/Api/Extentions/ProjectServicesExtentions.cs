@@ -40,7 +40,7 @@ public static class ProjectServicesExtentions
     public static void AddConnectionServices(this IServiceCollection services)
     {
         services.AddTransient<ITaskConnectionService, TaskConnectionService>();
-        services.AddTransient<IUserConnectionService, UserConnectionService<UserService>>();
+        services.AddTransient<IUserConnectionService, UserConnectionService>();
     }
 
     public static void AddMicroserviceInteractionOperations(this IServiceCollection services)

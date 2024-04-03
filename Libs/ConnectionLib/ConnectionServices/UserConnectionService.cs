@@ -16,22 +16,21 @@ namespace ConnectionLib.ConnectionServices;
 /// <summary>
 /// Сервис для управления соединением пользователей
 /// </summary>
-public class UserConnectionService<TService> : IUserConnectionService
-    where TService : IUserService
+public class UserConnectionService : IUserConnectionService
 {
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserConnectionService<TService>> _logger;
+    private readonly ILogger<UserConnectionService> _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly ObjectPool<IConnection> _connectionPool;
 
     private readonly string? _baseUrl;
     private readonly IHttpRequestService? _httpRequestService;
-    private readonly RabbitMQBackgroundAddProjectService? _rpcConsumer;
+    private readonly RabbitMqBackgroundAddProjectService? _rpcConsumer;
 
     public UserConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<UserConnectionService<TService>> logger,
+        ILogger<UserConnectionService> logger,
         ObjectPool<IConnection> connectionPool)
     {
         _configuration = configuration;
@@ -47,7 +46,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
         else if (_configuration.GetValue<string>("ConnectionType") == "rabbitmq")
         {
-            _rpcConsumer = new RabbitMQBackgroundAddProjectService(_serviceProvider, _connectionPool);
+            _rpcConsumer = new RabbitMqBackgroundAddProjectService(_serviceProvider, _connectionPool);
         }
         else
         {
@@ -56,28 +55,29 @@ public class UserConnectionService<TService> : IUserConnectionService
     }
 
     /// <inheritdoc/>
-    public async Task<AddProjectToListOfUserProjectsResponse> AddProjectIdToListOfUserProjectIds(AddProjectToListOfUserProjectsRequest request)
+    public async Task<AddProjectToListOfUserProjectsResponse> AddProjectIdToListOfUserProjectIds(
+        AddProjectToListOfUserProjectsRequest request)
     {
         if (_httpRequestService != null)
         {
             return await AddProjectWithHttp(request);
         }
-        else if (_rpcConsumer != null)
+
+        if (_rpcConsumer != null)
         {
-            await UserConnectionService<TService>.AddProjectWithRPC(request, "UserConnectionServiceQueue");
+            await AddProjectWithRpc(request, "UserConnectionServiceQueue");
             return new AddProjectToListOfUserProjectsResponse
             {
                 MemberId = request.MemberId,
                 ProjectId = request.ProjectId
             };
         }
-        else
-        {
-            throw new Exception("Не получилось настроить метод связи");
-        }
+
+        throw new Exception("Не получилось настроить метод связи");
     }
 
-    private async Task<AddProjectToListOfUserProjectsResponse> AddProjectWithHttp(AddProjectToListOfUserProjectsRequest request)
+    private async Task<AddProjectToListOfUserProjectsResponse> AddProjectWithHttp(
+        AddProjectToListOfUserProjectsRequest request)
     {
         var addMemberInProjectData = new HttpRequestData
         {
@@ -103,7 +103,7 @@ public class UserConnectionService<TService> : IUserConnectionService
         }
     }
 
-    private static async Task AddProjectWithRPC(AddProjectToListOfUserProjectsRequest request, string queueName)
+    private static async Task AddProjectWithRpc(AddProjectToListOfUserProjectsRequest request, string queueName)
     {
         var publisher = new RPCPublisher<AddProjectToListOfUserProjectsRequest>(queueName, request);
         await publisher.PublishAsync();

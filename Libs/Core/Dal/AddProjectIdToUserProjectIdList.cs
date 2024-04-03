@@ -14,7 +14,7 @@ public class AddProjectIdToUserProjectIdList<TDal>(IUserRepository<TDal> userRep
 {
     private readonly IUserRepository<TDal> _userRepository = userRepository;
 
-    public async Task<IdentityResult> AddProjectIdToProjectIdListAsync(int projectId, Guid memberId)
+    public async Task<IdentityResult> AddProjectIdToProjectIdListAsync(Guid projectId, Guid memberId)
     {
         var existingUserDal = await _userRepository.GetByIdAsync(memberId)
             ?? throw new ValidationException("Пользователь не найден в базе данных", string.Empty);

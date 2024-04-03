@@ -8,5 +8,5 @@ public record IsProjectExistsRequest
     /// <summary>
     /// Получает или устанавливает идентификатор существующего проекта
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 }

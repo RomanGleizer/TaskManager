@@ -8,12 +8,12 @@ namespace Core.Dal;
 /// </summary>
 /// <typeparam name="TEntity">Тип сущности</typeparam>
 /// <param name="repository">Репозиторий проектов</param>
-public class GetProjectById<TEntity>(IProjectRepository<TEntity, int> repository) : IGetProjectById<TEntity>
-    where TEntity : IBaseEntity<int>
+public class GetProjectById<TEntity>(IProjectRepository<TEntity, Guid> repository) : IGetProjectById<TEntity>
+    where TEntity : IBaseEntity<Guid>
 {
-    private readonly IProjectRepository<TEntity, int> _repository = repository;
+    private readonly IProjectRepository<TEntity, Guid> _repository = repository;
 
-    public async Task<TEntity> GetById(int id)
+    public async Task<TEntity> GetById(Guid id)
     {
         var existingProject = await _repository.GetProjectByIdAsync(id);
 

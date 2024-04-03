@@ -27,7 +27,7 @@ public static class ProjectServicesExtentions
 
     public static void AddRepositories(this IServiceCollection services)
     {
-        services.AddTransient<IProjectRepository<Project, int>, ProjectRepository>();
+        services.AddTransient<IProjectRepository<Project, Guid>, ProjectRepository>();
         services.AddTransient<IUserRepository<UserDal>, UserRepository>();
     }
 

@@ -8,7 +8,7 @@ public record AddProjectToListOfUserProjectsRequest
     /// <summary>
     /// Идентификатор проекта
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 
     /// <summary>
     /// Идентификатор участника

@@ -8,5 +8,5 @@ public interface IProjectIdsContainer
     /// <summary>
     /// Список идентификаторов проектов
     /// </summary>
-    IList<int> ProjectIds { get; }
+    IList<Guid> ProjectIds { get; }
 }

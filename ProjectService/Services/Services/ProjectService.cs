@@ -13,22 +13,22 @@ namespace Services.Services;
 /// Сервис для управления проектами
 /// </summary>
 public class ProjectService(
-    IProjectRepository<Project, int> storeProject,
+    IProjectRepository<Project, Guid> storeProject,
     IMapper mapper,
     IUserConnectionService userConnectionService) : IProjectService
 {
-    private readonly IProjectRepository<Project, int> _repository = storeProject;
+    private readonly IProjectRepository<Project, Guid> _repository = storeProject;
     private readonly IMapper _mapper = mapper;
     private readonly IUserConnectionService _userConnectionService = userConnectionService;
 
-    private async Task<Project> GetExistingProject(int id)
+    private async Task<Project> GetExistingProject(Guid id)
     {
         var existingProject = await _repository.GetProjectByIdAsync(id);
         return existingProject ?? throw new ValidationException("Не удалось найти существующий проектв БД", string.Empty);
     }
 
     /// <inheritdoc/>
-    public async Task<ProjectViewModel> GetById(int id)
+    public async Task<ProjectViewModel> GetById(Guid id)
     {
         var existingProject = await GetExistingProject(id);
         return _mapper.Map<ProjectViewModel>(existingProject);
@@ -54,7 +54,7 @@ public class ProjectService(
     }
 
     /// <inheritdoc/>
-    public async Task<ProjectViewModel> Delete(int id)
+    public async Task<ProjectViewModel> Delete(Guid id)
     {
         var existingProject = await GetExistingProject(id);
         var removedProject = await _repository.DeleteProjectAsync(existingProject);
@@ -62,7 +62,7 @@ public class ProjectService(
     }
 
     /// <inheritdoc/>
-    public async Task<ProjectViewModel> Update(int id, UpdateProjectViewModel model)
+    public async Task<ProjectViewModel> Update(Guid id, UpdateProjectViewModel model)
     {
         var existingProject = await GetExistingProject(id);
         existingProject = existingProject with

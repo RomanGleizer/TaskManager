@@ -8,7 +8,7 @@ public record AddProjectToListOfUserProjectsResponse
     /// Получает или устанавливает идентификатор проекта
     /// </summary>
     [JsonPropertyName("projectId")]
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор участника

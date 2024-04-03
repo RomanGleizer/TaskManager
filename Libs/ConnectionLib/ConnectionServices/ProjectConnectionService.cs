@@ -23,7 +23,7 @@ namespace ConnectionLib.ConnectionServices;
 /// </remarks>
 /// <param name="serviceProvider">Провайдер сервисов</param>
 public class ProjectConnectionService<TModel> : IProjectConnectionService
-    where TModel : IBaseEntity<int>
+    where TModel : IBaseEntity<Guid>
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<ProjectConnectionService<TModel>> _logger;

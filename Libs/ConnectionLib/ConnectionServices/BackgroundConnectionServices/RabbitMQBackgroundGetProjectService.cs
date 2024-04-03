@@ -19,7 +19,7 @@ namespace ConnectionLib.ConnectionServices.BackgroundConnectionServices;
 /// </remarks>
 /// <param name="serviceProvider">Поставщик служб</param>
 public class RabbitMQBackgroundGetProjectService<TModel>(IServiceProvider serviceProvider, ObjectPool<IConnection> connectionPool) : BackgroundService
-    where TModel : IBaseEntity<int>
+    where TModel : IBaseEntity<Guid>
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly string _queueName = "GetProjectQueue";

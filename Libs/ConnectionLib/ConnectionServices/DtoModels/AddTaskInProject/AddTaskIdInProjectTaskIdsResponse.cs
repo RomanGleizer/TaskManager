@@ -11,7 +11,7 @@ public record AddTaskIdInProjectTaskIdsResponse
     /// Получает или устанавливает идентификатор проекта
     /// </summary>
     [JsonPropertyName("id")]
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает список идентификаторов задач

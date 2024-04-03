@@ -8,7 +8,7 @@ public record ExistingTaskInProjectRequest
     /// <summary>
     /// Получает или устанавливает идентификатор существующей задачи
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 
     /// <summary>
     /// Получает или устанавливает идентификатор существующей задачи

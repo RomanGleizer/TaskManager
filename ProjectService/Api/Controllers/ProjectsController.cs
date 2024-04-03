@@ -28,7 +28,7 @@ public class ProjectsController(
     /// <returns>Данные о проекте</returns>
     [HttpGet("{projectId}")]
     [ProducesResponseType<ProjectViewModel>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetProjectById([FromRoute] int projectId)
+    public async Task<IActionResult> GetProjectById([FromRoute] Guid projectId)
     {
         var existingProjectViewModel = await _projectService.GetById(projectId);
         return Ok(existingProjectViewModel);
@@ -55,7 +55,7 @@ public class ProjectsController(
     /// <returns>Данные о обновленном проекте</returns>
     [HttpPut("{projectId}")]
     [ProducesResponseType<ProjectViewModel>(200)]
-    public async Task<IActionResult> UpdateProjectAsync([FromRoute] int projectId, [FromBody] UpdateProjectViewModel model)
+    public async Task<IActionResult> UpdateProjectAsync([FromRoute] Guid projectId, [FromBody] UpdateProjectViewModel model)
     {
         var updatedProjectViewModel = await _projectService.Update(projectId, model);
         return Ok(updatedProjectViewModel);
@@ -68,7 +68,7 @@ public class ProjectsController(
     /// <returns>Данные об удаленном проекте</returns>
     [HttpDelete("{projectId}")]
     [ProducesResponseType<ProjectViewModel>(200)]
-    public async Task<IActionResult> DeleteProjectAsync([FromRoute] int projectId)
+    public async Task<IActionResult> DeleteProjectAsync([FromRoute] Guid projectId)
     {
         var deletedProjectViewModel = await _projectService.Delete(projectId);
         return Ok(deletedProjectViewModel);
@@ -82,7 +82,7 @@ public class ProjectsController(
     /// <returns>Ответ с информацией о задаче</returns>
     [HttpGet("{projectId}/tasks/{taskId}")]
     [ProducesResponseType<ExistingTaskInProjectResponse>(200)]
-    public async Task<IActionResult> GetExistingTask([FromRoute] int projectId, [FromRoute] int taskId)
+    public async Task<IActionResult> GetExistingTask([FromRoute] Guid projectId, [FromRoute] int taskId)
     {
         var existingTask = await _taskConnectionService.GetExistingTaskAsync(new ExistingTaskInProjectRequest
         {
@@ -97,7 +97,7 @@ public class ProjectsController(
     }
 
     [HttpPost("{projectId}/tasks/{taskId}")]
-    public async Task<IActionResult> AddTaskInProject([FromRoute] int projectId, [FromRoute] int taskId)
+    public async Task<IActionResult> AddTaskInProject([FromRoute] Guid projectId, [FromRoute] int taskId)
     {
         await _addTaskIdToProjectIdList.AddNewTaskIdInProjectIdList(projectId, taskId);
         return Ok();

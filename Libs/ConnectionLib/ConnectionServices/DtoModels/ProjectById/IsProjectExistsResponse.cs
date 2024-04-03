@@ -11,7 +11,7 @@ public record IsProjectExistsResponse
     /// Получает или устанавливает идентификатор проекта
     /// </summary>
     [JsonPropertyName("id")]
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или устанавливает имя проекта

@@ -13,5 +13,5 @@ public interface IAddProjectIdToUserProjectIdList
     /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="memberId">Идентификатор пользователя</param>
     /// <returns></returns>
-    Task<IdentityResult> AddProjectIdToProjectIdListAsync(int projectId, Guid memberId);
+    Task<IdentityResult> AddProjectIdToProjectIdListAsync(Guid projectId, Guid memberId);
 }

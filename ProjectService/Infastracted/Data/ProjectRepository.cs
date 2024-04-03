@@ -8,12 +8,12 @@ namespace Infastracted.Data;
 /// <summary>
 /// Реализация интерфейса репозитория для работы с данными проектов
 /// </summary>
-public class ProjectRepository(ProjectServiceDbContext dbContext) : IProjectRepository<Project, int>
+public class ProjectRepository(ProjectServiceDbContext dbContext) : IProjectRepository<Project, Guid>
 {
     private readonly ProjectServiceDbContext _dbContext = dbContext;
 
     /// <inheritdoc/>
-    public async Task<Project?> GetProjectByIdAsync(int projectId)
+    public async Task<Project?> GetProjectByIdAsync(Guid projectId)
     {
         return await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
     }

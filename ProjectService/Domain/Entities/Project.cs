@@ -5,12 +5,12 @@ namespace Domain.Entities;
 /// <summary>
 /// Представляет информацию о проекте
 /// </summary>
-public record Project : IBaseEntity<int>, ITaskIdsContainer
+public record Project : IBaseEntity<Guid>, ITaskIdsContainer
 {
     /// <summary>
     /// Получает или задает идентификатор проекта
     /// </summary>
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или задает название проекта

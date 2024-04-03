@@ -8,7 +8,7 @@ public record ProjectViewModel
     /// <summary>
     /// Получает или задает идентификатор проекта
     /// </summary>
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или задает имя проекта

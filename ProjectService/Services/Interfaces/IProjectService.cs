@@ -12,7 +12,7 @@ public interface IProjectService
     /// </summary>
     /// <param name="id">Идентификатор проекта</param>
     /// <returns>Модель представления проекта или null, если проект не найден</returns>
-    Task<ProjectViewModel> GetById(int id);
+    Task<ProjectViewModel> GetById(Guid id);
 
     /// <summary>
     /// Создает новый проект
@@ -26,7 +26,7 @@ public interface IProjectService
     /// </summary>
     /// <param name="id">Идентификатор проекта для удаления</param>
     /// <returns>Модель представления удаленного проекта или null, если операция не удалась</returns>
-    Task<ProjectViewModel> Delete(int id);
+    Task<ProjectViewModel> Delete(Guid id);
 
     /// <summary>
     /// Обновляет информацию о проекте
@@ -34,5 +34,5 @@ public interface IProjectService
     /// <param name="id">Идентификатор проекта для обновления</param>
     /// <param name="model">Модель обновления проекта</param>
     /// <returns>Модель представления обновленного проекта или null, если операция не удалась</returns>
-    Task<ProjectViewModel> Update(int id, UpdateProjectViewModel model);
+    Task<ProjectViewModel> Update(Guid id, UpdateProjectViewModel model);
 }

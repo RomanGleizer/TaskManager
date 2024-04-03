@@ -93,7 +93,7 @@ public class UsersController(IUserService userService, IAddProjectIdToUserProjec
     /// <returns>Результат действия, указывающий на успешность операции</returns>
     [HttpPost("{memberId}/projects/{projectId}")]
     [ProducesResponseType<IdentityResult>(200)]
-    public async Task<IActionResult> AddProjectToListOfUserProjects([FromRoute] int projectId, [FromRoute] Guid memberId)
+    public async Task<IActionResult> AddProjectToListOfUserProjects([FromRoute] Guid projectId, [FromRoute] Guid memberId)
     {
         var result = await _addProjectIdToProjectIdList.AddProjectIdToProjectIdListAsync(projectId, memberId);
         return Ok(result);

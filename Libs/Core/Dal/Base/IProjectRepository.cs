@@ -4,7 +4,7 @@
 /// Интерфейс для работы с данными проектов
 /// </summary>
 public interface IProjectRepository<TEntity, TId>
-    where TEntity : IBaseEntity<int>
+    where TEntity : IBaseEntity<Guid>
 {
     /// <summary>
     /// Получает проект по его идентификатору

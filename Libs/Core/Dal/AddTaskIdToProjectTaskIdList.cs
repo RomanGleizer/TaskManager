@@ -6,12 +6,12 @@ namespace Core.Dal;
 /// Реализация контракта IAddTaskIdToProjectIdList
 /// </summary>
 /// <param name="repository">Репозиторий проектов</param>
-public class AddTaskIdToProjectTaskIdList<TEntity>(IProjectRepository<TEntity, int> repository) : IAddTaskIdToProjectTaskIdList
-    where TEntity : IBaseEntity<int>
+public class AddTaskIdToProjectTaskIdList<TEntity>(IProjectRepository<TEntity, Guid> repository) : IAddTaskIdToProjectTaskIdList
+    where TEntity : IBaseEntity<Guid>
 {
-    private readonly IProjectRepository<TEntity, int> _repository = repository;
+    private readonly IProjectRepository<TEntity, Guid> _repository = repository;
 
-    public async Task AddNewTaskIdInProjectIdList(int projectId, int taskId)
+    public async Task AddNewTaskIdInProjectIdList(Guid projectId, int taskId)
     {
         var existingProject = await _repository.GetProjectByIdAsync(projectId);
 

@@ -46,7 +46,7 @@ public class UserDal : IdentityUser, IBaseEntity<Guid>, IProjectIdsContainer
     /// <summary>
     /// Получает или устанавливает список идентификаторов проектов, в которых состоит пользователь
     /// </summary>
-    public required IList<int> ProjectIds { get; init; }
+    public required IList<Guid> ProjectIds { get; init; }
 
     /// <summary>
     /// Возвращает или устанавливает имя пользователя, которое используется для аутентификации и идентификации пользователя

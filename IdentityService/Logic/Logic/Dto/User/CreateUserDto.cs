@@ -43,7 +43,7 @@ public record CreateUserDto
     /// <summary>
     /// Устанавливает список идентификаторов проектов, связанных с пользователем
     /// </summary>
-    public IList<int> ProjectIds = [];
+    public IList<Guid> ProjectIds = [];
 
     /// <summary>
     /// Возвращает или устанавливает имя пользователя, которое используется для аутентификации и идентификации пользователя

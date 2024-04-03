@@ -18,77 +18,75 @@ namespace Logic.Services;
 /// </remarks>
 /// <param name="unitOfWork">Единица работы с данными</param>
 /// <param name="mapper">Маппер для преобразования между объектами</param>
-public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnectionService projectConnectionService) : IDtoService<TaskDTO, Guid>
+public class TaskService(
+    IUnitOfWork unitOfWork, 
+    IMapper mapper, 
+    IProjectConnectionService projectConnectionService) 
+    : IDtoService<TaskDto, Guid>
 {
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IMapper _mapper = mapper;
-    private readonly IProjectConnectionService _projectConnectionService = projectConnectionService;
-
     /// <inheritdoc/>
-    public async Task<IList<TaskDTO>> GetAllDtosAsync()
+    public async Task<IList<TaskDto>> GetAllDtosAsync()
     {
-        var allTaskDals = await _unitOfWork.Tasks.GetAllAsync();
-        return _mapper.Map<IList<TaskDal>, IList<TaskDTO>>(allTaskDals);
+        var allTaskDals = await unitOfWork.Tasks.GetAllAsync();
+        return mapper.Map<IList<TaskDal>, IList<TaskDto>>(allTaskDals);
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> GetDtoByIdAsync(Guid taskId)
+    public async Task<TaskDto> GetDtoByIdAsync(Guid taskId)
     {
         var taskDal = await GetExistingTaskAsync(taskId);
-        return _mapper.Map<TaskDTO>(taskDal);
+        return mapper.Map<TaskDto>(taskDal);
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> CreateDtoAsync(TaskDTO taskDTO)
+    public async Task<TaskDto> CreateDtoAsync(TaskDto taskDto)
     {
-        var taskDal = _mapper.Map<TaskDal>(taskDTO);
-        await _unitOfWork.Tasks.CreateAsync(taskDal);
+        var taskDal = mapper.Map<TaskDal>(taskDto);
+        await unitOfWork.Tasks.CreateAsync(taskDal);
 
-        /// Получаем проект по его Id из микросервиса ProjectService
-        var project = await _projectConnectionService.GetProjectByIdAsync(
-            new IsProjectExistsRequest
-            {
-                ProjectId = taskDal.ProjectId
-            })
-        ?? throw new ValidationException("Проект не найден в БД", string.Empty);
+        var project = await projectConnectionService.GetProjectByIdAsync(
+                          new IsProjectExistsRequest
+                          {
+                              ProjectId = taskDal.ProjectId
+                          })
+                      ?? throw new ValidationException("Проект не найден в БД", string.Empty);
 
-        /// Добавляем задачу в спискок задач проекта
-        await _projectConnectionService.AddTaskIdInProjectTaskIdsAsync(new AddTaskIdInProjectTaskIdsRequest
+        await projectConnectionService.AddTaskIdInProjectTaskIdsAsync(new AddTaskIdInProjectTaskIdsRequest
         {
             ProjectId = project.Id,
             TaskId = taskDal.Id
         });
 
-        return _mapper.Map<TaskDTO>(taskDal);
+        return mapper.Map<TaskDto>(taskDal);
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> DeleteDtoAsync(Guid taskId)
+    public async Task<TaskDto> DeleteDtoAsync(Guid taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
 
-        await _unitOfWork.Tasks.DeleteAsync(existingTaskDal);
-        return _mapper.Map<TaskDTO>(existingTaskDal);
+        await unitOfWork.Tasks.DeleteAsync(existingTaskDal);
+        return mapper.Map<TaskDto>(existingTaskDal);
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, Guid taskId)
+    public async Task<TaskDto> UpdateDtoAsync(TaskDto taskDto, Guid taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
 
         existingTaskDal = existingTaskDal with
         {
-            Name = taskDTO.Name,
-            Description = taskDTO.Description,
-            ExecutionStatus = taskDTO.ExecutionStatus,
-            CreatedDate = taskDTO.CreatedDate,
-            LastUpdateDate = taskDTO.LastUpdateDate,
-            PerformerIds = taskDTO.PerformerIds,
-            ProjectId = taskDTO.ProjectId
+            Name = taskDto.Name,
+            Description = taskDto.Description,
+            ExecutionStatus = taskDto.ExecutionStatus,
+            CreatedDate = taskDto.CreatedDate,
+            LastUpdateDate = taskDto.LastUpdateDate,
+            PerformerIds = taskDto.PerformerIds,
+            ProjectId = taskDto.ProjectId
         };
 
-        await _unitOfWork.Tasks.UpdateAsync(existingTaskDal);
-        return _mapper.Map<TaskDTO>(existingTaskDal);
+        await unitOfWork.Tasks.UpdateAsync(existingTaskDal);
+        return mapper.Map<TaskDto>(existingTaskDal);
     }
 
     /// <summary>
@@ -97,7 +95,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     /// <param name="taskId">Идентификатор задачи</param>
     private async Task<TaskDal> GetExistingTaskAsync(Guid taskId)
     {
-        var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
+        var existingTaskDal = await unitOfWork.Tasks.GetByIdAsync(taskId);
         return existingTaskDal ?? throw new ValidationException("Задача не найдена в бд", string.Empty);
     }
 }

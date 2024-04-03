@@ -9,24 +9,97 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="630370a5-2a06-4ac6-b7e3-7452995f739b" name="Changes" comment="" />
+    <list default="true" id="630370a5-2a06-4ac6-b7e3-7452995f739b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.IdentityService/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.IdentityService/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ProjectService/Api/.idea/.idea.ProjectService/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ProjectService/Api/.idea/.idea.ProjectService/.idea/indexLayout.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ProjectService/Api/.idea/.idea.ProjectService/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ProjectService/Api/.idea/.idea.ProjectService/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TaskService/Api/.idea/.idea.TaskService/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TaskService/Api/.idea/.idea.TaskService/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TaskService/Api/.idea/.idea.TaskService/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.IdentityService/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.IdentityService/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/RolesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/RolesController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/UsersController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logic/Logic/Dto/User/CreateUserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Logic/Logic/Dto/User/CreateUserDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logic/Logic/Dto/User/UpdateUserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Logic/Logic/Dto/User/UpdateUserDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logic/Logic/Dto/User/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Logic/Logic/Dto/User/UserDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logic/Logic/Interfaces/IUserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Logic/Logic/Interfaces/IUserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logic/Logic/Services/RoleService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Logic/Logic/Services/RoleService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Logic/Logic/Services/UserService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Logic/Logic/Services/UserService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/BackgroundConnectionServices/RabbitMQBackgroundAddProjectService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/BackgroundConnectionServices/RabbitMqBackgroundAddProjectService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/DtoModels/ProjectById/IsProjectExistsResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/DtoModels/ProjectById/IsProjectExistsResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/ProjectConnectionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/ProjectConnectionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/TaskConnectionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/TaskConnectionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/UserConnectionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Libs/ConnectionLib/ConnectionServices/UserConnectionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ProjectService/Api/.idea/.idea.ProjectService/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ProjectService/Api/.idea/.idea.ProjectService/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TaskService/Api/.idea/.idea.TaskService/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TaskService/Api/.idea/.idea.TaskService/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../ProjectService/Domain/Entities/Project.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2eaxOzBc74MD7agwkdW0QovH6iU" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)"
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\romy4\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
+      "C:\\Users\\romy4\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
+      "C:\\Users\\romy4\\AppData\\Local\\Symbols\\src"
+    ]
   }
 }]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="630370a5-2a06-4ac6-b7e3-7452995f739b" name="Changes" comment="" />
+      <created>1712156462675</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1712156462675</updated>
+      <workItem from="1712156463800" duration="668000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
 </project>

@@ -5,7 +5,7 @@ namespace Logic.DTO;
 /// <summary>
 /// DTO объект задачи
 /// </summary>
-public record TaskDTO : IBaseDTO<Guid>
+public record TaskDto : IBaseDTO<Guid>
 {
     /// <summary>
     /// Идентификатор задачи

@@ -17,8 +17,8 @@ public interface IDtoService<TEntity, TId>
     /// <summary>
     /// Создает объект DTO асинхронно
     /// </summary>
-    /// <param name="dto">DTO объект для создания</param>
-    Task<TEntity> CreateDtoAsync(TEntity dto);
+    /// <param name="taskDto">DTO объект для создания</param>
+    Task<TEntity> CreateDtoAsync(TEntity taskDto);
 
     /// <summary>
     /// Удаляет объект DTO асинхронно по идентификатору
@@ -29,7 +29,7 @@ public interface IDtoService<TEntity, TId>
     /// <summary>
     /// Обновляет объект DTO асинхронно
     /// </summary>
-    /// <param name="dto">DTO объект для обновления</param>
+    /// <param name="taskDto">DTO объект для обновления</param>
     /// <param name="id">Идентификатор объекта для обновления</param>
-    Task<TEntity> UpdateDtoAsync(TEntity dto, TId id);
+    Task<TEntity> UpdateDtoAsync(TEntity taskDto, TId id);
 }

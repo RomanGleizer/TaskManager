@@ -15,7 +15,7 @@ var mappingConfig = new MapperConfiguration(config => config.AddProfile(new Mapp
 var mapper = mappingConfig.CreateMapper();
 
 var connectionFactory = new ConnectionFactory { HostName = "localhost" };
-var poolPolicy = new RabbitMQConnectionPoolPolicy(connectionFactory);
+var poolPolicy = new RabbitMqConnectionPoolPolicy(connectionFactory);
 var connectionPool = new DefaultObjectPool<IConnection>(poolPolicy);
 
 builder.Services.AddSingleton(mapper);
@@ -27,7 +27,7 @@ builder.Services.AddConnectionServices();
 builder.Services.AddMicroserviceInteractionOperations();
 builder.Services.AddIdentity();
 
-builder.Services.AddHostedService<RabbitMQBackgroundAddProjectService>();
+builder.Services.AddHostedService<RabbitMqBackgroundAddProjectService>();
 
 builder.Services.AddDbContext<IdentityServiceDbContext>(options => options.UseSqlServer(connection));
 

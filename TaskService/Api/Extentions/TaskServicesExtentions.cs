@@ -26,12 +26,12 @@ public static class TaskServicesExtentions
     public static void AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<IRepository<TaskDal, Guid>, TaskRepository>();
-        services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+        services.AddTransient<IUnitOfWork, EfUnitOfWork>();
     }
 
     public static void AddServices(this IServiceCollection services)
     {
-        services.AddTransient<IDtoService<TaskDTO, Guid>, TaskService>();
+        services.AddTransient<IDtoService<TaskDto, Guid>, TaskService>();
     }
 
     public static void AddConnectionServices(this IServiceCollection services)

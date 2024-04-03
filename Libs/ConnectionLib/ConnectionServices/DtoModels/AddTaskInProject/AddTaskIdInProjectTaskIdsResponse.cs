@@ -17,5 +17,5 @@ public record AddTaskIdInProjectTaskIdsResponse
     /// Получает или устанавливает список идентификаторов задач
     /// </summary>
     [JsonPropertyName("taskIds")]
-    public required IList<int> TaskIds { get; init; }
+    public required IList<Guid> TaskIds { get; init; }
 }

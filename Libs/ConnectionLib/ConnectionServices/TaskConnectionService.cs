@@ -36,7 +36,7 @@ public class TaskConnectionService(
         };
 
         var connectionData = new HttpConnectionData();
-        var response = await _httpRequestService.SendRequestAsync<IList<int>>(requestData, connectionData).ConfigureAwait(false);
+        var response = await _httpRequestService.SendRequestAsync<IList<Guid>>(requestData, connectionData).ConfigureAwait(false);
 
         if (response.IsSuccessStatusCode)
         {

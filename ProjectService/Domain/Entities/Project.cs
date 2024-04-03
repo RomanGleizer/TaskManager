@@ -40,5 +40,5 @@ public record Project : IBaseEntity<Guid>, ITaskIdsContainer
     /// <summary>
     /// Получает или задает список задач проекта
     /// </summary>
-    public required IList<int> TaskIds { get; init; }
+    public required IList<Guid> TaskIds { get; init; }
 }

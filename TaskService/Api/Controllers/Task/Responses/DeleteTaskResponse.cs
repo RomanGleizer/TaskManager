@@ -36,12 +36,7 @@ public class DeleteTaskResponse
     public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
-    /// Получает или инициализирует список идентификаторов комментариев, связанных с удаленной задачей
-    /// </summary>
-    public required IList<int> CommentIds { get; init; }
-
-    /// <summary>
     /// Получает или инициализирует идентификатор проекта, к которому принадлежит удаленная задача
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 }

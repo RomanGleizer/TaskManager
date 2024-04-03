@@ -34,9 +34,4 @@ public class UpdateTaskResponse
     /// Получает или инициализирует список идентификаторов исполнителей, связанных с задачей
     /// </summary>
     public required IList<Guid> PerformerIds { get; init; }
-
-    /// <summary>
-    /// Получает или инициализирует список идентификаторов комментариев, связанных с задачей
-    /// </summary>
-    public required IList<int> CommentIds { get; init; }
 }

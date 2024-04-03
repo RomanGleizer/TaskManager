@@ -8,5 +8,5 @@ public record ExistingTaskInProjectResponse
     /// <summary>
     /// Получает или устанавливает значение cписка с идентификаторами задач
     /// </summary>
-    public required IList<int> TaskIds { get; init; }
+    public required IList<Guid> TaskIds { get; init; }
 }

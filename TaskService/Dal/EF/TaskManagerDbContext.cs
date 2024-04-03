@@ -16,9 +16,4 @@ public class TaskManagerDbContext(DbContextOptions<TaskManagerDbContext> options
     /// Задачи в базе данных
     /// </summary>
     public DbSet<TaskDal> Tasks { get; set; }
-
-    /// <summary>
-    /// Комментарии к задачам
-    /// </summary>
-    public DbSet<CommentDal> Comments { get; set; }
 }

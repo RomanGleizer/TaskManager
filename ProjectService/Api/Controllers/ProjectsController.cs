@@ -82,7 +82,7 @@ public class ProjectsController(
     /// <returns>Ответ с информацией о задаче</returns>
     [HttpGet("{projectId}/tasks/{taskId}")]
     [ProducesResponseType<ExistingTaskInProjectResponse>(200)]
-    public async Task<IActionResult> GetExistingTask([FromRoute] Guid projectId, [FromRoute] int taskId)
+    public async Task<IActionResult> GetExistingTask([FromRoute] Guid projectId, [FromRoute] Guid taskId)
     {
         var existingTask = await _taskConnectionService.GetExistingTaskAsync(new ExistingTaskInProjectRequest
         {
@@ -97,7 +97,7 @@ public class ProjectsController(
     }
 
     [HttpPost("{projectId}/tasks/{taskId}")]
-    public async Task<IActionResult> AddTaskInProject([FromRoute] Guid projectId, [FromRoute] int taskId)
+    public async Task<IActionResult> AddTaskInProject([FromRoute] Guid projectId, [FromRoute] Guid taskId)
     {
         await _addTaskIdToProjectIdList.AddNewTaskIdInProjectIdList(projectId, taskId);
         return Ok();

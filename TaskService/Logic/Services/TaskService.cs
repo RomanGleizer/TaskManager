@@ -18,7 +18,7 @@ namespace Logic.Services;
 /// </remarks>
 /// <param name="unitOfWork">Единица работы с данными</param>
 /// <param name="mapper">Маппер для преобразования между объектами</param>
-public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnectionService projectConnectionService) : IDtoService<TaskDTO, int>
+public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnectionService projectConnectionService) : IDtoService<TaskDTO, Guid>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
@@ -32,7 +32,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> GetDtoByIdAsync(int taskId)
+    public async Task<TaskDTO> GetDtoByIdAsync(Guid taskId)
     {
         var taskDal = await GetExistingTaskAsync(taskId);
         return _mapper.Map<TaskDTO>(taskDal);
@@ -63,7 +63,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> DeleteDtoAsync(int taskId)
+    public async Task<TaskDTO> DeleteDtoAsync(Guid taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
 
@@ -72,7 +72,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, int taskId)
+    public async Task<TaskDTO> UpdateDtoAsync(TaskDTO taskDTO, Guid taskId)
     {
         var existingTaskDal = await GetExistingTaskAsync(taskId);
 
@@ -84,16 +84,8 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
             CreatedDate = taskDTO.CreatedDate,
             LastUpdateDate = taskDTO.LastUpdateDate,
             PerformerIds = taskDTO.PerformerIds,
-            CommentIds = taskDTO.CommentIds,
             ProjectId = taskDTO.ProjectId
         };
-
-        foreach (var commentId in taskDTO.CommentIds)
-        {
-            var comment = await _unitOfWork.Comments.GetByIdAsync(commentId);
-            if (comment != null)
-                existingTaskDal.Comments.Add(comment);
-        }
 
         await _unitOfWork.Tasks.UpdateAsync(existingTaskDal);
         return _mapper.Map<TaskDTO>(existingTaskDal);
@@ -103,7 +95,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper, IProjectConnect
     /// Асинхронное получение задачи по Id
     /// </summary>
     /// <param name="taskId">Идентификатор задачи</param>
-    private async Task<TaskDal> GetExistingTaskAsync(int taskId)
+    private async Task<TaskDal> GetExistingTaskAsync(Guid taskId)
     {
         var existingTaskDal = await _unitOfWork.Tasks.GetByIdAsync(taskId);
         return existingTaskDal ?? throw new ValidationException("Задача не найдена в бд", string.Empty);

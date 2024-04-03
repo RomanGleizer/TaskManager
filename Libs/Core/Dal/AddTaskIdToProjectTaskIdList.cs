@@ -11,7 +11,7 @@ public class AddTaskIdToProjectTaskIdList<TEntity>(IProjectRepository<TEntity, G
 {
     private readonly IProjectRepository<TEntity, Guid> _repository = repository;
 
-    public async Task AddNewTaskIdInProjectIdList(Guid projectId, int taskId)
+    public async Task AddNewTaskIdInProjectIdList(Guid projectId, Guid taskId)
     {
         var existingProject = await _repository.GetProjectByIdAsync(projectId);
 

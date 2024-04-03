@@ -8,7 +8,7 @@ public class CreateTaskResponse
     /// <summary>
     /// Получает или инициализирует идентификатор созданной задачи
     /// </summary>
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или инициализирует название задачи
@@ -38,15 +38,10 @@ public class CreateTaskResponse
     /// <summary>
     /// Получает или инициализирует идентификатор проекта, к которому принадлежит задача
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 
     /// <summary>
     /// Получает или инициализирует перечисление идентификаторов исполнителей, связанных с задачей
     /// </summary>
     public required IList<Guid> PerformerIds { get; init; }
-
-    /// <summary>
-    /// Получает или инициализирует список идентификаторов комментариев, связанных с задачей
-    /// </summary>
-    public required IList<int> CommentIds { get; init; }
 }

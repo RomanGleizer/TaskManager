@@ -8,7 +8,7 @@ public class TaskInfoResponse
     /// <summary>
     /// Получает или инициализирует идентификатор задачи
     /// </summary>
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или инициализирует название задачи
@@ -39,9 +39,4 @@ public class TaskInfoResponse
     /// Получает или инициализирует перечисление идентификаторов исполнителей, связанных с задачей
     /// </summary>
     public required IList<Guid> PerformerIds { get; init; }
-
-    /// <summary>
-    /// Получает или инициализирует список идентификаторов комментариев, связанных с задачей
-    /// </summary>
-    public required IList<int> CommentIds { get; init; }
 }

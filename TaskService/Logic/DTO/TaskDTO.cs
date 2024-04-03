@@ -5,12 +5,12 @@ namespace Logic.DTO;
 /// <summary>
 /// DTO объект задачи
 /// </summary>
-public record TaskDTO : IBaseDTO<int>
+public record TaskDTO : IBaseDTO<Guid>
 {
     /// <summary>
     /// Идентификатор задачи
     /// </summary>
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Название задачи
@@ -43,12 +43,7 @@ public record TaskDTO : IBaseDTO<int>
     public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
-    /// Идентификаторы комментариев
-    /// </summary>
-    public required IList<int> CommentIds { get; init; }
-
-    /// <summary>
     /// Идентификатор проекта, к которому относится задача
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 }

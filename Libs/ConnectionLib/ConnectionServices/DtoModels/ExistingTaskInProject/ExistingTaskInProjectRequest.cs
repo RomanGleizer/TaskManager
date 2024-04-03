@@ -13,5 +13,5 @@ public record ExistingTaskInProjectRequest
     /// <summary>
     /// Получает или устанавливает идентификатор существующей задачи
     /// </summary>
-    public required int TaskId { get; init; }
+    public required Guid TaskId { get; init; }
 }

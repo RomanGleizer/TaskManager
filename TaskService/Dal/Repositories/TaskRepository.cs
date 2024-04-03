@@ -11,7 +11,7 @@ namespace Dal.Repositories;
 /// <remarks>
 /// Инициализирует новый экземпляр класса TaskRepository с заданным контекстом базы данных
 /// </remarks>
-public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDal, int>
+public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDal, Guid>
 {
     private readonly TaskManagerDbContext _dbContext = dbContext;
 
@@ -22,7 +22,7 @@ public class TaskRepository(TaskManagerDbContext dbContext) : IRepository<TaskDa
     }
 
     /// <inheritdoc/>
-    public async Task<TaskDal?> GetByIdAsync(int id)
+    public async Task<TaskDal?> GetByIdAsync(Guid id)
     {
         return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
     }

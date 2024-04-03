@@ -36,12 +36,7 @@ public record UpdateTaskDTO
     public required IList<Guid> PerformerIds { get; set; }
 
     /// <summary>
-    /// Получает или устанавливает список идентификаторов комментариев, связанных с задачей
-    /// </summary>
-    public required IList<int> CommentIds { get; set; }
-
-    /// <summary>
     /// Получает или устанавливает идентификатор проекта, к которому принадлежит задача
     /// </summary>
-    public required int ProjectId { get; set; }
+    public required Guid ProjectId { get; set; }
 }

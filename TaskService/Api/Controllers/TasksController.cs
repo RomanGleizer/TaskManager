@@ -15,9 +15,9 @@ namespace Api.Controllers;
 /// <param name="taskService">Сервис для работы с задачами</param>
 [Route("api/[controller]")]
 [ApiController]
-public class TasksController(IDtoService<TaskDTO, int> taskService) : ControllerBase
+public class TasksController(IDtoService<TaskDTO, Guid> taskService) : ControllerBase
 {
-    private readonly IDtoService<TaskDTO, int> _taskService = taskService;
+    private readonly IDtoService<TaskDTO, Guid> _taskService = taskService;
 
     /// <summary>
     /// Получает информацию о задаче по идентификатору
@@ -25,7 +25,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
     /// <param name="taskId">Идентификатор задачи</param>
     [HttpGet("{taskId}")]
     [ProducesResponseType<TaskInfoResponse>(200)]
-    public async Task<IActionResult> GetInfoAsync([FromRoute] int taskId)
+    public async Task<IActionResult> GetInfoAsync([FromRoute] Guid taskId)
     {
         var task = await _taskService.GetDtoByIdAsync(taskId);
         return Ok(new TaskInfoResponse
@@ -36,8 +36,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             ExecutionStatus = task.ExecutionStatus,
             CreatedDate = task.CreatedDate,
             LastUpdateDate = task.LastUpdateDate,
-            PerformerIds = task.PerformerIds,
-            CommentIds = task.CommentIds,
+            PerformerIds = task.PerformerIds
         });
     }
 
@@ -58,8 +57,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             CreatedDate = request.CreatedDate,
             LastUpdateDate = request.LastUpdateDate,
             ProjectId = request.ProjectId,
-            PerformerIds = request.PerformerIds,
-            CommentIds = request.CommentIds
+            PerformerIds = request.PerformerIds
         });
         return Ok(new CreateTaskResponse
         {
@@ -70,8 +68,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             CreatedDate = newTask.CreatedDate,
             LastUpdateDate = newTask.LastUpdateDate,
             ProjectId = newTask.ProjectId,
-            PerformerIds = newTask.PerformerIds,
-            CommentIds = newTask.CommentIds
+            PerformerIds = newTask.PerformerIds
         });
     }
 
@@ -81,7 +78,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
     /// <param name="taskId">Идентификатор задачи</param>
     [HttpDelete("{taskId}")]
     [ProducesResponseType<DeleteTaskResponse>(200)]
-    public async Task<IActionResult> DeleteTaskAsync([FromRoute] int taskId)
+    public async Task<IActionResult> DeleteTaskAsync([FromRoute] Guid taskId)
     {
         var deletedTask = await _taskService.DeleteDtoAsync(taskId);
         return Ok(new DeleteTaskResponse
@@ -92,8 +89,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             CreatedDate = deletedTask.CreatedDate,
             LastUpdateDate = deletedTask.LastUpdateDate,
             PerformerIds = deletedTask.PerformerIds,
-            ProjectId = deletedTask.ProjectId,
-            CommentIds = deletedTask.CommentIds
+            ProjectId = deletedTask.ProjectId
         });
     }
 
@@ -104,7 +100,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
     /// <param name="taskId">Идентификатор задачи</param>
     [HttpPut("{taskId}")]
     [ProducesResponseType<UpdateTaskResponse>(200)]
-    public async Task<IActionResult> UpdateTaskAsync([FromRoute] UpdateTaskDTO request, [FromRoute] int taskId)
+    public async Task<IActionResult> UpdateTaskAsync([FromRoute] UpdateTaskDTO request, [FromRoute] Guid taskId)
     {
         var taskDTO = new TaskDTO
         {
@@ -115,7 +111,6 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             CreatedDate = request.CreatedDate,
             LastUpdateDate = request.LastUpdateDate,
             PerformerIds = request.PerformerIds,
-            CommentIds = request.CommentIds,
             ProjectId = request.ProjectId
         };
 
@@ -127,8 +122,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
             ExecutionStatus = updatedTaskDal.ExecutionStatus,
             CreatedDate = updatedTaskDal.CreatedDate,
             LastUpdateDate = updatedTaskDal.LastUpdateDate,
-            PerformerIds = updatedTaskDal.PerformerIds,
-            CommentIds = updatedTaskDal.CommentIds
+            PerformerIds = updatedTaskDal.PerformerIds
         });
     }
 
@@ -137,7 +131,7 @@ public class TasksController(IDtoService<TaskDTO, int> taskService) : Controller
     /// </summary>
     /// <param name="taskId">Идентификатор задачи</param>
     [HttpGet("projects/{projectId}")]
-    public async Task<IActionResult> GetAllTasksFromCertainProject([FromRoute] int projectId)
+    public async Task<IActionResult> GetAllTasksFromCertainProject([FromRoute] Guid projectId)
     {
         var result = await _taskService.GetAllDtosAsync();
         var tasks = result

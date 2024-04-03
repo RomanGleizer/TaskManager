@@ -25,15 +25,13 @@ public static class TaskServicesExtentions
 
     public static void AddRepositories(this IServiceCollection services)
     {
-        services.AddTransient<IRepository<TaskDal, int>, TaskRepository>();
-        services.AddTransient<IRepository<CommentDal, int>, CommentRepository>();
+        services.AddTransient<IRepository<TaskDal, Guid>, TaskRepository>();
         services.AddTransient<IUnitOfWork, EFUnitOfWork>();
     }
 
     public static void AddServices(this IServiceCollection services)
     {
-        services.AddTransient<IDtoService<TaskDTO, int>, TaskService>();
-        services.AddTransient<IDtoService<CommentDTO, int>, CommentService>();
+        services.AddTransient<IDtoService<TaskDTO, Guid>, TaskService>();
     }
 
     public static void AddConnectionServices(this IServiceCollection services)
@@ -43,7 +41,7 @@ public static class TaskServicesExtentions
 
     public static void AddMicroserviceInteractionOperations(this IServiceCollection services)
     {
-        services.AddTransient<IProjectRepository<Project, int>, ProjectRepository>();
+        services.AddTransient<IProjectRepository<Project, Guid>, ProjectRepository>();
         services.AddTransient<IAddTaskIdToProjectTaskIdList, AddTaskIdToProjectTaskIdList<Project>>();
         services.AddTransient<IGetProjectById<Project>, GetProjectById<Project>>();
     }

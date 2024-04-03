@@ -8,5 +8,5 @@ public interface ITaskIdsContainer
     /// <summary>
     /// Список идентификторов задач
     /// </summary>
-    IList<int> TaskIds { get; }
+    IList<Guid> TaskIds { get; }
 }

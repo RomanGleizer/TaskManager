@@ -14,31 +14,10 @@ namespace Dal.Repositories;
 public class EFUnitOfWork(TaskManagerDbContext dbContext) : IUnitOfWork
 {
     private readonly TaskManagerDbContext _dbContext = dbContext;
-    private IRepository<TaskDal, int>? _taskRepository;
-    private IRepository<CommentDal, int>? _commentRepository;
+    private IRepository<TaskDal, Guid>? _taskRepository;
 
     /// <summary>
     /// Получает репозиторий для работы с сущностями TaskDal
     /// </summary>
-    public IRepository<TaskDal, int> Tasks
-    {
-        get
-        {
-            if (_taskRepository == null)
-                _taskRepository = new TaskRepository(_dbContext);
-            return _taskRepository;
-        }
-    }
-
-    /// <summary>
-    /// Получает репозиторий для работы с сущностями CommentDal
-    /// </summary>
-    public IRepository<CommentDal, int> Comments
-    {
-        get
-        {
-            _commentRepository ??= new CommentRepository(_dbContext);
-            return _commentRepository;
-        }
-    }
+    public IRepository<TaskDal, Guid> Tasks => _taskRepository ??= new TaskRepository(_dbContext);
 }

@@ -13,5 +13,5 @@ public record AddTaskIdInProjectTaskIdsRequest
     /// <summary>
     /// Получает или устанавливает идентификатор задачи, которую необходимо добавить в проект
     /// </summary>
-    public required int TaskId { get; init; }
+    public required Guid TaskId { get; init; }
 }

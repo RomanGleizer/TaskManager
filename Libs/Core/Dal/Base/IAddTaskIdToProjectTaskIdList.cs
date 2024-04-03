@@ -10,5 +10,5 @@ public interface IAddTaskIdToProjectTaskIdList
     /// </summary>
     /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="taskId">Идентификатор добавляемой задачи</param>
-    Task AddNewTaskIdInProjectIdList(Guid projectId, int taskId);
+    Task AddNewTaskIdInProjectIdList(Guid projectId, Guid taskId);
 }

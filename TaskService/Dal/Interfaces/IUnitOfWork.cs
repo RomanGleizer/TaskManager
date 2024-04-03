@@ -11,10 +11,5 @@ public interface IUnitOfWork
     /// <summary>
     /// Репозиторий для работы с задачами
     /// </summary>
-    IRepository<TaskDal, int> Tasks { get; }
-
-    /// <summary>
-    /// Репозиторий для работы с комментариями
-    /// </summary>
-    IRepository<CommentDal, int> Comments { get; }
+    IRepository<TaskDal, Guid> Tasks { get; }
 }

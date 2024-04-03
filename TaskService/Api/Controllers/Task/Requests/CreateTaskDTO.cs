@@ -8,7 +8,7 @@ public record CreateTaskDTO
     /// <summary>
     /// Получает или устанавливает идентификатор задачи
     /// </summary>
-    public required int Id { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или устанавливает название задачи
@@ -41,12 +41,7 @@ public record CreateTaskDTO
     public required IList<Guid> PerformerIds { get; init; }
 
     /// <summary>
-    /// Получает или устанавливает список идентификаторов комментариев, связанных с задачей
-    /// </summary>
-    public required IList<int> CommentIds { get; init; }
-
-    /// <summary>
     /// Получает или устанавливает идентификатор проекта, к которому принадлежит задача
     /// </summary>
-    public required int ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 }

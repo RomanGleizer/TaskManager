@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using ConnectionLib.ConnectionServices.DtoModels.AddTaskInProject;
-using ConnectionLib.ConnectionServices.DtoModels.ProjectById;
 using ConnectionLib.ConnectionServices.Interfaces;
 using Core.Dal.Base;
 using Core.Exceptions;
 using Dal.Entities;
 using Dal.Interfaces;
 using Logic.DTO;
+using Logic.TaskSaga;
+using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Logic.Services;
 
@@ -20,8 +21,8 @@ namespace Logic.Services;
 /// <param name="mapper">Маппер для преобразования между объектами</param>
 public class TaskService(
     IUnitOfWork unitOfWork, 
-    IMapper mapper, 
-    IProjectConnectionService projectConnectionService) 
+    IMapper mapper,
+    IBus bus) 
     : IDtoService<TaskDto, Guid>
 {
     /// <inheritdoc/>
@@ -42,21 +43,11 @@ public class TaskService(
     public async Task<TaskDto> CreateDtoAsync(TaskDto taskDto)
     {
         var taskDal = mapper.Map<TaskDal>(taskDto);
+
+        var message = new CreateTaskSagaRequest(taskDal.ProjectId, taskDal.Id);
+        await bus.Publish(message);
+
         await unitOfWork.Tasks.CreateAsync(taskDal);
-
-        var project = await projectConnectionService.GetProjectByIdAsync(
-                          new IsProjectExistsRequest
-                          {
-                              ProjectId = taskDal.ProjectId
-                          })
-                      ?? throw new ValidationException("Проект не найден в БД", string.Empty);
-
-        await projectConnectionService.AddTaskIdInProjectTaskIdsAsync(new AddTaskIdInProjectTaskIdsRequest
-        {
-            ProjectId = project.Id,
-            TaskId = taskDal.Id
-        });
-
         return mapper.Map<TaskDto>(taskDal);
     }
 

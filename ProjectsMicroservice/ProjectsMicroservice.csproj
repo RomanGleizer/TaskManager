@@ -41,12 +41,7 @@
     <ItemGroup>
         <ProjectReference Include="..\ConnectionLibrary\ConnectionLibrary.csproj" />
         <ProjectReference Include="..\Core\Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="UsersMicroservice">
-        <HintPath>..\UsersMicroservice\obj\Debug\net8.0\UsersMicroservice.dll</HintPath>
-      </Reference>
+        <ProjectReference Include="..\UsersMicroservice\UsersMicroservice.csproj" />
     </ItemGroup>
 
 </Project>

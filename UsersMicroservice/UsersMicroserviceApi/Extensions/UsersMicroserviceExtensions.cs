@@ -3,7 +3,7 @@ using ConnectionLibrary.ConnectionServices.Interfaces;
 using Core.Dal;
 using Core.Dal.Base;
 using Core.HttpLogic;
-using ProjectsMicroservice.ProjectsMicroserviceDomain.Entities;
+// using ProjectsMicroservice.ProjectsMicroserviceDomain.Entities;
 using UsersMicroservice.UsersMicroserviceDal.Entities;
 using UsersMicroservice.UsersMicroserviceDal.EntityFramework;
 using UsersMicroservice.UsersMicroserviceDal.Interfaces;
@@ -39,7 +39,7 @@ public static class UsersMicroserviceExtensions
 
     public static void AddConnectionServices(this IServiceCollection services)
     {
-        services.AddTransient<IProjectConnectionService, ProjectConnectionService<Project>>();
+        // services.AddTransient<IProjectConnectionService, ProjectConnectionService<Project>>();
     }
 
     public static void AddMicroserviceInteractionOperations(this IServiceCollection services)

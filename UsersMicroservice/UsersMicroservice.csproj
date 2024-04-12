@@ -37,10 +37,4 @@
         <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="ProjectsMicroservice">
-        <HintPath>..\ProjectsMicroservice\obj\Debug\net8.0\ProjectsMicroservice.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

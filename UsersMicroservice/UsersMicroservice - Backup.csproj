@@ -33,14 +33,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="TasksMicroserviceDal\" />
-        <Folder Include="TasksMicroserviceLogic\" />
+        <ProjectReference Include="..\ConnectionLibrary\ConnectionLibrary.csproj" />
+        <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ConnectionLibrary\ConnectionLibrary.csproj" />
-        <ProjectReference Include="..\Core\Core.csproj" />
-        <ProjectReference Include="..\ProjectsMicroservice\ProjectsMicroservice.csproj" />
+      <Reference Include="ProjectsMicroservice">
+        <HintPath>..\ProjectsMicroservice\obj\Debug\net8.0\ProjectsMicroservice.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

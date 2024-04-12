@@ -1,6 +1,6 @@
 ﻿namespace Core.Dal.Base;
 
-public interface IDtoService<TEntity, TId>
+public interface IDtoService<TEntity, in TId>
     where TEntity : IBaseDTO<TId>
 {
     /// <summary>

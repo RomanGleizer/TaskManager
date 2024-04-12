@@ -14,7 +14,7 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 var identityDbConnection = builder.Configuration.GetConnectionString("IdentityDbConnection");
 
 var connectionFactory = new ConnectionFactory { HostName = "localhost" };
-var poolPolicy = new RabbitMQConnectionPoolPolicy(connectionFactory);
+var poolPolicy = new RabbitMqConnectionPoolPolicy(connectionFactory);
 var connectionPool = new DefaultObjectPool<IConnection>(poolPolicy);
 
 var mapperProfile = new MapperConfiguration(config => config.AddProfile(new MapperProfile()));
@@ -31,7 +31,7 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
 
-builder.Services.AddHostedService<RabbitMQBackgroundAddProjectService>();
+builder.Services.AddHostedService<RabbitMqBackgroundAddProjectService>();
 
 builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
 

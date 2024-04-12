@@ -19,7 +19,7 @@ namespace ConnectionLib.ConnectionServices;
 public class TaskConnectionService(
     IConfiguration configuration,
     IServiceProvider serviceProvider,
-    ILogger<UserConnectionService<UserService>> logger) : ITaskConnectionService
+    ILogger<UserConnectionService> logger) : ITaskConnectionService
 {
     private readonly IHttpRequestService _httpRequestService = serviceProvider.GetRequiredService<IHttpRequestService>();
     private readonly string? _baseUrl = configuration.GetValue<string>("BaseUrl:Tasks");

@@ -16,11 +16,10 @@ namespace ConnectionLib.ConnectionServices;
 /// <summary>
 /// Сервис для управления соединением пользователей
 /// </summary>
-public abstract class UserConnectionService<TService> : IUserConnectionService
-    where TService : IUserService
+public class UserConnectionService : IUserConnectionService
 {
     private readonly IConfiguration _configuration;
-    private readonly ILogger<UserConnectionService<TService>> _logger;
+    private readonly ILogger<UserConnectionService> _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly ObjectPool<IConnection> _connectionPool;
 
@@ -31,7 +30,7 @@ public abstract class UserConnectionService<TService> : IUserConnectionService
     public UserConnectionService(
         IConfiguration configuration,
         IServiceProvider serviceProvider,
-        ILogger<UserConnectionService<TService>> logger,
+        ILogger<UserConnectionService> logger,
         ObjectPool<IConnection> connectionPool)
     {
         _configuration = configuration;
@@ -63,19 +62,18 @@ public abstract class UserConnectionService<TService> : IUserConnectionService
         {
             return await AddProjectWithHttp(request);
         }
-        else if (_rpcConsumer != null)
+
+        if (_rpcConsumer != null)
         {
-            await UserConnectionService<TService>.AddProjectWithRpc(request, "UserConnectionServiceQueue");
+            await AddProjectWithRpc(request, "UserConnectionServiceQueue");
             return new AddProjectToListOfUserProjectsResponse
             {
                 MemberId = request.MemberId,
                 ProjectId = request.ProjectId
             };
         }
-        else
-        {
-            throw new Exception("Не получилось настроить метод связи");
-        }
+
+        throw new Exception("Не получилось настроить метод связи");
     }
 
     private async Task<AddProjectToListOfUserProjectsResponse> AddProjectWithHttp(

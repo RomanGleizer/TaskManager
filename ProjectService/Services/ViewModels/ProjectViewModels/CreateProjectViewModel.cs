@@ -8,7 +8,7 @@ public record CreateProjectViewModel
     /// <summary>
     /// Получает или задает идентификатор проекта
     /// </summary>
-    public required int Guid { get; init; }
+    public required Guid Id { get; init; }
 
     /// <summary>
     /// Получает или задает имя проекта
@@ -38,5 +38,5 @@ public record CreateProjectViewModel
     /// <summary>
     /// Получает или задает список идентификаторов задач, связанных с проектом
     /// </summary>
-    public required IList<int> TaskIds { get; init; }
+    public required IList<Guid> TaskIds { get; init; }
 }

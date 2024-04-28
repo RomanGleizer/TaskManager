@@ -49,29 +49,24 @@ public class UsersController(
     /// <param name="dto">DTO, представляющий пользователя, который должен быть создан</param>
     /// <returns>Результат действия, указывающий на успешность или неудачу операции создания</returns>
     [HttpPost]
-    [ProducesResponseType<IdentityResult>(200)]
+    [ProducesResponseType(typeof(IdentityResult), 200)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var semaphoreAcquired = await semaphore.AcquireAsync("create_user");
-        if (!semaphoreAcquired)
-            return StatusCode(429, "Превышен лимит запросов на создание пользователя");
-
-        try
+        return await ExecuteWithSemaphoreAsync("create_user", async () =>
         {
-            var result = await userService.CreateUserAsync(dto, dto.Password);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
-        }
-        finally
-        {
-            semaphore.Release("create_user");
-        }
+            try
+            {
+                var result = await userService.CreateUserAsync(dto, dto.Password);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
+        });
     }
 
     /// <summary>
@@ -83,23 +78,18 @@ public class UsersController(
     [ProducesResponseType<IdentityResult>(200)]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid userId)
     {
-        var semaphoreAcquired = await semaphore.AcquireAsync("delete_user");
-        if (!semaphoreAcquired)
-            return StatusCode(429, $"Превышен лимит запросов на удаление пользователя с Id {userId}");
-
-        try
+        return await ExecuteWithSemaphoreAsync("delete_user", async () =>
         {
-            var result = await userService.DeleteUserAsync(userId);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"При удалении пользователя произошла ошибка: {ex.Message}");
-        }
-        finally
-        {
-            semaphore.Release("delete_user");
-        }
+            try
+            {
+                var result = await userService.DeleteUserAsync(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
+        });
     }
 
     /// <summary>
@@ -112,25 +102,21 @@ public class UsersController(
     [ProducesResponseType<IdentityResult>(200)]
     public async Task<IActionResult> UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
 
-        var semaphoreAcquired = await semaphore.AcquireAsync("update_user");
-        if (!semaphoreAcquired)
-            return StatusCode(429, $"Превышен лимит запросов на обновление пользователя с Id {userId}");
-
-        try
+        return await ExecuteWithSemaphoreAsync("update_user", async () =>
         {
-            var result = await userService.UpdateUserAsync(userId, dto);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"При обновлении пользователя произошла ошибка: {ex.Message}");
-        }
-        finally
-        {
-            semaphore.Release("update_user");
-        }
+            try
+            {
+                var result = await userService.UpdateUserAsync(userId, dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
+        });
     }
 
     /// <summary>
@@ -147,5 +133,25 @@ public class UsersController(
     {
         var result = await addProjectId.AddProjectIdToProjectIdListAsync(projectId, memberId);
         return Ok(result);
+    }
+    
+    private async Task<IActionResult> ExecuteWithSemaphoreAsync(string operationName, Func<Task<IActionResult>> action)
+    {
+        var semaphoreAcquired = await semaphore.AcquireAsync(operationName);
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на операцию {operationName}");
+
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Во время операции {operationName} произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            await semaphore.ReleaseAsync(operationName);
+        }
     }
 }

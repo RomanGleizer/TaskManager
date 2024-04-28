@@ -7,6 +7,9 @@ using Microsoft.Extensions.ObjectPool;
 using ProjectsMicroservice.ProjectsMicroserviceDomain.Entities;
 using ProjectsMicroservice.ProjectsMicroserviceInfrastructure.EntityFramework;
 using RabbitMQ.Client;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
+using SemaphoreSynchronizationPrimitiveLibrary.Semaphores;
+using StackExchange.Redis;
 using TasksMicroservice.TasksMicroserviceApi.Extensions;
 using TasksMicroservice.TasksMicroserviceDal.EntityFramework;
 using TasksMicroservice.TasksMicroserviceLogic.MapperLogic;
@@ -43,7 +46,14 @@ builder.Services.AddDbContext<ProjecstMicroserviceDbContext>(options => options.
 
 builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
 
+builder.Services.AddSingleton<IDistributedSemaphore>(_ =>
+{
+    var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
+    return new RedisDistributedSemaphore(connectionMultiplexer, 10);
+});
+
 builder.Services.AddDbContext<SagasDbContext>(options => options.UseSqlServer(sagaConnection));
+
 builder.Services.AddMassTransit(cfg =>
 {
     cfg.SetKebabCaseEndpointNameFormatter();

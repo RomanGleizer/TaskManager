@@ -10,7 +10,8 @@ public static class StartUpTraceId
     {
         serviceCollection.AddScoped<TraceIdAccessor>();
         serviceCollection
-            .TryAddScoped<ITraceWriter>(provider => ServiceProviderServiceExtensions.GetRequiredService<TraceIdAccessor>(provider));
+            .TryAddScoped<ITraceWriter>(provider =>
+                ServiceProviderServiceExtensions.GetRequiredService<TraceIdAccessor>(provider));
         serviceCollection
             .TryAddScoped<ITraceReader>(provider => provider.GetRequiredService<TraceIdAccessor>());
         serviceCollection

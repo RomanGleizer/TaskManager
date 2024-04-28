@@ -3,6 +3,9 @@ using ConnectionLibrary.ConnectionServices.BackgroundConnectionServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.ObjectPool;
 using RabbitMQ.Client;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
+using SemaphoreSynchronizationPrimitiveLibrary.Semaphores;
+using StackExchange.Redis;
 using UsersMicroservice.UsersMicroserviceApi.Extensions;
 using UsersMicroservice.UsersMicroserviceDal.EntityFramework;
 using UsersMicroservice.UsersMicroserviceLogic.Mappers;
@@ -32,6 +35,12 @@ builder.Services.AddIdentity();
 builder.Services.AddHostedService<RabbitMqBackgroundAddProjectService>();
 builder.Services.AddDbContext<UsersMicroserviceDbContext>(options => options.UseSqlServer(connection));
 builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
+
+builder.Services.AddSingleton<IDistributedSemaphore>(provider =>
+{
+    var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
+    return new RedisDistributedSemaphore(connectionMultiplexer, 10);
+});
 
 var app = builder.Build();
 

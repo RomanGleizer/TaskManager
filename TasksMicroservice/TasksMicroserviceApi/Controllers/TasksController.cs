@@ -1,5 +1,6 @@
 ﻿using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
 using TasksMicroservice.TasksMicroserviceApi.Controllers.Task.Requests;
 using TasksMicroservice.TasksMicroserviceApi.Controllers.Task.Responses;
 using TasksMicroservice.TasksMicroserviceLogic.Dto;
@@ -15,7 +16,7 @@ namespace TasksMicroservice.TasksMicroserviceApi.Controllers;
 /// <param name="taskService">Сервис для работы с задачами</param>
 [Route("api/[controller]")]
 [ApiController]
-public class TasksController(IDtoService<TaskDto, Guid> taskService) : ControllerBase
+public class TasksController(IDtoService<TaskDto, Guid> taskService, IDistributedSemaphore semaphore) : ControllerBase
 {
     /// <summary>
     ///     Получает информацию о задаче по идентификатору
@@ -46,28 +47,43 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
     [ProducesResponseType<CreateTaskResponse>(200)]
     public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskDto request)
     {
-        var newTask = await taskService.CreateDtoAsync(new TaskDto
+        var semaphoreAcquired = await semaphore.AcquireAsync("create_task");
+        if (!semaphoreAcquired)
+            return StatusCode(429, "Превышен лимит запросов на создание задачи");
+
+        try
         {
-            Id = request.Id,
-            Name = request.Name,
-            Description = request.Description,
-            ExecutionStatus = request.ExecutionStatus,
-            CreatedDate = request.CreatedDate,
-            LastUpdateDate = request.LastUpdateDate,
-            ProjectId = request.ProjectId,
-            PerformerIds = request.PerformerIds
-        });
-        return Ok(new CreateTaskResponse
+            var newTask = await taskService.CreateDtoAsync(new TaskDto
+            {
+                Id = request.Id,
+                Name = request.Name,
+                Description = request.Description,
+                ExecutionStatus = request.ExecutionStatus,
+                CreatedDate = request.CreatedDate,
+                LastUpdateDate = request.LastUpdateDate,
+                ProjectId = request.ProjectId,
+                PerformerIds = request.PerformerIds
+            });
+            return Ok(new CreateTaskResponse
+            {
+                Id = newTask.Id,
+                Name = newTask.Name,
+                Description = newTask.Description,
+                ExecutionStatus = newTask.ExecutionStatus,
+                CreatedDate = newTask.CreatedDate,
+                LastUpdateDate = newTask.LastUpdateDate,
+                ProjectId = newTask.ProjectId,
+                PerformerIds = newTask.PerformerIds
+            });
+        }
+        catch (Exception ex)
         {
-            Id = newTask.Id,
-            Name = newTask.Name,
-            Description = newTask.Description,
-            ExecutionStatus = newTask.ExecutionStatus,
-            CreatedDate = newTask.CreatedDate,
-            LastUpdateDate = newTask.LastUpdateDate,
-            ProjectId = newTask.ProjectId,
-            PerformerIds = newTask.PerformerIds
-        });
+            throw new Exception($"При создании задачи произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            semaphore.Release("create_task");
+        }
     }
 
     /// <summary>
@@ -78,17 +94,32 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
     [ProducesResponseType<DeleteTaskResponse>(200)]
     public async Task<IActionResult> DeleteTaskAsync([FromRoute] Guid taskId)
     {
-        var deletedTask = await taskService.DeleteDtoAsync(taskId);
-        return Ok(new DeleteTaskResponse
+        var semaphoreAcquired = await semaphore.AcquireAsync("delete_task");
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на удаление задачи с Id {taskId}");
+
+        try
         {
-            Name = deletedTask.Name,
-            Description = deletedTask.Description,
-            ExecutionStatus = deletedTask.ExecutionStatus,
-            CreatedDate = deletedTask.CreatedDate,
-            LastUpdateDate = deletedTask.LastUpdateDate,
-            PerformerIds = deletedTask.PerformerIds,
-            ProjectId = deletedTask.ProjectId
-        });
+            var deletedTask = await taskService.DeleteDtoAsync(taskId);
+            return Ok(new DeleteTaskResponse
+            {
+                Name = deletedTask.Name,
+                Description = deletedTask.Description,
+                ExecutionStatus = deletedTask.ExecutionStatus,
+                CreatedDate = deletedTask.CreatedDate,
+                LastUpdateDate = deletedTask.LastUpdateDate,
+                PerformerIds = deletedTask.PerformerIds,
+                ProjectId = deletedTask.ProjectId
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"При удалении задачи с Id {taskId} произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            semaphore.Release("delete_task");
+        }
     }
 
     /// <summary>
@@ -100,28 +131,43 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
     [ProducesResponseType<UpdateTaskResponse>(200)]
     public async Task<IActionResult> UpdateTaskAsync([FromRoute] UpdateTaskDto request, [FromRoute] Guid taskId)
     {
-        var taskDto = new TaskDto
-        {
-            Id = taskId,
-            Name = request.Name,
-            Description = request.Description,
-            ExecutionStatus = request.ExecutionStatus,
-            CreatedDate = request.CreatedDate,
-            LastUpdateDate = request.LastUpdateDate,
-            PerformerIds = request.PerformerIds,
-            ProjectId = request.ProjectId
-        };
+        var semaphoreAcquired = await semaphore.AcquireAsync("update_task");
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на обновление задачи с id {taskId}");
 
-        var updatedTaskDal = await taskService.UpdateDtoAsync(taskDto, taskId);
-        return Ok(new UpdateTaskResponse
+        try
         {
-            Name = updatedTaskDal.Name,
-            Description = updatedTaskDal.Description,
-            ExecutionStatus = updatedTaskDal.ExecutionStatus,
-            CreatedDate = updatedTaskDal.CreatedDate,
-            LastUpdateDate = updatedTaskDal.LastUpdateDate,
-            PerformerIds = updatedTaskDal.PerformerIds
-        });
+            var taskDto = new TaskDto
+            {
+                Id = taskId,
+                Name = request.Name,
+                Description = request.Description,
+                ExecutionStatus = request.ExecutionStatus,
+                CreatedDate = request.CreatedDate,
+                LastUpdateDate = request.LastUpdateDate,
+                PerformerIds = request.PerformerIds,
+                ProjectId = request.ProjectId
+            };
+
+            var updatedTaskDal = await taskService.UpdateDtoAsync(taskDto, taskId);
+            return Ok(new UpdateTaskResponse
+            {
+                Name = updatedTaskDal.Name,
+                Description = updatedTaskDal.Description,
+                ExecutionStatus = updatedTaskDal.ExecutionStatus,
+                CreatedDate = updatedTaskDal.CreatedDate,
+                LastUpdateDate = updatedTaskDal.LastUpdateDate,
+                PerformerIds = updatedTaskDal.PerformerIds
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"При обновлении задачи с Id {taskId} произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            semaphore.Release("update_task");
+        }
     }
 
     /// <summary>

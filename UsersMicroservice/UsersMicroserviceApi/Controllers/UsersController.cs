@@ -1,6 +1,7 @@
 ﻿using Core.Dal.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
 using UsersMicroservice.UsersMicroserviceLogic.Dto.User;
 using UsersMicroservice.UsersMicroserviceLogic.Interfaces;
 
@@ -11,7 +12,11 @@ namespace UsersMicroservice.UsersMicroserviceApi.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IUserService userService, IAddProjectIdToUserProjectIdList addProjectId) : ControllerBase
+public class UsersController(
+    IUserService userService,
+    IAddProjectIdToUserProjectIdList addProjectId,
+    IDistributedSemaphore semaphore)
+    : ControllerBase
 {
     /// <summary>
     ///     Получает всех пользователей из базы данных
@@ -47,10 +52,26 @@ public class UsersController(IUserService userService, IAddProjectIdToUserProjec
     [ProducesResponseType<IdentityResult>(200)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        var result = await userService.CreateUserAsync(dto, dto.Password);
-        return Ok(result);
+        var semaphoreAcquired = await semaphore.AcquireAsync("create_user");
+        if (!semaphoreAcquired)
+            return StatusCode(429, "Превышен лимит запросов на создание пользователя");
+
+        try
+        {
+            var result = await userService.CreateUserAsync(dto, dto.Password);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            semaphore.Release("create_user");
+        }
     }
 
     /// <summary>
@@ -62,8 +83,23 @@ public class UsersController(IUserService userService, IAddProjectIdToUserProjec
     [ProducesResponseType<IdentityResult>(200)]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid userId)
     {
-        var result = await userService.DeleteUserAsync(userId);
-        return Ok(result);
+        var semaphoreAcquired = await semaphore.AcquireAsync("delete_user");
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на удаление пользователя с Id {userId}");
+
+        try
+        {
+            var result = await userService.DeleteUserAsync(userId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"При удалении пользователя произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            semaphore.Release("delete_user");
+        }
     }
 
     /// <summary>
@@ -77,9 +113,24 @@ public class UsersController(IUserService userService, IAddProjectIdToUserProjec
     public async Task<IActionResult> UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var result = await userService.UpdateUserAsync(userId, dto);
 
-        return Ok(result);
+        var semaphoreAcquired = await semaphore.AcquireAsync("update_user");
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на обновление пользователя с Id {userId}");
+
+        try
+        {
+            var result = await userService.UpdateUserAsync(userId, dto);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"При обновлении пользователя произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            semaphore.Release("update_user");
+        }
     }
 
     /// <summary>

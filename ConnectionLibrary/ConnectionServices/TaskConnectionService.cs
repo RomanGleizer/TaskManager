@@ -38,10 +38,7 @@ public class TaskConnectionService(
         var response = await _httpRequestService.SendRequestAsync<IList<Guid>>(requestData, connectionData)
             .ConfigureAwait(false);
 
-        if (response.IsSuccessStatusCode)
-        {
-            return new ExistingTaskInProjectResponse { TaskIds = response.Body };
-        }
+        if (response.IsSuccessStatusCode) return new ExistingTaskInProjectResponse { TaskIds = response.Body };
 
         logger.LogError("Не удалось найти задачу. Код состояния: {StatusCode}", response.StatusCode);
         throw new HttpRequestException($"Запрос завершился неудачно с кодом состояния {response.StatusCode}");

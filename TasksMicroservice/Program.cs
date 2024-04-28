@@ -16,7 +16,7 @@ using TasksMicroservice.TasksMicroserviceLogic.MapperLogic;
 using TasksMicroservice.TasksMicroserviceLogic.TaskSaga;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var redisDistributedSemaphoreConfigurationTimeout = builder.Configuration.GetValue<string>("RedisDistributedSemaphoreTimeoutInSeconds");
 var connection = builder.Configuration.GetConnectionString("TaskMicroserviceConnection");
 var projectConnection = builder.Configuration.GetConnectionString("ProjectMicroserviceConnection");
 var sagaConnection = builder.Configuration.GetConnectionString("SagasDatabase");
@@ -86,6 +86,15 @@ builder.Services.AddMassTransit(cfg =>
         });
         rabbitMqBusFactoryConfigurator.ConfigureEndpoints(busRegistrationContext);
     });
+});
+
+builder.Services.AddSingleton<IDistributedSemaphore>(provider =>
+{
+    if (!int.TryParse(redisDistributedSemaphoreConfigurationTimeout, out var redisDistributedSemaphoreTimeout))
+        throw new Exception("Параметр TimeOut в конфигурации не целое число");
+
+    var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
+    return new RedisDistributedSemaphore(connectionMultiplexer, redisDistributedSemaphoreTimeout);
 });
 
 var app = builder.Build();

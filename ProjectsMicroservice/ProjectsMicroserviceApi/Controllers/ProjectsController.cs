@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectsMicroservice.ProjectsMicroserviceApplication.Interfaces;
 using ProjectsMicroservice.ProjectsMicroserviceApplication.ViewModels.ProjectViewModels;
 using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
+using UsersMicroservice.UsersMicroserviceLogic.Interfaces;
+using UsersMicroservice.UsersMicroserviceLogic.Services;
 
 namespace ProjectsMicroservice.ProjectsMicroserviceApi.Controllers;
 
@@ -41,23 +43,21 @@ public class ProjectsController(
     [ProducesResponseType<ProjectViewModel>(200)]
     public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectViewModel model)
     {
-        var semaphoreAcquired = await semaphore.AcquireAsync("create_project");
-        if (!semaphoreAcquired)
-            return StatusCode(429, "Превышен лимит запросов на создание проекта");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        try
+        return await ExecuteWithSemaphoreAsync("create_project", async () =>
         {
-            var createdProjectViewModel = await projectService.Create(model);
-            return Ok(createdProjectViewModel);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"При создании проекта произошла ошибка: {ex.Message}");
-        }
-        finally
-        {
-            semaphore.Release("create_project");
-        }
+            try
+            {
+                var result = await projectService.Create(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
+        });
     }
 
     /// <summary>
@@ -68,26 +68,25 @@ public class ProjectsController(
     /// <returns>Данные об обновленном проекте</returns>
     [HttpPut("{projectId:guid}")]
     [ProducesResponseType<ProjectViewModel>(200)]
-    public async Task<IActionResult> UpdateProjectAsync([FromRoute] Guid projectId,
+    public async Task<IActionResult> UpdateProjectAsync(
+        [FromRoute] Guid projectId,
         [FromBody] UpdateProjectViewModel model)
     {
-        var semaphoreAcquired = await semaphore.AcquireAsync("update_project");
-        if (!semaphoreAcquired)
-            return StatusCode(429, $"Превышен лимит запросов на обновление проекта с id {projectId}");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        try
+        return await ExecuteWithSemaphoreAsync("update_project", async () =>
         {
-            var updatedProjectViewModel = await projectService.Update(projectId, model);
-            return Ok(updatedProjectViewModel);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"При обновлении проекта произошла ошибка: {ex.Message}");
-        }
-        finally
-        {
-            semaphore.Release("update_project");
-        }
+            try
+            {
+                var result = await projectService.Update(projectId, model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
+        });
     }
 
     /// <summary>
@@ -99,23 +98,18 @@ public class ProjectsController(
     [ProducesResponseType<ProjectViewModel>(200)]
     public async Task<IActionResult> DeleteProjectAsync([FromRoute] Guid projectId)
     {
-        var semaphoreAcquired = await semaphore.AcquireAsync("delete_project");
-        if (!semaphoreAcquired)
-            return StatusCode(429, $"Превышен лимит запросов на удаление проекта с id {projectId}");
-
-        try
+        return await ExecuteWithSemaphoreAsync("delete_project", async () =>
         {
-            var deletedProjectViewModel = await projectService.Delete(projectId);
-            return Ok(deletedProjectViewModel);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"При удалении проекта произошла ошибка: {ex.Message}");
-        }
-        finally
-        {
-            semaphore.Release("delete_project");
-        }
+            try
+            {
+                var result = await projectService.Delete(projectId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
+        });
     }
 
     /// <summary>
@@ -140,10 +134,30 @@ public class ProjectsController(
         return NotFound($"Задача с id {taskId} не была найдена в БД");
     }
 
-    [HttpGet("{projectId:guid}/tasks/{taskId:guid}")]
+    [HttpPost("{projectId:guid}/tasks/{taskId:guid}")]
     public async Task<IActionResult> AddTaskInProject([FromRoute] Guid projectId, [FromRoute] Guid taskId)
     {
         await addProjectIdToProjectIdList.AddNewTaskIdInProjectIdList(projectId, taskId);
         return Ok();
+    }
+
+    private async Task<IActionResult> ExecuteWithSemaphoreAsync(string operationName, Func<Task<IActionResult>> action)
+    {
+        var semaphoreAcquired = await semaphore.AcquireAsync(operationName);
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на операцию {operationName}");
+
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Во время операции {operationName} произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            await semaphore.ReleaseAsync(operationName);
+        }
     }
 }

@@ -1,9 +1,6 @@
-﻿using ConnectionLibrary.ConnectionServices;
-using ConnectionLibrary.ConnectionServices.Interfaces;
-using Core.Dal;
+﻿using Core.Dal;
 using Core.Dal.Base;
 using Core.HttpLogic;
-// using ProjectsMicroservice.ProjectsMicroserviceDomain.Entities;
 using UsersMicroservice.UsersMicroserviceDal.Entities;
 using UsersMicroservice.UsersMicroserviceDal.EntityFramework;
 using UsersMicroservice.UsersMicroserviceDal.Interfaces;
@@ -11,6 +8,7 @@ using UsersMicroservice.UsersMicroserviceDal.Repositories;
 using UsersMicroservice.UsersMicroserviceLogic.Dto.Role;
 using UsersMicroservice.UsersMicroserviceLogic.Interfaces;
 using UsersMicroservice.UsersMicroserviceLogic.Services;
+// using ProjectsMicroservice.ProjectsMicroserviceDomain.Entities;
 
 namespace UsersMicroservice.UsersMicroserviceApi.Extensions;
 

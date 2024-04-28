@@ -13,6 +13,7 @@ using UsersMicroservice.UsersMicroserviceDal.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var redisDistributedSemaphoreConfigurationTimeout = builder.Configuration.GetValue<string>("RedisDistributedSemaphoreTimeoutInSeconds");
 var connection = builder.Configuration.GetConnectionString("ProjectMicroserviceConnection");
 var identityDbConnection = builder.Configuration.GetConnectionString("UsersMicroserviceConnection");
 
@@ -42,8 +43,11 @@ builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
 
 builder.Services.AddSingleton<IDistributedSemaphore>(provider =>
 {
+    if (!int.TryParse(redisDistributedSemaphoreConfigurationTimeout, out var redisDistributedSemaphoreTimeout))
+        throw new Exception("Параметр TimeOut в конфигурации не целое число");
+
     var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
-    return new RedisDistributedSemaphore(connectionMultiplexer, 10);
+    return new RedisDistributedSemaphore(connectionMultiplexer, redisDistributedSemaphoreTimeout);
 });
 
 builder.Services.AddDbContext<ProjecstMicroserviceDbContext>(

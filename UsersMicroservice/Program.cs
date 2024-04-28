@@ -13,6 +13,7 @@ using UsersMicroservice.UsersMicroserviceLogic.Mappers;
 var builder = WebApplication.CreateBuilder(args);
 
 var connection = builder.Configuration.GetConnectionString("UsersMicroserviceConnection");
+var redisDistributedSemaphoreConfigurationTimeout = builder.Configuration.GetValue<string>("RedisDistributedSemaphoreTimeoutInSeconds");
 
 var mappingConfig = new MapperConfiguration(mapperConfigurationExpression
     => mapperConfigurationExpression.AddProfile(new MappingProfile()));
@@ -38,8 +39,11 @@ builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
 
 builder.Services.AddSingleton<IDistributedSemaphore>(provider =>
 {
+    if (!int.TryParse(redisDistributedSemaphoreConfigurationTimeout, out var redisDistributedSemaphoreTimeout))
+        throw new Exception("Параметр TimeOut в конфигурации не целое число");
+
     var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
-    return new RedisDistributedSemaphore(connectionMultiplexer, 10);
+    return new RedisDistributedSemaphore(connectionMultiplexer, redisDistributedSemaphoreTimeout);
 });
 
 var app = builder.Build();

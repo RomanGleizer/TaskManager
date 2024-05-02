@@ -1,14 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersMicroservice", "UsersMicroservice\UsersMicroservice.csproj", "{D6E97EC9-C42B-49E4-95E2-C75FF242BD1A}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsersMicroservice", "UsersMicroservice\UsersMicroservice.csproj", "{D6E97EC9-C42B-49E4-95E2-C75FF242BD1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsMicroservice", "ProjectsMicroservice\ProjectsMicroservice.csproj", "{F60CAB17-A8E9-4D01-A48E-D4A2CF646EF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsMicroservice", "ProjectsMicroservice\ProjectsMicroservice.csproj", "{F60CAB17-A8E9-4D01-A48E-D4A2CF646EF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{07258C8B-D356-4E95-A6A5-B26E07B71725}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{07258C8B-D356-4E95-A6A5-B26E07B71725}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionLibrary", "ConnectionLibrary\ConnectionLibrary.csproj", "{E6708DE9-0A7B-46FE-A0AA-3209563D7FDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectionLibrary", "ConnectionLibrary\ConnectionLibrary.csproj", "{E6708DE9-0A7B-46FE-A0AA-3209563D7FDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksMicroservice", "TasksMicroservice\TasksMicroservice.csproj", "{8F636283-7CDC-440F-9848-C81933507D3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksMicroservice", "TasksMicroservice\TasksMicroservice.csproj", "{8F636283-7CDC-440F-9848-C81933507D3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemaphoreSynchronizationPrimitiveLibrary", "SemaphoreSynchronizationPrimitiveLibrary\SemaphoreSynchronizationPrimitiveLibrary.csproj", "{58AFDEA9-9B5B-4216-89AF-06B456AE9FD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +41,15 @@ Global
 		{8F636283-7CDC-440F-9848-C81933507D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F636283-7CDC-440F-9848-C81933507D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F636283-7CDC-440F-9848-C81933507D3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58AFDEA9-9B5B-4216-89AF-06B456AE9FD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58AFDEA9-9B5B-4216-89AF-06B456AE9FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58AFDEA9-9B5B-4216-89AF-06B456AE9FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58AFDEA9-9B5B-4216-89AF-06B456AE9FD6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CFF6183-AFDC-4D83-8B94-68D3EEA16D9B}
 	EndGlobalSection
 EndGlobal

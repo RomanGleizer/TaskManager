@@ -3,6 +3,9 @@ using ConnectionLibrary.ConnectionServices.BackgroundConnectionServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.ObjectPool;
 using RabbitMQ.Client;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
+using SemaphoreSynchronizationPrimitiveLibrary.Semaphores;
+using StackExchange.Redis;
 using UsersMicroservice.UsersMicroserviceApi.Extensions;
 using UsersMicroservice.UsersMicroserviceDal.EntityFramework;
 using UsersMicroservice.UsersMicroserviceLogic.Mappers;
@@ -10,6 +13,7 @@ using UsersMicroservice.UsersMicroserviceLogic.Mappers;
 var builder = WebApplication.CreateBuilder(args);
 
 var connection = builder.Configuration.GetConnectionString("UsersMicroserviceConnection");
+var redisDistributedSemaphoreConfigurationTimeout = builder.Configuration.GetValue<string>("RedisDistributedSemaphoreTimeoutInSeconds");
 
 var mappingConfig = new MapperConfiguration(mapperConfigurationExpression
     => mapperConfigurationExpression.AddProfile(new MappingProfile()));
@@ -32,6 +36,15 @@ builder.Services.AddIdentity();
 builder.Services.AddHostedService<RabbitMqBackgroundAddProjectService>();
 builder.Services.AddDbContext<UsersMicroserviceDbContext>(options => options.UseSqlServer(connection));
 builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
+
+builder.Services.AddSingleton<IDistributedSemaphore>(provider =>
+{
+    if (!int.TryParse(redisDistributedSemaphoreConfigurationTimeout, out var redisDistributedSemaphoreTimeout))
+        throw new Exception("TimeOut is not int");
+
+    var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
+    return new RedisDistributedSemaphore(connectionMultiplexer, redisDistributedSemaphoreTimeout);
+});
 
 var app = builder.Build();
 

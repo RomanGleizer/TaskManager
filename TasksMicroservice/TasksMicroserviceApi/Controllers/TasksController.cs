@@ -1,5 +1,8 @@
 ﻿using Core.Dal.Base;
 using Microsoft.AspNetCore.Mvc;
+using ProjectsMicroservice.ProjectsMicroserviceApplication.Interfaces;
+using ProjectsMicroservice.ProjectsMicroserviceApplication.Services;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
 using TasksMicroservice.TasksMicroserviceApi.Controllers.Task.Requests;
 using TasksMicroservice.TasksMicroserviceApi.Controllers.Task.Responses;
 using TasksMicroservice.TasksMicroserviceLogic.Dto;
@@ -15,7 +18,7 @@ namespace TasksMicroservice.TasksMicroserviceApi.Controllers;
 /// <param name="taskService">Сервис для работы с задачами</param>
 [Route("api/[controller]")]
 [ApiController]
-public class TasksController(IDtoService<TaskDto, Guid> taskService) : ControllerBase
+public class TasksController(IDtoService<TaskDto, Guid> taskService, IDistributedSemaphore semaphore) : ControllerBase
 {
     /// <summary>
     ///     Получает информацию о задаче по идентификатору
@@ -46,27 +49,40 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
     [ProducesResponseType<CreateTaskResponse>(200)]
     public async Task<IActionResult> CreateTaskAsync([FromBody] CreateTaskDto request)
     {
-        var newTask = await taskService.CreateDtoAsync(new TaskDto
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return await ExecuteWithSemaphoreAsync("create_task", async () =>
         {
-            Id = request.Id,
-            Name = request.Name,
-            Description = request.Description,
-            ExecutionStatus = request.ExecutionStatus,
-            CreatedDate = request.CreatedDate,
-            LastUpdateDate = request.LastUpdateDate,
-            ProjectId = request.ProjectId,
-            PerformerIds = request.PerformerIds
-        });
-        return Ok(new CreateTaskResponse
-        {
-            Id = newTask.Id,
-            Name = newTask.Name,
-            Description = newTask.Description,
-            ExecutionStatus = newTask.ExecutionStatus,
-            CreatedDate = newTask.CreatedDate,
-            LastUpdateDate = newTask.LastUpdateDate,
-            ProjectId = newTask.ProjectId,
-            PerformerIds = newTask.PerformerIds
+            try
+            {
+                var newTask = await taskService.CreateDtoAsync(new TaskDto
+                {
+                    Id = request.Id,
+                    Name = request.Name,
+                    Description = request.Description,
+                    ExecutionStatus = request.ExecutionStatus,
+                    CreatedDate = request.CreatedDate,
+                    LastUpdateDate = request.LastUpdateDate,
+                    ProjectId = request.ProjectId,
+                    PerformerIds = request.PerformerIds
+                });
+                return Ok(new CreateTaskResponse
+                {
+                    Id = newTask.Id,
+                    Name = newTask.Name,
+                    Description = newTask.Description,
+                    ExecutionStatus = newTask.ExecutionStatus,
+                    CreatedDate = newTask.CreatedDate,
+                    LastUpdateDate = newTask.LastUpdateDate,
+                    ProjectId = newTask.ProjectId,
+                    PerformerIds = newTask.PerformerIds
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
         });
     }
 
@@ -78,16 +94,26 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
     [ProducesResponseType<DeleteTaskResponse>(200)]
     public async Task<IActionResult> DeleteTaskAsync([FromRoute] Guid taskId)
     {
-        var deletedTask = await taskService.DeleteDtoAsync(taskId);
-        return Ok(new DeleteTaskResponse
+        return await ExecuteWithSemaphoreAsync("delete_task", async () =>
         {
-            Name = deletedTask.Name,
-            Description = deletedTask.Description,
-            ExecutionStatus = deletedTask.ExecutionStatus,
-            CreatedDate = deletedTask.CreatedDate,
-            LastUpdateDate = deletedTask.LastUpdateDate,
-            PerformerIds = deletedTask.PerformerIds,
-            ProjectId = deletedTask.ProjectId
+            try
+            {
+                var deletedTask = await taskService.DeleteDtoAsync(taskId);
+                return Ok(new DeleteTaskResponse
+                {
+                    Name = deletedTask.Name,
+                    Description = deletedTask.Description,
+                    ExecutionStatus = deletedTask.ExecutionStatus,
+                    CreatedDate = deletedTask.CreatedDate,
+                    LastUpdateDate = deletedTask.LastUpdateDate,
+                    PerformerIds = deletedTask.PerformerIds,
+                    ProjectId = deletedTask.ProjectId
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
         });
     }
 
@@ -100,27 +126,40 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
     [ProducesResponseType<UpdateTaskResponse>(200)]
     public async Task<IActionResult> UpdateTaskAsync([FromRoute] UpdateTaskDto request, [FromRoute] Guid taskId)
     {
-        var taskDto = new TaskDto
-        {
-            Id = taskId,
-            Name = request.Name,
-            Description = request.Description,
-            ExecutionStatus = request.ExecutionStatus,
-            CreatedDate = request.CreatedDate,
-            LastUpdateDate = request.LastUpdateDate,
-            PerformerIds = request.PerformerIds,
-            ProjectId = request.ProjectId
-        };
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        var updatedTaskDal = await taskService.UpdateDtoAsync(taskDto, taskId);
-        return Ok(new UpdateTaskResponse
+        return await ExecuteWithSemaphoreAsync("update_task", async () =>
         {
-            Name = updatedTaskDal.Name,
-            Description = updatedTaskDal.Description,
-            ExecutionStatus = updatedTaskDal.ExecutionStatus,
-            CreatedDate = updatedTaskDal.CreatedDate,
-            LastUpdateDate = updatedTaskDal.LastUpdateDate,
-            PerformerIds = updatedTaskDal.PerformerIds
+            try
+            {
+                var taskDto = new TaskDto
+                {
+                    Id = taskId,
+                    Name = request.Name,
+                    Description = request.Description,
+                    ExecutionStatus = request.ExecutionStatus,
+                    CreatedDate = request.CreatedDate,
+                    LastUpdateDate = request.LastUpdateDate,
+                    PerformerIds = request.PerformerIds,
+                    ProjectId = request.ProjectId
+                };
+
+                var updatedTaskDal = await taskService.UpdateDtoAsync(taskDto, taskId);
+                return Ok(new UpdateTaskResponse
+                {
+                    Name = updatedTaskDal.Name,
+                    Description = updatedTaskDal.Description,
+                    ExecutionStatus = updatedTaskDal.ExecutionStatus,
+                    CreatedDate = updatedTaskDal.CreatedDate,
+                    LastUpdateDate = updatedTaskDal.LastUpdateDate,
+                    PerformerIds = updatedTaskDal.PerformerIds
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"При создании пользователя произошла ошибка: {ex.Message}");
+            }
         });
     }
 
@@ -138,5 +177,25 @@ public class TasksController(IDtoService<TaskDto, Guid> taskService) : Controlle
             .ToList();
 
         return Ok(tasks);
+    }
+
+    private async Task<IActionResult> ExecuteWithSemaphoreAsync(string operationName, Func<Task<IActionResult>> action)
+    {
+        var semaphoreAcquired = await semaphore.AcquireAsync(operationName);
+        if (!semaphoreAcquired)
+            return StatusCode(429, $"Превышен лимит запросов на операцию {operationName}");
+
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Во время операции {operationName} произошла ошибка: {ex.Message}");
+        }
+        finally
+        {
+            await semaphore.ReleaseAsync(operationName);
+        }
     }
 }

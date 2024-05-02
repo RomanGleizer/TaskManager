@@ -21,8 +21,8 @@ public class UserService(IMapper mapper, IUserRepository<UserDal> userRepository
     /// <inheritdoc />
     public async Task<IList<UserDto>> GetAllUsersAsync()
     {
-        var userDals = await userRepository.GetAllAsync();
-        return mapper.Map<IList<UserDto>>(userDals);
+        var users = await userRepository.GetAllAsync();
+        return mapper.Map<IList<UserDto>>(users);
     }
 
     /// <inheritdoc />

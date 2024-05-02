@@ -7,13 +7,16 @@ using Microsoft.Extensions.ObjectPool;
 using ProjectsMicroservice.ProjectsMicroserviceDomain.Entities;
 using ProjectsMicroservice.ProjectsMicroserviceInfrastructure.EntityFramework;
 using RabbitMQ.Client;
+using SemaphoreSynchronizationPrimitiveLibrary.Interfaces;
+using SemaphoreSynchronizationPrimitiveLibrary.Semaphores;
+using StackExchange.Redis;
 using TasksMicroservice.TasksMicroserviceApi.Extensions;
 using TasksMicroservice.TasksMicroserviceDal.EntityFramework;
 using TasksMicroservice.TasksMicroserviceLogic.MapperLogic;
 using TasksMicroservice.TasksMicroserviceLogic.TaskSaga;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var redisDistributedSemaphoreConfigurationTimeout = builder.Configuration.GetValue<string>("RedisDistributedSemaphoreTimeoutInSeconds");
 var connection = builder.Configuration.GetConnectionString("TaskMicroserviceConnection");
 var projectConnection = builder.Configuration.GetConnectionString("ProjectMicroserviceConnection");
 var sagaConnection = builder.Configuration.GetConnectionString("SagasDatabase");
@@ -43,7 +46,14 @@ builder.Services.AddDbContext<ProjecstMicroserviceDbContext>(options => options.
 
 builder.Services.AddSingleton<ObjectPool<IConnection>>(connectionPool);
 
+builder.Services.AddSingleton<IDistributedSemaphore>(_ =>
+{
+    var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
+    return new RedisDistributedSemaphore(connectionMultiplexer, 10);
+});
+
 builder.Services.AddDbContext<SagasDbContext>(options => options.UseSqlServer(sagaConnection));
+
 builder.Services.AddMassTransit(cfg =>
 {
     cfg.SetKebabCaseEndpointNameFormatter();
@@ -76,6 +86,15 @@ builder.Services.AddMassTransit(cfg =>
         });
         rabbitMqBusFactoryConfigurator.ConfigureEndpoints(busRegistrationContext);
     });
+});
+
+builder.Services.AddSingleton<IDistributedSemaphore>(provider =>
+{
+    if (!int.TryParse(redisDistributedSemaphoreConfigurationTimeout, out var redisDistributedSemaphoreTimeout))
+        throw new Exception("TimeOut is not int");
+
+    var connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
+    return new RedisDistributedSemaphore(connectionMultiplexer, redisDistributedSemaphoreTimeout);
 });
 
 var app = builder.Build();
